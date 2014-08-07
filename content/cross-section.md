@@ -1,7 +1,7 @@
 Title: Visualizing high-dimensional functions with cross-sections
 date: 2014-02-12
 comments: true
-tags: math
+tags: math visualization
 
 Last September, I gave a talk which included a bunch of two-dimensional plots of
 a high-dimensional objective I was developing specialized algorithms for

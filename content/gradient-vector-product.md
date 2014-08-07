@@ -1,7 +1,7 @@
-Title: Gradient-vector product
+title: Gradient-vector product
 date: 2014-02-10
 comments: true
-tags: math
+tags: math calculus
 
 
 We've all written the following test for our gradient code (known as the
@@ -10,8 +10,8 @@ finite-difference approximation).
 $$
 \frac{\partial}{\partial x_i} f(\boldsymbol{x}) \approx
  \frac{1}{2 \varepsilon} \Big(
-   f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{e_i}) 
- - f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{e_i}) 
+   f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{e_i})
+ - f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{e_i})
  \Big)
 $$
 
@@ -26,8 +26,8 @@ with the following formula,
 $$
 \nabla f(\boldsymbol{x})^{\top} \boldsymbol{d} \approx
 \frac{1}{2 \varepsilon} \Big(
-   f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{d}) 
- - f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{d}) 
+   f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{d})
+ - f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{d})
  \Big)
 $$
 
@@ -85,8 +85,8 @@ need to remember one formula!
 $$
 H(\boldsymbol{x})\, \boldsymbol{d} \approx
 \frac{1}{2 \varepsilon} \Big(
-  \nabla f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{d}) 
-- \nabla f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{d}) 
+  \nabla f(\boldsymbol{x} + \varepsilon \cdot \boldsymbol{d})
+- \nabla f(\boldsymbol{x} - \varepsilon \cdot \boldsymbol{d})
 \Big)
 $$
 

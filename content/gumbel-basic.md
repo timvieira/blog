@@ -1,7 +1,7 @@
 Title: Gumbel max trick
 date: 2014-07-31
 comments: true
-tags: math
+tags: math sampling Gumbel
 
 
 **Goal**: Sampling from a discrete distribution parametrized by unnormalized

@@ -1,7 +1,7 @@
 Title: Gumbel max trick and weighted reservoir sampling
 date: 2014-08-01
 comments: true
-tags: math
+tags: math sampling Gumbel
 
 A while back, [Hanna](http://people.cs.umass.edu/~wallach/) and I stumbled upon
 the following blog post:

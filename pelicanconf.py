@@ -67,6 +67,7 @@ PLUGIN_PATH = './plugins/pelican-plugins'
 SUMMARY_MAX_LENGTH = None
 
 PLUGINS = [#'summary',
+           'render_math',
            'liquid_tags.img',
            'liquid_tags.video',
            'liquid_tags.include_code',
