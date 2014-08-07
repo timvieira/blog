@@ -3,7 +3,7 @@ date: 2014-08-07
 comments: true
 tags: math calculus
 
-Estimate derivative by simply passing in a complex number to your function!
+Estimate derivatives by simply passing in a complex number to your function!
 
 $$
 f'(x) \approx \frac{1}{\varepsilon} \text{Im}\Big[ f(x + i \cdot \varepsilon) \Big]
@@ -80,11 +80,9 @@ print complex_step(f)(x)
 
 **Other comments**
 
-- Gradients of multivariate functions appear to require independent
-  approximations for each dimension of the input. Same goes for forward-mode /
-  dual number approaches (see
-  [automatic differentiation](http://en.wikipedia.org/wiki/Automatic_differentiation))
-  and finite-difference methods.
+- Using the complex-step method to estimate the gradients of multivariate
+  functions requires independent approximations for each dimension of the
+  input.
 
 - Although the complex-step approximation only requires a single function
   evaluation, it's unlikely faster than performing two function evaluations
