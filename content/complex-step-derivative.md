@@ -23,7 +23,7 @@ This post is based on
 **Derivation**: Start with the Taylor series approximation:
 
 $$
-\lim\_{\varepsilon \rightarrow 0} f(x + i \cdot \varepsilon) =
+f(x + i \cdot \varepsilon) =
   \frac{i^0 \varepsilon^0}{0!} f(x)
 + \frac{i^1 \varepsilon^1}{1!} f'(x)
 + \frac{i^2 \varepsilon^2}{2!} f''(x)
