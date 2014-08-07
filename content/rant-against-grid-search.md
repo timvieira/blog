@@ -1,7 +1,7 @@
 Title: Rant against grid search
 date: 2014-07-22
 comments: true
-tags: math
+tags: misc
 
 Grid search is a simple and intuitive algorithm for optimizing and/or exploring
 the effects of parameters to a function. However, given its rigid definition

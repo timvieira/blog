@@ -1,7 +1,7 @@
 Title: Exp-normalize trick
 date: 2014-02-11
 comments: true
-tags: math numerical
+tags: math, numerical
 
 This trick is the very close cousin of the infamous log-sum-exp trick
 ([scipy.misc.logsumexp](http://docs.scipy.org/doc/scipy/reference/generated/scipy.misc.logsumexp.html)),
