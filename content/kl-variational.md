@@ -1,0 +1,140 @@
+title: Notes on KL-divergence with applications to variational inference
+date: 2014-10-06
+tags: math, statistics, machine-learning
+comments: true
+
+It's well-known that
+[KL-divergence](http://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)
+is not symmetric, which direction is right for your problem?
+
+First, which one is which?
+
+**Cheat sheet**: If we're fitting $q$ to $p$ using
+
+$\textbf{KL}(q || p)$
+  - mode-seeking, exclusive
+  - no normalization wrt $p$
+
+$\textbf{KL}(p || q)$
+  - mean-seeking, inclusive
+  - results in a moment-matching problem when $q$ is in the exponential family
+  - requires normalization wrt $p$
+
+**How to remember which direction is which?**
+
+ - The KL notation is a little strange with the "$||$", but it can help you
+   remember which is which by pretending its a division symbol (it does
+   correspond to division in the equation).
+
+ - Always normalize wrt the "numerator" and $q$.
+
+
+**Computational perspecive**: Now, let's look at what's involved in fitting a
+model $q_\theta$ in each direction. I'll describe the gradient and pay special
+attention to the issue of normalization.
+
+Notation: $p,q_\theta$ are probabilty distributions. $p = \bar{p} / Z_p$, where
+$Z_p$ is the normalization constant. Similarly for $q$.
+
+The easy direction $\textbf{KL}(q_\theta || p)$
+-----------------------------------------------
+
+\begin{align*}
+\textbf{KL}(q_\theta || p)
+&= \sum_d q(d) \log \left( \frac{q(d)}{p(d)} \right) \\
+&= \sum_d q(d) \left( \log q(d) - \log p(d) \right) \\
+&= \underbrace{\sum_d q(d) \log q(d)}_{-\text{entropy}} - \underbrace{\sum_d q(d) \log p(d)}_{\text{cross-entropy}} \\
+\end{align*}
+
+Let's look at normalization of $p$, the entropy term is easy because there is no $p$ in it.
+\begin{align*}
+\sum_d q(d) \log p(d)
+&= \sum_d q(d) \log (\bar{p}(d) / Z_p) \\
+&= \sum_d q(d) \left( \log \bar{p}(d) - \log Z_p) \right) \\
+&= \sum_d q(d) \log \bar{p}(d) - \sum_d q(d) \log Z_p \\
+&= \sum_d q(d) \log \bar{p}(d) - \log Z_p
+\end{align*}
+
+In this case, $-\log Z_p$ is an additive constant, which can be dropped because
+we're optimizing.
+
+This leaves us with the following optimization problem:
+\begin{align*}
+& \text{argmin}_\theta \textbf{KL}(q_\theta || p) \\
+&\qquad = \text{argmin}_\theta \sum_d q_\theta(d) \log q_\theta(d) - \sum_d q_\theta(d) \log \bar{p}(d)
+\end{align*}
+
+Let's work out the gradient
+\begin{align*}
+& \nabla\left[ \sum_d q_\theta(d) \log q_\theta(d) - \sum_d q_\theta(d) \log \bar{p}(d) \right] \\
+&\qquad = \sum_d \nabla \left[ q_\theta(d) \log q_\theta(d) \right] - \sum_d \nabla\left[ q_\theta(d) \right] \log \bar{p}(d) \\
+&\qquad = \sum_d \nabla \left[ q_\theta(d) \right] \left( 1 + \log q_\theta(d) \right) - \sum_d \nabla\left[ q_\theta(d) \right] \log \bar{p}(d) \\
+&\qquad = \sum_d \nabla \left[ q_\theta(d) \right] \left( 1 + \log q_\theta(d) - \log \bar{p}(d) \right) \\
+&\qquad = \sum_d \nabla \left[ q_\theta(d) \right] \left( \log q_\theta(d) - \log \bar{p}(d) \right) \\
+\end{align*}
+
+We killed the one in the last equality because $\sum_d \nabla
+\left[ q(d) \right] = \nabla \left[ \sum_d q(d) \right] = \nabla
+\left[ 1 \right] = 0$, for any $q$ which is a probability distribution.
+
+
+
+This is convenient because we don't need to normalize $p$.
+
+Harder direction $\textbf{KL}(p || q_\theta)$
+---------------------------------------------
+
+\begin{align*}
+\textbf{KL}(p || q_\theta)
+&= \sum_d p(d) \log \left( \frac{p(d)}{q(d)} \right) \\
+&= \sum_d p(d) \left( \log p(d) - \log q(d) \right) \\
+&= \sum_d p(d) \log p(d) - \sum_d p(d) \log q(d) \\
+\end{align*}
+
+Clearly the first term (entropy) won't matter if we're just trying optimize wrt
+$\theta$. So, let's focus on the second term (cross-entropy).
+\begin{align*}
+\sum_d p(d) \log q(d)
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \left( \bar{q}(d)/Z_q \right) \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \left( \bar{q}(d)/Z_q \right) \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \left( \log \bar{q}(d) - \log Z_q \right) \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \frac{1}{Z_p} \sum_d \bar{p}(d) \log Z_q \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \log Z_q \frac{1}{Z_p} \sum_d \bar{p}(d) \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \log Z_q
+\end{align*}
+
+Unfortunately the $Z_p$ factor is unavoidable. The usual "approximate inference
+story" is that $Z_p$ is hard to compute, while the approximating distributions
+normalization constant $Z_q$ is easy.
+
+Nonetheless, optimizing KL in this direction is still useful. Examples include,
+expectation propagation, variational decoding, standard maximum likelihood is
+even an example (were $p$ is the empirical distribution).
+
+The gradient, when $q$ is in the exponential family, is intuitive:
+
+\begin{align*}
+\nabla \left[ \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \log Z_q \right]
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \nabla \left[ \log \bar{q}(d) \right] - \nabla \log Z_q \\
+&= \frac{1}{Z_p} \sum_d \bar{p}(d) \phi_q(d) - \mathbb{E}_q \left[ \phi_q \right] \\
+&= \mathbb{E}_p \left[ \phi_q \right] - \mathbb{E}_q \left[ \phi_q \right]
+\end{align*}
+
+Optimization problem is convex for exponential families.
+
+Computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
+
+You can think of maximum likelihood estimation as a method which minimizes KL
+divergence from samples $p$. In this case, $p$ is the true data distribution!
+The first term in the gradient is based on a sample ("observed expected feature
+counts").
+
+Further reading
+---------------
+
+Both directions of KL are special cases of $\alpha$-divergence. For a unified
+account of both directions consider looking into $\alpha$-divergence.
+
+- Inclusive divergences require $q > 0$ whenever $p > 0$. No "false negatives".
+
+- Exclusive divergences will often favor a single mode.
