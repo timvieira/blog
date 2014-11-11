@@ -77,9 +77,9 @@ We killed the one in the last equality because $\sum_d \nabla
 \left[ q(d) \right] = \nabla \left[ \sum_d q(d) \right] = \nabla
 \left[ 1 \right] = 0$, for any $q$ which is a probability distribution.
 
-
-
-This is convenient because we don't need to normalize $p$.
+This direction is convenient because we don't need to normalize
+$p$. Unfortunately, the "easy" direction is nonconvex in general --- unlike the
+"hard" direction, which is convex.
 
 Harder direction $\textbf{KL}(p || q_\theta)$
 ---------------------------------------------
