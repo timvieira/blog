@@ -31,7 +31,8 @@ impossible$-$the largest number exponentiated after shifting is $0$.
 If what you want to remain in log-space, that is, compute
 $\log(\boldsymbol{\pi})$, you should use logsumexp. However, if
 $\boldsymbol{\pi}$ is your goal, then exp-normalize trick is for you! Since it
-avoids additional calls to $\exp$, which would be required if using log-sum-exp.
+avoids additional calls to $\exp$, which would be required if using log-sum-exp
+and more importantly exp-normalize is more numerically stable!
 
 
 **Log-sum-exp for computing the log-distibution**
