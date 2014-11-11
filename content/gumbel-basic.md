@@ -8,7 +8,7 @@ tags: math, sampling, Gumbel
 log-probabilities:
 
 $$
-\pi\_k = \frac{1}{z} \exp(x\_k)   \ \ \ \text{where } z = \sum\_{j=1}^K \exp(x_j)
+\pi_k = \frac{1}{z} \exp(x_k)   \ \ \ \text{where } z = \sum_{j=1}^K \exp(x_j)
 $$
 
 **The usual way**: Exponentiate and normalize (using the
@@ -24,10 +24,10 @@ an algorithm for sampling from a discrete distribution (aka categorical):
 **The Gumbel max trick**:
 
 $$
-y = \text{argmax}\_{i \in \\{1,\cdots,K\\}} x\_i + z\_i
+y = \text{argmax}_{i \in \\{1,\cdots,K\\}} x_i + z_i
 $$
 
-where $z\_1 \cdots z\_K$ are i.i.d. $\text{Gumbel}(0,1)$ random variates. It
+where $z_1 \cdots z_K$ are i.i.d. $\text{Gumbel}(0,1)$ random variates. It
 turns out that $y$ is distributed according to $\pi$. (See the short derivations
 in this
 [blog post](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/).)

@@ -48,7 +48,7 @@ exact in the limit and just as accurate.
   is available. Andrei (2009) reccommends
 
 $$
-\varepsilon = \sqrt{\epsilon\_{\text{mach}}} (1 + \|\boldsymbol{x} \|\_{\infty}) / \| \boldsymbol{d} \|\_{\infty}
+\varepsilon = \sqrt{\epsilon_{\text{mach}}} (1 + \|\boldsymbol{x} \|_{\infty}) / \| \boldsymbol{d} \|_{\infty}
 $$
 
 

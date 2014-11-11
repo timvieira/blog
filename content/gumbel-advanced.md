@@ -18,10 +18,10 @@ which is inspired by the
 similarity between weighted reservior sampling and the Gumbel max trick lead us
 to make some cute connections, which I'll describe in this post.
 
-**The problem**: We're given a stream of unnormalized probabilities, $x\_1,
-x\_2, \cdots$. At any point in time $t$ we'd like to have a sampled index $i$
-available, where the probability of $i$ is given by $\pi\_t(i) = \frac{x\_i}{
-\sum\_{j=1}^t x_j}$.
+**The problem**: We're given a stream of unnormalized probabilities, $x_1,
+x_2, \cdots$. At any point in time $t$ we'd like to have a sampled index $i$
+available, where the probability of $i$ is given by $\pi_t(i) = \frac{x_i}{
+\sum_{j=1}^t x_j}$.
 
 Assume, without loss of generality, that $x_i > 0$ for all $i$. (If any element
 has a zero weight we can safely ignore it since it should never be sampled.)
@@ -32,13 +32,13 @@ is a simple "modification" of the Gumbel-max-trick for handling streaming data:
 $a = -\infty; b = \text{null}  \ \ \text{\# maximum value and index}$
 for $i=1,2,\cdots;$ do:
 :  \# Compute log-unnormalized probabilities
-:  $w\_i = \log(x\_i)$
+:  $w_i = \log(x_i)$
 :  \# Additively perturb each weight by a Gumbel random variate
-:  $z\_i \sim \text{Gumbel}(0,1)$
-:  $k\_i = w\_i + z\_i$
+:  $z_i \sim \text{Gumbel}(0,1)$
+:  $k_i = w_i + z_i$
 :  \# Keep around the largest $k_i$ (i.e. the argmax)
-:  if $k\_i > a$:
-:  $\ \ \ \ a = k\_i$
+:  if $k_i > a$:
+:  $\ \ \ \ a = k_i$
 :  $\ \ \ \ b = i$
 
 If we interrupt this algorithm at any point, we have a sample $b$.
@@ -55,11 +55,11 @@ reservior sampling
 $a = -\infty; b = \text{null}$
 for $i=1,2,\cdots;$ do:
 :  \# Additively perturb each weight by a Gumbel random variate,
-:  $u\_i \sim \text{Uniform}(0,1)$
-:  $e\_i = u\_i^{(\frac{1}{x\_i})}$
+:  $u_i \sim \text{Uniform}(0,1)$
+:  $e_i = u_i^{(\frac{1}{x_i})}$
 :  \# Keep around the largest $e_i$
-:  if $k\_i > a$:
-:  $\ \ \ \ a = k\_i$
+:  if $k_i > a$:
+:  $\ \ \ \ a = k_i$
 :  $\ \ \ \ b = i$
 
 Again, if interrupt this algorithm at any point, we have our sample $b$.
@@ -73,10 +73,10 @@ $-\log(-\log(\text{Uniform}(0,1)))$. This is a straightforward application of
 the
 [inverse transform sampling](http://en.wikipedia.org/wiki/Inverse_transform_sampling)
 method for random number generation. This means that if we use the same sequence
-of uniform random variates then, $z\_i = -\log(-\log(u\_i))$.
+of uniform random variates then, $z_i = -\log(-\log(u_i))$.
 
-However, this does not give use equality between $k\_i$ and $e\_i$, but it does
-turn out that $k_i = -\log(-\log(e\_i))$, which is useful because this is a
+However, this does not give use equality between $k_i$ and $e_i$, but it does
+turn out that $k_i = -\log(-\log(e_i))$, which is useful because this is a
 monotonic transformation on the interval $(0,1)$. Since monotonic
 transformations preserve ordering, the sequences $k$ and $e$ result in the same
 comparison decisions, as well as, the same argmax. In summary, the algorithms

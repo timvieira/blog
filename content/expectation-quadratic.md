@@ -19,11 +19,11 @@ $$
 **Delta Method**: Suppose we'd like to compute expected value of a nonlinear
 function $f$ applied our random variable $x$,
 $\mathbb{E}\left[ f(x) \right]$. The Delta method approximates this expection by
-replacing $f$ by it's second-order Talylor approximation $\hat{f\_{a}}$ taken at
+replacing $f$ by it's second-order Talylor approximation $\hat{f_{a}}$ taken at
 some point $a$
 
 $$
-\hat{f_{a}}(x) = f(a) + \nabla\negthinspace f(a)^\{\top} (x - a) + \frac{1}{2} (x - a)^\top H(a)\, (x - a)
+\hat{f_{a}}(x) = f(a) + \nabla f(a)^{\top} (x - a) + \frac{1}{2} (x - a)^\top H(a) (x - a)
 $$
 
 The expectation of this Talyor approximation is a quadratic function! Let's try
