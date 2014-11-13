@@ -1,11 +1,11 @@
-title: Notes on KL-divergence with applications to variational inference
+title: KL-divergence as an objective function
 date: 2014-10-06
 tags: math, statistics, machine-learning
 comments: true
 
 It's well-known that
 [KL-divergence](http://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)
-is not symmetric, which direction is right for your problem?
+is not symmetric, but which direction is right for fitting your model?
 
 First, which one is which?
 
@@ -20,24 +20,23 @@ $\textbf{KL}(p || q)$
   - results in a moment-matching problem when $q$ is in the exponential family
   - requires normalization wrt $p$
 
-**How to remember which direction is which?**
-
- - The KL notation is a little strange with the "$||$", but it can help you
-   remember which is which by pretending its a division symbol (it does
-   correspond to division in the equation).
-
- - Always normalize wrt the "numerator" and $q$.
+**How I remember which is which**: The KL notation is a little strange with the
+"$||$". I pretend it's a division symbol. This happens to correspond nicely to a
+division symbol in the corresponding equation (I'm not sure it's
+intentional). It helps to remember that you always normalize wrt the "numerator"
+(and $q$).
 
 
-**Computational perspecive**: Now, let's look at what's involved in fitting a
-model $q_\theta$ in each direction. I'll describe the gradient and pay special
-attention to the issue of normalization.
+## Computational perspecive
 
-Notation: $p,q_\theta$ are probabilty distributions. $p = \bar{p} / Z_p$, where
-$Z_p$ is the normalization constant. Similarly for $q$.
+Let's look at what's involved in fitting a model $q_\theta$ in each
+direction. In this section, I'll describe the gradient and pay special attention
+to the issue of normalization.
 
-The easy direction $\textbf{KL}(q_\theta || p)$
------------------------------------------------
+**Notation**: $p,q_\theta$ are probabilty distributions. $p = \bar{p} / Z_p$,
+where $Z_p$ is the normalization constant. Similarly for $q$.
+
+### The easy direction $\textbf{KL}(q_\theta || p)$
 
 \begin{align*}
 \textbf{KL}(q_\theta || p)
@@ -81,8 +80,7 @@ This direction is convenient because we don't need to normalize
 $p$. Unfortunately, the "easy" direction is nonconvex in general --- unlike the
 "hard" direction, which is convex.
 
-Harder direction $\textbf{KL}(p || q_\theta)$
----------------------------------------------
+### Harder direction $\textbf{KL}(p || q_\theta)$
 
 \begin{align*}
 \textbf{KL}(p || q_\theta)
@@ -129,11 +127,10 @@ divergence from samples $p$. In this case, $p$ is the true data distribution!
 The first term in the gradient is based on a sample ("observed expected feature
 counts").
 
-Further reading
----------------
+## Remarks
 
-Both directions of KL are special cases of $\alpha$-divergence. For a unified
-account of both directions consider looking into $\alpha$-divergence.
+- Both directions of KL are special cases of $\alpha$-divergence. For a unified
+  account of both directions consider looking into $\alpha$-divergence.
 
 - Inclusive divergences require $q > 0$ whenever $p > 0$. No "false negatives".
 
