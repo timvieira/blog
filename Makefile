@@ -88,3 +88,6 @@ deploy: publish
 	cd _build/$(DEPLOYREPOSITORY) && git push origin master
 
 .PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload github
+
+push:
+	( make publish && rsync -a output/. ~/projects/self/timvieira.github.com/blog/. && cd ~/projects/self/timvieira.github.com/ && git add blog && git commit -m 'update blog' && git push )

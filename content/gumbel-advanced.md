@@ -29,7 +29,7 @@ has a zero weight we can safely ignore it since it should never be sampled.)
 **Streaming Gumbel-max sampler**: I came up with the following algorithm, which
 is a simple "modification" of the Gumbel-max-trick for handling streaming data:
 
-$a = -\infty; b = \text{null}  \ \ \text{\# maximum value and index}$
+$a = -\infty; b = \text{null}  \ \ \text{# maximum value and index}$
 for $i=1,2,\cdots;$ do:
 :  \# Compute log-unnormalized probabilities
 :  $w_i = \log(x_i)$
