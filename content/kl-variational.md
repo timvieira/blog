@@ -118,14 +118,14 @@ The gradient, when $q$ is in the exponential family, is intuitive:
 &= \mathbb{E}_p \left[ \phi_q \right] - \mathbb{E}_q \left[ \phi_q \right]
 \end{align*}
 
-Optimization problem is convex for exponential families.
+Optimization problem is convex when $q_\theta$ is an exponential families ---
+i.e., $p$ can be arbitrary. You can think of maximum likelihood estimation as a
+method which minimizes KL divergence from samples of $p$. In this case, $p$ is
+the true data distribution! The first term in the gradient is based on a sample
+instead of an exact estimate (often called "observed feature counts").
 
-Computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
+Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
 
-You can think of maximum likelihood estimation as a method which minimizes KL
-divergence from samples $p$. In this case, $p$ is the true data distribution!
-The first term in the gradient is based on a sample ("observed expected feature
-counts").
 
 ## Remarks
 
@@ -135,3 +135,8 @@ counts").
 - Inclusive divergences require $q > 0$ whenever $p > 0$. No "false negatives".
 
 - Exclusive divergences will often favor a single mode.
+
+- Computing the value of KL (not just the gradient) in either direction requires
+  normalization. However, in the "easy" direction, using unnormalized $p$
+  results in only an additive constant difference. So, it's still just as
+  useful, if all you care about is optimization (fitting the model).
