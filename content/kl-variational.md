@@ -18,7 +18,7 @@ $\textbf{KL}(q || p)$
 $\textbf{KL}(p || q)$
   - mean-seeking, inclusive
   - results in a moment-matching problem when $q$ is in the exponential family
-  - requires normalization wrt $p$
+  - requires normalization wrt $p$ 
 
 **How I remember which is which**: The KL notation is a little strange with the
 "$||$". I pretend it's a division symbol. This happens to correspond nicely to a
@@ -106,8 +106,10 @@ story" is that $Z_p$ is hard to compute, while the approximating distributions
 normalization constant $Z_q$ is easy.
 
 Nonetheless, optimizing KL in this direction is still useful. Examples include,
-expectation propagation, variational decoding, standard maximum likelihood is
-even an example (were $p$ is the empirical distribution).
+expectation propagation, variational decoding and maximum likelihood
+estimation. In the case of maximum likelihood estimation, $p$ is the empirical
+distribution, so technically you don't have to compute its normalizing constant,
+but you do need to sample from it (which can be just as hard).
 
 The gradient, when $q$ is in the exponential family, is intuitive:
 

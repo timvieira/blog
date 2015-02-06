@@ -27,7 +27,9 @@ One simple thing to do is take a nonzero vector $\boldsymbol{d} \in
 picture of $f$ by evaluating it at various intervals along the chosen direction
 as follows,
 
-$f_i = f(\boldsymbol{x} + \alpha_i \ \boldsymbol{d}) \ \ $ for $\alpha_i \in [\alpha_\min, \alpha_\max]$
+$$
+f_i = f(\boldsymbol{x} + \alpha_i \ \boldsymbol{d}) \ \ \text{for } \alpha_i \in [\alpha_\min, \alpha_\max]
+$$
 
 Of course, you'll have to pick a reasonable range and discretize it. Note,
 $\boldsymbol{x}$ and $\boldsymbol{d}$ are fixed for all $\alpha_i$. Now, you can
