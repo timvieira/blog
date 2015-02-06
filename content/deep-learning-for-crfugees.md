@@ -1,7 +1,7 @@
 title: Conditional random fields as Deep learning models?
 date: 2015-02-05
 comments: true
-tags: machine-learning deep-learning structured-prediction
+tags: machine-learning, deep-learning, structured-prediction
 
 This post is intended to convince conditional random field (CRF) lovers that
 deep learning might not be as crazy as it seems. And maybe even convince some
