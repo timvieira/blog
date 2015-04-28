@@ -30,7 +30,7 @@ publish:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
 
 notebook:
-	ipython notebook --pylab=inline content/notebook/
+	ipython notebook content/notebook/
 
 
 .PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload github
