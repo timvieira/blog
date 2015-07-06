@@ -23,15 +23,11 @@ regenerate: clean
 serve:
 	cd $(OUTPUTDIR) && gnome-open http://localhost:8000 && python -m SimpleHTTPServer
 
-devserver:
-	$(BASEDIR)/develop_server.sh restart
-
 publish:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
 
 notebook:
 	ipython notebook content/notebook/
-
 
 .PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload github
 
