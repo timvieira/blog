@@ -6,7 +6,7 @@ AUTHOR = u'Tim Vieira'
 
 SITENAME = u'Graduate Descent'
 SITESUBTITLE = u''
-SITEURL = ''  # change in publishconf.py
+SITEURL = 'http://timvieira.github.io/blog'  # change in publishconf.py
 
 # Times and dates
 DEFAULT_DATE_FORMAT = '%b %d, %Y'
@@ -58,7 +58,7 @@ NOTEBOOK_DIR = 'notebook'
 #  Theme requires http://github.com/duilio/pelican-octopress-theme/
 #  Plugins require http://github.com/getpelican/pelican-plugins/
 THEME = './theme/pelican-octopress-theme'
-PLUGIN_PATH = './plugins/pelican-plugins'
+PLUGIN_PATHS = ['./plugins/pelican-plugins']
 
 # When creating a short summary of an article, this will be the default length
 # in words of the text created. This only applies if your content does not

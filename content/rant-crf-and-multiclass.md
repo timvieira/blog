@@ -20,7 +20,7 @@ where
 $$
 \begin{eqnarray*}
 p(y|x) &=& \frac{1}{Z(x)} \exp(\theta^\top \phi(x,y)) & \ \ \ \ \text{and} \ \ \ \ &
-Z(x) &=& \sum_{y \in Y} \exp(\theta^\top \phi(x,y))
+Z(x) &=& \sum_{y \in \mathcal{Y}} \exp(\theta^\top \phi(x,y))
 \end{eqnarray*}
 $$
 

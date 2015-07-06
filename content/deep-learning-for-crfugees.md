@@ -40,7 +40,7 @@ training conditions as close as possible to test-time conditions.
 
 Now, as long as everything is differentiable, you can apply automatic
 differentiation (backprop) to train the end-to-end system. This idea appears in
-a few publications, including a handfull of papers by Justin Domke, and a few by
+a few publications, including a handful of papers by Justin Domke, and a few by
 Stoyanov & Eisner.
 
 Unsuprisingly, it works pretty well.
