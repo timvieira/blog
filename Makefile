@@ -17,19 +17,6 @@ $(OUTPUTDIR)/%.html:
 clean:
 	find $(OUTPUTDIR) -mindepth 1 -delete
 
-regenerate: clean
-	$(PELICAN) -r $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
-
-serve:
-	cd $(OUTPUTDIR) && gnome-open http://localhost:8000 && python -m SimpleHTTPServer
-
-publish:
-	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
-
-notebook:
-	ipython notebook content/notebook/
-
-.PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload github
-
-push:
-	( make publish && rsync -a output/. ~/projects/self/timvieira.github.com/blog/. && cd ~/projects/self/timvieira.github.com/ && git add blog && git commit -m 'update blog' && git push )
+push: html
+	rsync -a output/. ~/projects/self/timvieira.github.com/blog/.
+	( cd ~/projects/self/timvieira.github.com/ && git add blog && git commit -m 'update blog' && git push )
