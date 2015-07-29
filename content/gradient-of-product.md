@@ -10,12 +10,12 @@ $$
 \newcommand{\bigo}[0]{\mathcal{O}}
 $$
 
-In this post we'll look at the gradient of product. This is such a common
-subroutine in machine learning that it's worth careful consideration. In a later
-post, I'll describe the gradient of a sum-over-products, which is another
-interesting and common pattern in machine learning (e.g., exponential families,
-CRFs, context-free grammar, case-factor diagrams, semiring-weighted logic
-programming).
+In this post we'll look at how to compute the gradient of a product. This is
+such a common subroutine in machine learning that it's worth careful
+consideration. In a later post, I'll describe the gradient of a
+sum-over-products, which is another interesting and common pattern in machine
+learning (e.g., exponential families, CRFs, context-free grammar, case-factor
+diagrams, semiring-weighted logic programming).
 
 Given a collection of functions with a common argument $f_1, \cdots, f_n \in \{
 \R^d \mapsto \R \}$.
@@ -92,6 +92,8 @@ Pro:
  - Numerically stable
 
  - Runtime $\bigo(n)$ with space $\bigo(1)$.
+
+ - Doesn't require multiplicative inverse.
 
 Con:
 
