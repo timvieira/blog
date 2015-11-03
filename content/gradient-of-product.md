@@ -36,7 +36,7 @@ $$
 As you can see in the equation above, the gradient takes the form of a
 "leave-one-out product" sometimes called a "cavity."
 
-A naive method for computing the gradient computes the leave-out-out products
+A naive method for computing the gradient computes the leave-one-out products
 from scratch for each $i$ (outer loop)---resulting in a overall runtime of
 $O(n^2)$ to compute the gradient. Later, we'll see a dynamic program for
 computing this efficiently.
@@ -60,7 +60,7 @@ Pro:
 Con:
 
  - Requires $f \ne 0$. No worries, we can handle zeros with three cases: (1) If
-   No zeros: the division trick works fine. (2) Only one zero: implies that only
+   no zeros: the division trick works fine. (2) Only one zero: implies that only
    one term in the sum will have a nonzero gradient, which we compute via
    leave-one-out product. (3) Two or more zeros: all gradients are zero and
    there is no work to be done.
@@ -93,7 +93,8 @@ Pro:
 
  - Runtime $\bigo(n)$ with space $\bigo(1)$.
 
- - Doesn't require multiplicative inverse.
+ - Doesn't require multiplicative inverse assuming you can compute $\gradx{ \log
+   f_i(x) }$ without it.
 
 Con:
 

@@ -65,8 +65,8 @@ for $i=1,2,\cdots;$ do:
 Again, if interrupt this algorithm at any point, we have our sample $b$.
 
 **Relationship**: Let's try to relate these algorithms. At a high level, both
-algorithms take compute a randomized key and take an argmax. What's the
-relationship between the keys?
+algorithms compute a randomized key and take an argmax. What's the relationship
+between the keys?
 
 First, note that a $\text{Gumbel}(0,1)$ variate can be generated via
 $-\log(-\log(\text{Uniform}(0,1)))$. This is a straightforward application of

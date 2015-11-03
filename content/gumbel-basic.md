@@ -15,11 +15,13 @@ $$
 [exp-normalize trick](/blog/post/2014/02/11/exp-normalize-trick/)), then use the
 an algorithm for sampling from a discrete distribution (aka categorical):
 
-    def usual(x):
-        cdf = exp(x - x.max()).cumsum()     # the exp-normalize trick
-        z = cdf[-1]
-        u = uniform(0,1)
-        return cdf.searchsorted(u * z)
+```python
+def usual(x):
+    cdf = exp(x - x.max()).cumsum()     # the exp-normalize trick
+    z = cdf[-1]
+    u = uniform(0,1)
+    return cdf.searchsorted(u * z)
+```
 
 **The Gumbel max trick**:
 
@@ -34,9 +36,11 @@ in this
 
 Implementing the Gumbel max trick is remarkable easy:
 
-    def gumbel_max_sample(x):
-        z = gumbel(loc=0, scale=1, size=x.shape)
-        return (x + g).argmax(axis=1)
+```python
+def gumbel_max_sample(x):
+    z = gumbel(loc=0, scale=1, size=x.shape)
+    return (x + g).argmax(axis=1)
+```
 
 If you don't have access to a Gumbel random variate generator, you can use
 $-\log(-\log(\text{Uniform}(0,1))$
