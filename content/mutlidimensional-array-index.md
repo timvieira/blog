@@ -6,10 +6,10 @@ tags: misc
 
 This is a simple note on how to compute the bijective mapping between the
 indices of an $n$-dimensional array and a flat, one-dimensional array. We'll
-look at both direction of the mapping: ``(tuple->int)`` and ``(int -> tuple)``.
+look at both directions of the mapping: ``(tuple->int)`` and ``(int -> tuple)``.
 
 This mapping can be used as a perfect hash for tuples, assuming each dimension
-$a, b, c, \ldots$ is positive integers and bounded $a \le A, b \le B, c \le C,
+$a, b, c, \ldots$ is a positive integer and bounded $a \le A, b \le B, c \le C,
 \ldots$
 
 
@@ -54,7 +54,7 @@ which is apparent in the test case.
 
 For $n=4$ the pattern is $((a \cdot B + b) \cdot C + d) \cdot D + d$.
 
-Sidenote: we don't actually need the bound $a \le A$ in either ``index`` or
+Sidenote: We don't actually need the bound $a \le A$ in either ``index`` or
 ``inverse``. This gives us a little extra flexibility because our first
 dimension can be infinite/unknown.
 
