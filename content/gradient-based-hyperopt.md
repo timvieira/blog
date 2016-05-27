@@ -43,13 +43,13 @@ $\lambda$. Assuming we don't change $\lambda$ too much, then the inner
 optimization shouldn't change $\theta$ too much and it will change in a
 predictable way.
 
-To do this we'll appeal to the implicit function theorem. Let's looking the
+To do this, we'll appeal to the implicit function theorem. Let's looking the
 general case to simplify notation. Suppose $x$ and $y$ are related through a
 function $g$ as follows,
 
 $$g(x,y) = 0.$$
 
-Assuming $g$ is a smooth function in $x$ and $y$, then we can perturb either
+Assuming $g$ is a smooth function in $x$ and $y$, we can perturb either
 argument, say $x$ by a small amount $\Delta_x$ and $y$ by $\Delta_y$. Because
 system preserves the constraint, i.e.,
 

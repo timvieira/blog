@@ -118,3 +118,14 @@ RELATIVE_URLS = True
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
+
+
+
+MATH_JAX = {
+    'align': 'center',
+    'macros': [
+        #'/home/user/latex-macros.tex'
+    ],
+    #'source': "'//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'",
+    #'source': "file:////home/timv/projects/blog/output/MathJax.js",
+}

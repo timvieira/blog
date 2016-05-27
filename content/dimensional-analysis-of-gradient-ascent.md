@@ -1,4 +1,4 @@
-title: Dimensional analysis of gradient descent
+title: Dimensional analysis of gradient ascent
 date: 2016-05-27
 comments: true
 tags: math, optimization
@@ -51,7 +51,7 @@ Another method for handling step sizes is line search. However, line search
 won't let us run online. Furthermore, line search would be too slow in the case
 where we want a step size for each dimension.
 
-In machine learning, we've become fond to online methods, which adapt the step
+In machine learning, we've become fond of online methods, which adapt the step
 size as they go. The general idea is to estimate a step size matrix that passes
 the unit check (for each dimension of $x$). Furthermore, we want do as little
 extra work as possible to get this estimate (e.g., we want to avoid computing a
