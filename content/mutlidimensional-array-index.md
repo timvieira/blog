@@ -4,13 +4,12 @@ comments: true
 tags: misc
 
 
-This is a simple note on how to compute the bijective mapping between the
-indices of an $n$-dimensional array and a flat, one-dimensional array. We'll
-look at both directions of the mapping: ``(tuple->int)`` and ``(int -> tuple)``.
+This is a simple note on how to compute a bijective mapping between the indices
+of an $n$-dimensional array and a flat, one-dimensional array. We'll look at
+both directions of the mapping: ``(tuple->int)`` and ``(int -> tuple)``.
 
-This mapping can be used as a perfect hash for tuples, assuming each dimension
-$a, b, c, \ldots$ is a positive integer and bounded $a \le A, b \le B, c \le C,
-\ldots$
+We'll assume each dimension $a, b, c, \ldots$ is a positive integer and bounded
+$a \le A, b \le B, c \le C, \ldots$
 
 
 ### Start small
