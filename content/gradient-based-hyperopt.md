@@ -91,8 +91,8 @@ $$
 $$
 
 This tells us how $\theta$ changes with respect to an infinitesimal change to
-$\lambda$. Now, we can apply the chain rule we get the gradient of the whole
-optimization problem,
+$\lambda$. Now, we can apply the chain rule to get the gradient of the whole
+optimization problem wrt $\lambda$,
 
 $$
 \frac{\partial \mathcal{L}_{\text{dev}}}{\partial \lambda}
@@ -100,26 +100,32 @@ $$
 $$
 
 Since we don't like (explicit) matrix inverses, we compute $- \left( \frac{
-\partial^2 \mathcal{L}_{\text{train}} }{ \partial \theta\, \partial \theta^\top }
-\right)^{-1} \frac{ \partial^2 \mathcal{L}_{\text{train}} }{ \partial \theta\,
+\partial^2 \mathcal{L}_{\text{train}} }{ \partial \theta\, \partial \theta^\top
+} \right)^{-1} \frac{ \partial^2 \mathcal{L}_{\text{train}} }{ \partial \theta\,
 \partial \lambda^\top}$ as the solution to $\left( \frac{ \partial^2
-\mathcal{L}_{\text{train}} }{ \partial \theta\, \partial \theta^\top } \right) x =
--\frac{ \partial^2 \mathcal{L}_{\text{train}}}{ \partial \theta\, \partial
-\lambda^\top}$. When the Hessian is positive definite we can solve this linear system
-with conjugate gradient, which conveniently only requires matrix-vector
+\mathcal{L}_{\text{train}} }{ \partial \theta\, \partial \theta^\top } \right) x
+= -\frac{ \partial^2 \mathcal{L}_{\text{train}}}{ \partial \theta\, \partial
+\lambda^\top}$. When the Hessian is positive definite, the linear system can be
+solved with conjugate gradient, which conveniently only requires matrix-vector
 products---i.e., you never have to materialize the Hessian. (Apparently,
-[matrix-free linear algebra](https://en.wikipedia.org/wiki/Matrix-free_methods) is a thing.)
+[matrix-free linear algebra](https://en.wikipedia.org/wiki/Matrix-free_methods)
+is a thing.) In fact, you don't even have to implement the Hessian-vector and
+Jacobian-vector products because they are accurately and efficiently
+approximated with centered differences (see
+[earlier post](/blog/post/2014/02/10/gradient-vector-product/)).
 
-In fact, both the Hessian-vector product and the Jacobian-vector products are
-accurately and efficiently approximated with centered differences (see
-[earlier post](/blog/post/2014/02/10/gradient-vector-product/)), which means you
-don't even need to write code to compute the Hessian or Jacobian---you just need
-the first derivatives.
-
-At the end of the day, this is a pretty easy an algorithm! However, the estimate
-of the gradient we get can temperamental if the linear system is
+At the end of the day, this is an easy algorithm to implement! However, the
+estimate of the gradient can be temperamental if the linear system is
 ill-conditioned.
 
 In a later post, I'll describe a more-robust algorithms based on automatic
-differentiation through gradient descent (or other optimization algorithms),
-which make fewer and less-brittle assumptions about the inner optimization.
+differentiation through the inner optimization algorithm, which make fewer and
+less-brittle assumptions about the inner optimization.
+
+**Further reading**:
+
+ - [Truncated Bi-Level Optimization](https://justindomke.wordpress.com/2014/02/03/truncated-bi-level-optimization/)
+
+ - [Efficient multiple hyperparameter learning for log-linear models](http://ai.stanford.edu/~chuongdo/papers/learn_reg.pdf)
+
+ - [Gradient-based Hyperparameter Optimization through Reversible Learning](http://arxiv.org/abs/1502.03492)
