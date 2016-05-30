@@ -8,7 +8,7 @@ the following blog post:
 [Algorithms Every Data Scientist Should Know: Reservoir Sampling](http://blog.cloudera.com/blog/2013/04/hadoop-stratified-randosampling-algorithm),
 which got us excited about reservior sampling.
 
-Around the same time, I attended an talk by
+Around the same time, I attended a talk by
 [Tamir Hazan](http://cs.haifa.ac.il/~tamir/) about some of his work on
 perturb-and-MAP
 [(Hazan & Jaakkola, 2012)](http://cs.haifa.ac.il/~tamir/papers/mean-width-icml12.pdf),
@@ -86,7 +86,7 @@ are the same!
 that the same algorithm can be used to perform *sampling without replacement* by
 sorting and taking the elements with the highest keys. This same modification is
 applicable to the Gumbel-max-trick because the keys have exactly the same
-ordering as ES.In practice we don't sort the key, but instead use a bounded
+ordering as ES. In practice we don't sort the key, but instead use a bounded
 priority queue.
 
 **Closing**: To the best of my knowledge, the connection between the
