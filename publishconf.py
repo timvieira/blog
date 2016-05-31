@@ -23,5 +23,4 @@ DELETE_OUTPUT_DIRECTORY = True
 
 DISQUS_SITENAME = 'graduatedescent'
 
-#DISQUS_SITENAME = 'disqus-sitename'
 #GOOGLE_ANALYTICS = 'google-analytics-id'
