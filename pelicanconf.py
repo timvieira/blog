@@ -100,10 +100,10 @@ TWITTER_LATEST_TWEETS = True
 TWITTER_FOLLOW_BUTTON = True
 TWITTER_TWEET_COUNT = 3
 TWITTER_WIDGET_ID = '551816176788328448'
-
 #TWITTER_SHOW_REPLIES = 'false'
 #TWITTER_SHOW_FOLLOWER_COUNT = False
 
+DISQUS_SITENAME = 'graduatedescent'
 
 # RSS/Atom feeds
 FEED_DOMAIN = '/blog' #SITEURL
@@ -112,14 +112,12 @@ FEED_ATOM = 'atom.xml'
 # Search
 SEARCH_BOX = False #True
 
-RELATIVE_URLS = True
+#RELATIVE_URLS = False      #<<< needs to be True for disqus to work
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
-
-
 
 MATH_JAX = {
     'align': 'center',
