@@ -1,6 +1,7 @@
-title: Policy gradient reinforcement learning
+title: Likelihood-ratio gradient
 date: 2016-06-09
 comments: true
+status: draft
 tags: math, optimization, rl, policy-gradient
 
 Policy search methods are a popular approach to reinforcement learning (RL)
@@ -35,6 +36,9 @@ that the **utility** $J(\pi)$ is maximized,
 \begin{equation}\label{def:policyperformance}
   J(\pi) = \mathbb{E}\left[ R(s_0) + R(s_1) + \dots + R(s_H) \Biggr| \pi \right].
 \end{equation}
+
+Computing $J(\pi)$ is a common subroutine in many RL algorithms called **policy
+evaluation**.
 
 Given this definition it is natural to want to try to optimize $J(\pi)$ by
 gradient ascent. We'll get there in a minute; let's talk a little bit more about
@@ -96,7 +100,7 @@ A few notes on the derivation:
    sampling).
 
 Given the MDP conditional independence assumptions, we can further simplify the
-computation of the ratio term $\nabla_\theta p(\tau|\pi_\theta)/q(\tau)$,
+computation of the ratio term $\nabla_\theta p(\tau|\pi_\theta)/q(\tau),$
 \begin{eqnarray}
 \frac{\nabla_\theta p(\tau|\pi_\theta)}{{q(\tau)}}
 &=& \frac{p(\tau|\pi_\theta)}{q(\tau)} \frac{\nabla_\theta p(\tau|\pi_\theta)}{p(\tau|\pi_\theta)} \\
@@ -134,29 +138,34 @@ probability model that we want to cancel out because we can't evaluate the
 probability directly (e.g., because it is the real world not a simulation), but
 we can sample from it (e.g., [Bottou+,13](http://arxiv.org/abs/1209.2355)).
 
-**Computating the gradient**: If the state space is managable in size and we
-know the parameters of the MDP, we can use dynamic programming to compute
+**Computing the gradient**: If the state space is managable in size and we know
+the parameters of the MDP, we can use dynamic programming to compute
 $\nabla_\theta J(\pi_\theta)$ *exactly*. This is because the sum over
-trajectories in Eq \ref{eq:LR-MDP} factors nicely due to the Markov assumptions
+trajectories in Eq \ref{eq:LR-MDP} factors nicely due to the Markov assumptions.
 Evaluting $J(\pi_\theta)$ is equivalent to computing the value of a Markov
-reward process (an MDP with the policy fixed is a Markov reward process; you see
-this as a subroutine in algorithms like policy iteration). To get the gradient,
-simply backpropagate through your favorite Markov reward process value
-estimation procedure.
+reward process (an MDP with the policy fixed is a **Markov reward process**). To
+get the gradient, you can simply backpropagate through the policy evaluation
+procedure.
 
-In most cases, however, the state space is too big *and* we don't know the
-dynamics or rewards, thus dynamic programming is infeasible. So we use a **Monte
-Carlo Approximation**. We can get an unbiased estimates by sampling a bunch of
-trajectories, $\tau^{(1)} \dots \tau^{(m)} \overset{\text{i.i.d.}}{\sim} q$ and
-computing
+**Estimating the gradient**: In most cases, however, the state space is too big
+*and* we don't know the dynamics or rewards, thus dynamic programming is
+infeasible. So we use a **Monte Carlo estimate**. We can get an unbiased
+estimates by sampling a bunch of trajectories, $\tau^{(1)} \dots \tau^{(m)}
+\overset{\text{i.i.d.}}{\sim} q$ and computing
 
 \begin{eqnarray}
-\hat{J}(\pi_\theta) &=& \frac{1}{m} \sum_{j=1}^m \frac{\nabla_\theta p(\tau^{(j)}|\pi_\theta)}{q(\tau^{(j)})} R(\tau^{(j)}) \\
+\hat{J}(\pi_\theta)
 &=& \frac{1}{m} \sum_{j=1}^m
-  \left( \prod_{t=0}^H \frac{\pi_\theta(a^{(j)}_t|s^{(j)}_t)}{q(a^{(j)}_t|s^{(j)}_t)} \right)
+  w^{(j)}
   \cdot \left( \sum_{t=0}^H \nabla_\theta \log \pi_\theta(a^{(j)}_t|s^{(j)}_t) \right)
   \cdot \left( \sum_{t=0}^H R(s^{(j)}_t) \right). \label{eq:LRMCestimate}
 \end{eqnarray}
+
+where
+
+$$
+w^{(j)} = \frac{p(\tau^{(j)}|\pi_\theta)}{q(\tau^{(j)})} = \prod_{t=0}^H \frac{\pi_\theta(a^{(j)}_t|s^{(j)}_t)}{q(a^{(j)}_t|s^{(j)}_t)}
+$$
 
 This Monte Carlo estimate is unbiased, but is it any good?  Does it help us
 estimate a good policy? One might imagine that if the state spaces or action
@@ -169,12 +178,32 @@ gradient.
 
 **Other stuff**
 
- * baseline - control variate - actor-critic
-   (compatible function)
+ * Variance reduction
 
- * normalized version
+   - optimal baseline: always recommended, not described here.
 
- * relaxing discrete decisions to stochastic ones. Learning under complicated
+   - Control variate: generalization of optimal baseline to other available
+     quantities with known exact expectations.
+
+     (The optimal baseline uses the gradient-of-log-policy as a control
+     variate. It's correct because the expected value of this quantity is
+     zero. It can't hurt variance unless the coefficients are poorly estimated
+     (actually, there are more precise conditions).)
+
+   - actor-critic
+
+     Introduces bias (unless we have a "compatible" parameterization between the
+     policy and value function).
+
+     There are many bias-variance tradeoffs available under this general scheme.
+
+   - Past rewards are independent of future actions. This let's us rewrite the
+     MC estimate to obtain a variance reduction. (not described here)
+
+ * Self-normalized version (if memory serves, you don't benefit/need optimal
+   baselines for this version)
+
+ * Relaxing discrete decisions to stochastic ones. Learning under complicated
    reward functions in complex environments.
 
 **When does policy gradient fail**:
@@ -184,6 +213,81 @@ gradient.
    shaping**, that reward functions which aren't super "hands off" and "push
    back" the reward signal to earlier states. This is not always easy to do.
 
- * Kakade & Langford (2002): the long corridor problem
+ * Stochastic policies tend to learn more conservative policies. (Although it is
+   the case that deterministic policies are a special case of stochastic
+   policies.) The classic example is Sutton and Barto's cliff problem where the
+   optimal policy walks a straight line across the edge of a cliff, but
+   stochastic policies tend to learn to move away from edge of the cliff because
+   during learning it tends to fall off.
 
- * Cliff problem from Sutton and Barto
+ * Kakade & Langford (2002): the long corridor problem (I prefer "walking a
+   tight rope" since it's more like the cliff problem). In this case, it's
+   difficult to reach final state and thus we never get a reward. It may take
+   exponential time in $H$ to reach the final state even once when we're just
+   sampling random stuff.
+
+ * Long trajectories (for example the visual attention paper uses $5$
+   steps. Jacob Andrea's recent best paper at NAACL uses $H=1$). Of course,
+   there is a tradeof between number of actions and trajectory length (otherwise
+   we could say trivially say that we just have each trajectory as a single
+   action making $H=1$ (in a trivial sense).
+
+ * State spaces with sparse rewards. We need a strong reward signal to leads
+   policy gradient in the right direction.
+
+ * Another case, where it'd be tempting to apply policy gradient is in
+   structured predication where you try to minimize the risk (expected loss
+   under the model). In this situation, normalization constants and samples are
+   often too slow get.
+
+**Misc tricks**:
+
+* **How big should we set $m$?** I like to set the minibatch size $m$ in any
+  finicky SGD setup to ensure that the inner product between the current
+  gradient and previous gradient is positive. This prevents excessive
+  oscillation. Monitoring this quantity is pretty easy.
+
+* **Gradient clipping** is sometimes useful because we may have exploding
+  gradients. (It seems like every one uses the magic value $5$. I'd prefer to
+  use something with appropriate units for the given problem. Maybe something
+  based on the norms of previous gradients.)
+
+* **Reward normalization**: I'm not crazy about normalizing rewards (e.g.,
+  subtract mean and divide by variance; or possibly the rank transform used in
+  CMA-ES).
+
+* **Natural gradient**: Seems to work if the additional computation is faster
+  than collecting more samples. I recommend analytic Fisher matrix-vector
+  products instead of the empirical Fisher matrix and the truncated conjugate
+  gradient trick to avoid ever materializing the Fisher matrix. Natural gradient
+  is (approximately) parameterization invariant.
+
+* **Self-normalized importance sampling** (divide by $\sum_{j=1}^m w^{(j)}$
+  instead of $m$ in the MC estimate). Introduces bias which decreases with $m$
+  (eventually the bias vanishes). Often works better than the vaniila REINFORCE
+  algorithm.
+
+* **Off-line optimization**: After you've collected a large sample (big $m$) you
+  can optimze $\hat{J}$ using your favorite deterministic optimization algorithm
+  (e.g., L-BFGS). You'll definitely want some type of "regularization" which
+  prefers policies in places with sufficient samples. You can measure this type
+  of thing in many ways (e.g., Bottou, Levine & Koltun, ; Philip Thomas; Tang &
+  Abbeel, 2010). The original paper on this topic is (probably) "learning from
+  scarce experience" (Peshkin & Shelton, 2002) or Shelton's thesis. A similar
+  deterministic approximation appears in PEGASUS (Ng & Jordan, 2000)
+
+**Take home messages**:
+
+ * If you can evaluate it, then you can take the gradient of it (assuming it
+   exists). This even holds if the evaluation is based on Monte Carlo.
+
+ * The likelihood-ratio shows up all over the place, not just RL. It even shows
+   up in counterfactual / causal reasoning.
+
+ * We described a general way to learn from watching someone else act in a world
+   we don't understand. The only catch is that in order for us to learn from
+   them we need them to do a little bit of "exploration" (and tell us their
+   action probabilities).
+
+ * Policy gradient is useful in many domains, but usually doesn't work out of
+   the box. It's an interesting set of math tricks nonetheless.
