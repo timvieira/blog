@@ -209,16 +209,16 @@ strategy, $q^*_i \propto \sqrt{p_i / s_i}$. If noise is constant, then we
 recover the original solution, $q^*_i \propto \sqrt{p_i}$.
 
 **A more realistic application**: In certain language modeling applications, we
-  avoid computing normalization constants by using importance sampling or noise
-  contrastive estimation techniques. These techniques depend on a proposal
-  distribution, which folks often take to be the unigram
-  distribution. Unfortunately, this gives too many samples of stop words (e.g.,
-  "the", "an", "a"), so practitioners "anneal" the unigram distribution (to
-  increase the entropy), that is sample from $q_i \propto
-  p_{\text{unigram},i}^\alpha$. Typically, $\alpha$ is set by grid search and,
-  no surprise, $\alpha \approx 1/2$ tends to work best! The $\sqrt{p}$-sampling
-  trick is a theoretical justification in favor of annealing by $1/2$ as well as
-  annealing as the right thing to at all (e.g., why not do additive
-  smoothing?). The assumption is that we want to sample the actual word at a
-  given position (the special recipe) as soon as possible, given that all we
-  have access to is the unigram prior.
+  avoid computing normalization constants (which require summing over a massive
+  vocabulary) by using importance sampling or noise contrastive estimation
+  techniques. These techniques depend on a proposal distribution, which folks
+  often take to be the unigram distribution. Unfortunately, this gives too many
+  samples of stop words (e.g., "the", "an", "a"), so practitioners "anneal" the
+  unigram distribution (to increase the entropy), that is sample from $q_i
+  \propto p_{\text{unigram},i}^\alpha$. Typically, $\alpha$ is set by grid
+  search and (no surprise) $\alpha \approx 1/2$ tends to work best! The
+  $\sqrt{p}$-sampling trick is a theoretical in favor of annealing as "the right
+  thing to do" (e.g., why not do additive smoothing?) and it even tells us how
+  to set the annealing parameter $\alpha$. The key assumption is that we want to
+  sample the actual word at a given position as soon as possible, given that all
+  we have access to is the unigram prior.
