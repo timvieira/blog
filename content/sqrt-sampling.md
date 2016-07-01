@@ -190,8 +190,8 @@ bigger than $n$.
 
 **What's the intuition?** The reason why the $\sqrt{p}$-scheme is preferred is
 because we save on *additional* cooking experiments. For example, if a recipe
-has $k$ higher prior probability than the average recipe, then that recipe will
-try it $\sqrt{k}$ more often; compared to instead of $k$, which we'd get under
+has $k$ times higher prior probability than the average recipe, then we will try
+that recipe $\sqrt{k}$ times more often; compared to $k$, which we'd get under
 $\boldsymbol{p}$. Additional cooking experiments are not so advantageous.
 
 **Allowing for noise in the cooking process**: Suppose that for each recipe we
