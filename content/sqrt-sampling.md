@@ -79,12 +79,12 @@ $$
 = q_{j} \sum_{t=1}^\infty t \cdot a^{t-1}
 $$
 
-Using the identity $\nabla_a [ a^t ] = t \cdot a^{t-1}$,
+Use the identity $\nabla_a [ a^t ] = t \cdot a^{t-1}$,
 $$
 = q_{j} \sum_{t=1}^\infty \nabla_a[ a^{t} ].
 $$
 
-Fishing the gradient out of the sum and tweaking summation index,
+Fish the gradient out of the sum and tweak summation index,
 $$
 = q_{j} \nabla_a\left[ \sum_{t=1}^\infty a^{t} \right]
 = q_{j} \nabla_a\left[ -1 + \sum_{t=0}^\infty a^{t}\right]
@@ -95,7 +95,7 @@ $$
 = q_{j} \nabla_a\left[ -1 + \frac{1}{1-a} \right].
 $$
 
-Take the derivative, expanding $a$ and simplify,
+Take derivative, expand $a$ and simplify,
 $$
 = q_{j} \frac{1}{(1-a)^2}
 = \frac{1}{q_j}

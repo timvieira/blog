@@ -27,7 +27,7 @@ example: using approximate marginals from sum-product loopy BP in place of the
 true marginals in the gradient of the log-likelihood. This results in a
 different nonconvex objective function. (Note:
 [sometimes](http://aclweb.org/anthology/C/C12/C12-1122.pdf) these loopy BP
-approximations works fine.)
+approximations work fine.)
 
 It looks like using approximate inference during training changes the training
 objective.
