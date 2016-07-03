@@ -3,3 +3,4 @@ output/*
 *.pyc
 .hgsub
 .ipynb_checkpoints
+cache/
