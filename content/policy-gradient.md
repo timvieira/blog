@@ -84,20 +84,20 @@ policy $q$. (See my earlier post on
 A few notes on the derivation:
 
  * Note that even if $q = p_\theta$, we still need to "correct" for the bias
-   (via importance weights, i.e., we divide by $q$ in our sampled gradients even
-   if $q=p_\theta$.
+   via importance weights (i.e., we divide by $q$ in our sampled gradients even
+   if $q=p_\theta$).
 
  * Technical note: Line \ref{eq:requires-interchange} requires an interchange of
    derivative and integral, which can be troublesome if any bits of the math can
    explode. We're not going to worry about it.
 
- * It's a very interesting fact that we can obtain unbiased gradient estimates
-   for $\pi_\theta$ by evaluating on samples from a completely different policy!
-   For example, $q(\tau)=p(\tau|\pi_\theta)$ is a valid choice, as is
-   $p(\tau|\pi_{\theta'})$ for a different set of parameters. In fact, *any*
-   distribution over trajectories, which has support everywhere
-   $p(\tau|\pi_\theta)$, is valid (a general requirement in importance
-   sampling).
+ * It's interesting that we can obtain unbiased gradient estimates for
+   $\pi_\theta$ by evaluating on samples from a completely different policy!
+   For example, $q(\tau)=p(\tau|\pi_\theta)$ ("on policy") is a valid choice, as
+   is $p(\tau|\pi_{\theta'})$ ("off policy") for a different set of
+   parameters. In fact, *any* distribution over trajectories, which has support
+   everywhere $p(\tau|\pi_\theta)$ does, is valid (a familiar requirement for
+   importance sampling).
 
 Given the MDP conditional independence assumptions, we can further simplify the
 computation of the ratio term $\nabla_\theta p(\tau|\pi_\theta)/q(\tau),$
@@ -227,10 +227,10 @@ gradient.
    sampling random stuff.
 
  * Long trajectories (for example the visual attention paper uses $5$
-   steps. Jacob Andrea's recent best paper at NAACL uses $H=1$). Of course,
-   there is a tradeof between number of actions and trajectory length (otherwise
-   we could say trivially say that we just have each trajectory as a single
-   action making $H=1$ (in a trivial sense).
+   steps. Jacob Andreas' recent best paper at NAACL uses $H=1$). Of course,
+   there is a tradeoff between number of actions and trajectory length
+   (otherwise we could say trivially say that we just have each trajectory as a
+   single action making $H=1$ (in a trivial sense).
 
  * State spaces with sparse rewards. We need a strong reward signal to leads
    policy gradient in the right direction.
