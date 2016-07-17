@@ -119,6 +119,8 @@ FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
+# NOTE: You need to manually set ``displayAlign: 'center'`` in
+# plugins/pelican-plugins/liquid_tags/notebook.py
 MATH_JAX = {
     'align': 'center',
     'macros': [
