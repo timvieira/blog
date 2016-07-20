@@ -176,36 +176,6 @@ dissimilar to $\pi_\theta$ the samples will be a weak estimate of the true
 gradient.
 
 
-**Other stuff**
-
- * Variance reduction
-
-   - optimal baseline: always recommended, not described here.
-
-   - Control variate: generalization of optimal baseline to other available
-     quantities with known exact expectations.
-
-     (The optimal baseline uses the gradient-of-log-policy as a control
-     variate. It's correct because the expected value of this quantity is
-     zero. It can't hurt variance unless the coefficients are poorly estimated
-     (actually, there are more precise conditions).)
-
-   - actor-critic
-
-     Introduces bias (unless we have a "compatible" parameterization between the
-     policy and value function).
-
-     There are many bias-variance tradeoffs available under this general scheme.
-
-   - Past rewards are independent of future actions. This let's us rewrite the
-     MC estimate to obtain a variance reduction. (not described here)
-
- * Self-normalized version (if memory serves, you don't benefit/need optimal
-   baselines for this version)
-
- * Relaxing discrete decisions to stochastic ones. Learning under complicated
-   reward functions in complex environments.
-
 **When does policy gradient fail**:
 
  * We need a strong signal from beginning to end when using policy
@@ -275,6 +245,48 @@ gradient.
   Abbeel, 2010). The original paper on this topic is (probably) "learning from
   scarce experience" (Peshkin & Shelton, 2002) or Shelton's thesis. A similar
   deterministic approximation appears in PEGASUS (Ng & Jordan, 2000)
+
+* **Variance reduction**
+
+  - The baseline trick: always recommended, not described here.
+
+    **TODO**: Explain why the baseline "is a thing"... it looked totally
+    arbitrary to me when I first saw it.
+
+  - Control variate: generalization of optimal baseline to other available
+    quantities with known exact expectations.
+
+    (The optimal baseline uses the gradient-of-log-policy as a control
+    variate. It's correct because the expected value of this quantity is
+    zero. It can't hurt variance unless the coefficients are poorly estimated
+    (actually, there are more precise conditions).)
+
+  - Actor-critic (i.e., using a value function approximator in addition to
+    policy learning)
+
+    Introduces bias (unless we have a "compatible" parameterization between the
+    policy and value function).
+
+    There are many bias-variance tradeoffs available under this general scheme.
+
+  - Past rewards are independent of future actions. This let's us rewrite the
+    MC estimate to obtain a variance reduction. (not described here)
+
+**Remarks**
+
+ * **Relaxing discrete actions into stochastic ones**: A common way to handle
+   discrete (i.e., nondifferentiable) structures/decisions is to put a
+   differentiable density over the structure. (Note: this shouldn't be
+   surprising -- it's what we do in structured prediction, e.g. with CRFs!)
+
+ * **Unknown environments**: Dynamics cancel out! Note that we need to be able
+   to get samples from the unknown factors in the environment/model.
+
+ * **Bandit feedback**: Learning under nondecomposable reward functions Policy
+   gradient naturally handles "bandit feedback" (i.e., you only see the values
+   of trajectories that you sample). In contrast with "full information" which
+   tells you the reward of all possible trajectories.
+
 
 **Take home messages**:
 
