@@ -26,7 +26,7 @@ def usual(x):
 **The Gumbel max trick**:
 
 $$
-y = \text{argmax}_{i \in \\{1,\cdots,K\\}} x_i + z_i
+y = \underset{ i \in \{1,\cdots,K\} }{\operatorname{argmax}} x_i + z_i
 $$
 
 where $z_1 \cdots z_K$ are i.i.d. $\text{Gumbel}(0,1)$ random variates. It
@@ -58,7 +58,5 @@ $-\log(-\log(\text{Uniform}(0,1))$
      function, we'd like to avoid calling them. What gives? Well, Gumbel's calls
      to $\log$ do not depend on the data so they can be precomputed; this is
      handy for implementations which rely on vectorization for efficiency,
-     e.g. python+numpy. By the way, an interesting alternative approach to
-     avoiding $\exp$ is described on Justin Domke's blog post on
-     [speeding up sampling from a sigmoid](http://justindomke.wordpress.com/2014/01/08/reducing-sigmoid-computations-by-at-least-88-0797077977882/),
-     which discusses a trick for $K=2$. (Make sure you read the comments!)
+     e.g. python+numpy. See my later [post](/blog/fast-sampling-sigmoid.md) on
+     fast sigmoid sampling (i.e., when $K=2$).
