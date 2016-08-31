@@ -58,5 +58,7 @@ $-\log(-\log(\text{Uniform}(0,1))$
      function, we'd like to avoid calling them. What gives? Well, Gumbel's calls
      to $\log$ do not depend on the data so they can be precomputed; this is
      handy for implementations which rely on vectorization for efficiency,
-     e.g. python+numpy. See my later [post](/blog/fast-sampling-sigmoid.md) on
-     fast sigmoid sampling (i.e., when $K=2$).
+     e.g. python+numpy.
+
+**Further reading**: I have a few posts relating to the Gumbel-max trick. Have a
+look at [posts tagged with Gumbel](/blog/tag/gumbel.html).

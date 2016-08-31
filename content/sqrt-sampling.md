@@ -244,7 +244,7 @@ recover the original solution, $q^*_i \propto \sqrt{p_i}.$
   avoid computing normalization constants (which require summing over a massive
   vocabulary) by using importance sampling, negative sampling or noise
   contrastive estimation techniques (e.g.,
-  [Ji+,06](https://arxiv.org/pdf/1511.06909.pdf)
+  [Ji+,16](https://arxiv.org/pdf/1511.06909.pdf)
   [Levy+,15](http://www.aclweb.org/anthology/Q15-1016)). These techniques depend
   on a proposal distribution, which folks often take to be the unigram
   distribution. Unfortunately, this gives too many samples of stop words (e.g.,
