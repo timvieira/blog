@@ -1,4 +1,4 @@
-title: Reversing a sequence in sublinear space
+title: Reversing a sequence with sublinear space
 date: 2016-10-01
 comments: true
 tags: algorithms
@@ -6,10 +6,7 @@ tags: algorithms
 Suppose we have a computation, which generates sequence of states $s_1 \ldots
 s_n$, such that $s_{t} = f(s_{t-1})$ and $s_0$ is set deterministically.
 
-So, producing the initial sequence takes $\mathcal{O}(n)$ time. If all we care
-about is the final state, then we can do it in $\mathcal{O}(1)$ space.
-
-Now, we'd like to devise an algorithm, which can reconstruct each point in the
+We'd like to devise an algorithm, which can reconstruct each point in the
 sequence efficiently as we traverse it backwards. You can think of this as
 "hitting undo" from the end of the sequence or reversing a singly-liked list.
 
@@ -19,11 +16,11 @@ the size of each state is large, this will be infeasible.
 **Idea 0**: Rerun the forward pass $n$ times. Runtime $\mathcal{O}(n^2)$, space
   $\mathcal{O}(1)$.
 
-**Idea 1**: Suppose we save $k \le n$ states evenly spaced "checkpoints"?
-Clearly, this gives us $\mathcal{O}(k)$ space, but what does it do to
-the runtime?  Well, if we are at time $t$ the we have to "replay" computation
-from the last recorded checkpoint to get $s_t$, which takes $O(n/k)$ time. Thus,
-the overall runtimes becomes $O(n^2/k)$. This runtime is not ideal.
+**Idea 1**: Suppose we save $0 < k \le n$ evenly spaced "checkpoint" states.
+Clearly, this gives us $\mathcal{O}(k)$ space, but what does it do to the
+runtime?  Well, if we are at time $t$ the we have to "replay" computation from
+the last recorded checkpoint to get $s_t$, which takes $O(n/k)$ time. Thus, the
+overall runtimes becomes $O(n^2/k)$. This runtime is not ideal.
 
 **Idea 2**: *Idea 1* did something kind of silly, within a chunk of size $n/k$,
 it does each computation multiple times! Suppose we increase the memory
@@ -88,6 +85,8 @@ That's nuts! We get away with *sublinear* space $\mathcal{O}(\sqrt{n})$ and we
 only blow up our runtime by a factor of 2. Also, I really love the "introduce a
 parameter then optimize it out" trick.
 
+<button onclick="toggle('#code')">Code</button>
+<div id="code" style="display:none;">
 ```python
 def sqrt_space(f, s0, n):
     k = int(ceil(sqrt(n)))
@@ -116,18 +115,30 @@ def step(f, s, k):
         s = f(s)
         B.append(s)
     return B
-
 ```
+</div>
 
 **Idea 3**: What if we apply "the remember $k$ states" trick *recursively*? I'm
 going to work this out for $k=2$ (and then claim that the value of $k$ doesn't
 matter).
 
 Run forward to get the midpoint at $s_{m}$, where $m=b + \lfloor n/2
-\rfloor$. Next, recurse on the left and right chunks `[b:m]` and `[m:e]` (using
-Python slice syntax). We hit the base case when the width of the interval is
+\rfloor$. Next, recurse on the left and right chunks $[b,m)$ and $[m,e)$. 
+We hit the base case when the width of the interval is
 one.
 
+Note that we implicitly store midpoints as we recurse (thanks to the stack
+frame).  The max depth of the recursion is $\mathcal{O}(\log n)$, which gives us
+a $\mathcal{O}(\log n)$ space bound.
+
+We can characterize runtime with the following recurrence relation, $T(n) = 2
+\cdot T(n/2) + \mathcal{O}(n)$. Since we recognize this as the recurrence for
+mergesort, we know that it flattens to $\mathcal{O}(n \log n)$ time. Also, just
+like in the case of sorting, the branching factor doesn't matter so we're happy
+with or initial assumption that $k=2$.
+
+<button onclick="toggle('#code')">Code</button>
+<div id="code" style="display:none;">
 ```python
 def recursive(f, s0, b, e):
     if e - b == 1:
@@ -143,16 +154,8 @@ def recursive(f, s0, b, e):
         for s in recursive(f, s0, b, b+d):
             yield s
 ```
+</div>
 
-Note that we implicitly store midpoints as we recurse (thanks to the stack
-frame).  The max depth of the recursion is $\mathcal{O}(\log n)$, which gives us
-a $\mathcal{O}(\log n)$ space bound.
-
-We can characterize runtime with the following recurrence relation, $T(n) = 2
-\cdot T(n/2) + \mathcal{O}(n)$. Since we recognize this as the recurrence for
-mergesort, we know that it flattens to $\mathcal{O}(n \log n)$ time. Also, just
-like in the case of sorting, the branching factor doesn't matter so we're happy
-with or initial assumption that $k=2$.
 
 ## Remarks
 
