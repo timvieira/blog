@@ -24,13 +24,17 @@ gradient algorithm by simply applying backprop to the forward algorithm (and
 made some other contributions).
 
 **Many algorithms are just backprop.** For example, forward-backward and
-inside-outside, are actually just instances of automatic differentiation (i.e.,
+inside-outside, are actually just instances of automatic differentiation
+([Eisner,'16](https://www.cs.jhu.edu/~jason/papers/eisner.spnlp16.pdf)) (i.e.,
 outside is just backprop on inside). This shouldn't be a surprise because these
 algorithms are used to compute gradients. Basically, if you know backprop and
 the inside algorithm, then you can derive the outside algorithm by applying the
 backprop transform manually. I find it easier to understand the outside
 algorithm via its connection to backprop, then via
-[the usual presentation](https://www.cs.jhu.edu/~jason/465/iobasics.pdf).
+[the usual presentation](https://www.cs.jhu.edu/~jason/465/iobasics.pdf). Note
+that inside-outside and forward-backward pre-date backpropagation and have
+additional uses beyond computing gradients.
+
 
 **Once you've grokked backprop, the world is your oyster!** You can backprop
 through many approximate inference algorithms, e.g.,
