@@ -65,8 +65,8 @@ $$
 function toggle(x) { $(x).toggle(); }
 </script>
 
-<button onclick="toggle('#derivation')" class="toggle-button">Derivation</button>
-<div id="derivation" style="display:none;" class="derivation">
+<button onclick="toggle('#derivation-series')" class="toggle-button">Derivation</button>
+<div id="derivation-series" style="display:none;" class="derivation">
 **Derivation**:
 
 We start with

@@ -3,8 +3,8 @@ date: 2016-10-01
 comments: true
 tags: algorithms
 
-Suppose we have a computation, which generates sequence of states $s_1 \ldots
-s_n$, such that $s_{t} = f(s_{t-1})$ and $s_0$ is set deterministically.
+Suppose we have a computation which generates sequence of states $s_1 \ldots
+s_n$ according to $s_{t} = f(s_{t-1})$ where $s_0$ is given.
 
 We'd like to devise an algorithm, which can reconstruct each point in the
 sequence efficiently as we traverse it backwards. You can think of this as
@@ -61,8 +61,8 @@ $$
 function toggle(x) { $(x).toggle(); }
 </script>
 
-<button onclick="toggle('#derivation')" class="toggle-button">Derivation</button>
-<div id="derivation" style="display:none;" class="derivation">
+<button onclick="toggle('#derivation-optimal-space')" class="toggle-button">Derivation</button>
+<div id="derivation-optimal-space" style="display:none;" class="derivation">
 To get the minimum, we solve for $k$ that sets the derivative to zero.
 $$
 \begin{eqnarray}
@@ -85,8 +85,8 @@ That's nuts! We get away with *sublinear* space $\mathcal{O}(\sqrt{n})$ and we
 only blow up our runtime by a factor of 2. Also, I really love the "introduce a
 parameter then optimize it out" trick.
 
-<button onclick="toggle('#code')">Code</button>
-<div id="code" style="display:none;">
+<button onclick="toggle('#code-sqrt-space')">Code</button>
+<div id="code-sqrt-space" style="display:none;">
 ```python
 def sqrt_space(f, s0, n):
     k = int(ceil(sqrt(n)))
@@ -123,7 +123,7 @@ going to work this out for $k=2$ (and then claim that the value of $k$ doesn't
 matter).
 
 Run forward to get the midpoint at $s_{m}$, where $m=b + \lfloor n/2
-\rfloor$. Next, recurse on the left and right chunks $[b,m)$ and $[m,e)$. 
+\rfloor$. Next, recurse on the left and right chunks $[b,m)$ and $[m,e)$.
 We hit the base case when the width of the interval is
 one.
 
@@ -137,8 +137,8 @@ mergesort, we know that it flattens to $\mathcal{O}(n \log n)$ time. Also, just
 like in the case of sorting, the branching factor doesn't matter so we're happy
 with or initial assumption that $k=2$.
 
-<button onclick="toggle('#code')">Code</button>
-<div id="code" style="display:none;">
+<button onclick="toggle('#code-recursive')">Code</button>
+<div id="code-recursive" style="display:none;">
 ```python
 def recursive(f, s0, b, e):
     if e - b == 1:
