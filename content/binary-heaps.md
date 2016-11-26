@@ -1,19 +1,18 @@
-title: Binary heaps, incremental maintenance
+title: Heaps for incremental computation
 date: 2016-11-21
 comments: true
 tags: math, sampling, datastructures
 
 
 In this post, I'll describe a neat trick for maintaining a summary quantity
-(e.g., sum, product, max, log-sum-exp). The trick and it's implementation are
-very similar to the max-heap that many people are familiar with.
-
-I'll describe one really elegant application to fast sampling under an evolving
-discrete distribution using a binary heap and binary search.
+(e.g., sum, product, max, log-sum-exp, concatenation, cross-product) under
+changes to its inputs. The trick and it's implementation are inspired by the
+well-known max-heap datastructure. I'll also describe a really elegant
+application to fast sampling under an evolving categorical distribution.
 
 
 **Setup**: Suppose we'd like to efficiently compute a summary quantity under
-changes to its $n$ dimensional input vector $\boldsymbol{w}$. The particular
+changes to its $n$-dimensional input vector $\boldsymbol{w}$. The particular
 form of the quantity we're going to compute is $z = \bigoplus_{i=1}^n w_i$,
 where $\oplus$ is some associative binary operator with identity element
 $\boldsymbol{0}$.
@@ -33,8 +32,9 @@ $\boldsymbol{0}$.
 
 </div>
 
-Essentially, the trick boils down to *parenthesis placement* in the expression
-which computes $z$. A freedom we assumed via the associative property.
+**The trick**: Essentially, the trick boils down to *parenthesis placement* in
+the expression which computes $z$. A freedom we assumed via the associative
+property.
 
 I'll demonstrate by example with $n=8$.
 
@@ -63,28 +63,27 @@ parenthesized expressions.
 
 Since fewer intermediate quantities depend on a given input, fewer intermediates
 need to be adjusted upon a change to the input. Therefore, we get faster
-algorithms for maintaining the desired quantity as the inputs change.
+algorithms for *maintaining* the output quantity $z$ as the inputs change (we
+also maintain the values of the intermediate quantities).
 
-**Heap datastructure**:
+**Heap datastructure**: We're going to maintain the values of the intermediates
+quantities by storing them in a heap datastructure, which is a *complete* binary
+tree. In our case, the tree has depth $1 + \lceil \log_2 n \rceil$, with the
+values of $\boldsymbol{w}$ at it's leaves (aligned left) and padding with
+$\boldsymbol{0}$ for remaining leaves. Thus, $\boldsymbol{S} < 4 n$.
 
-We're going to maintain the values of the intermediates quantities by storing
-them in a heap datastructure, which is a *complete* binary tree. In our case,
-the tree has depth $1 + \lceil \log_2 n \rceil$, with the values of
-$\boldsymbol{w}$ at it's leaves (aligned left) and padding with $\boldsymbol{0}$
-for remaining leaves. Thus, $\boldsymbol{S} < 4 n$.
-
-This structure makes our implementation *really nice* and efficient because we
+This structure makes our implementation really nice and efficient because we
 don't need pointers to find the parent or children of a node (i.e., no need to
 wrap elements into a "node" class like in a general tree data structure). So, we
 can pack everything into an array, which means our implementation has great
 memory/cache locality and low storage overhead.
 
 Traversing the tree is pretty simple: Let $d$ be the number of internal nodes,
-nodes $i \le d$ are interal. For node $i$, left child $\rightarrow {2 \cdot i}$
-for $i \le d,$ right child $\rightarrow {2 \cdot i + 1}$ for $i \le d,$ parent
-$\rightarrow \lfloor i / 2 \rfloor$ if $i > 1.$ (Note these operations assume
-that the array's indices start at $1$. We generally fake this by adding a dummy
-node at position $0$, which makes implementation simpler.)
+nodes $1 \le i \le d$ are interal. For node $i$, left child $\rightarrow {2
+\cdot i},$ right child $\rightarrow {2 \cdot i + 1},$ parent $\rightarrow
+\lfloor i / 2 \rfloor.$ (Note that these operations assume the array's indices
+start at $1$. We generally fake this by adding a dummy node at position $0$,
+which makes implementation simpler.)
 
 **Initializing the heap**: Here's code that initializes the heap structure we
   just described.
@@ -101,14 +100,14 @@ def sumheap(w):
     return S
 ```
 
-
-**Updating $w_k$** boils down to fixing intermediate sums that depend on the
-  input, which changed. I won't go into all of the details here, but will give
-  code below. I'd like to quickly point out that the term "parents" is not great
-  for our purposes because they are the *dependents*: when an input changes the
-  value the parents, grand parents, great grand parents, etc, become stale and
-  need to be recomputed bottom up. The code below implements changing the value
-  of $w_k$ and runs in $\mathcal{O}(\log n)$ time.
+**Updating $w_k$** boils down to fixing intermediate sums that (transitively)
+  depend on $w_k$. I won't go into all of the details here, instead I'll give
+  code (below). I'd like to quickly point out that the term "parents" is not
+  great for our purposes because they are the *dependents*: when an input
+  changes the value the parents, grand parents, great grand parents, etc, become
+  stale and need to be recomputed bottom up (from the leaves). The code below
+  implements the update method for changing the value of $w_k$ and runs in
+  $\mathcal{O}(\log n)$ time.
 
 
 ```python
@@ -122,9 +121,8 @@ def update(S, k, v):
         S[i] = S[2*i] + S[2*i + 1]
 ```
 
-
-
-**Remarks**:
+Remarks
+-------
 
  * **Numerical stability**: If the operations are noisy (e.g., floating point
    operator), then the heap version may be better behaved. For example, if
@@ -150,7 +148,8 @@ def update(S, k, v):
    fast array implementation instead of a generic tree datastructure.
 
 
-**Generalizations**:
+Generalizations
+---------------
 
  * No zero? No problem. We don't *actually* require a zero element. So, it's
    fair to augment $\boldsymbol{K} \cup \{ \textsf{null} \}$ where
@@ -159,97 +158,101 @@ def update(S, k, v):
    satisfy the definition of a zero (e.g., by adding an if-statement).
 
  * Generalization to an arbitrary maps instead of fixed vectors is possible with
-   a bijective "locator" map which tracks the location of elements.
+   a "locator" map, which a bijective map from elements to indices in a dense
+   array.
 
- * Support for growing and shrinking: We support growing by maintaining an
-   underlying array that is always slightly larger than we need. We already are
-   *already* doing this to keep the heap structure simple, but it also has the
-   added benefit of allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!
-   This is because the resize operation, which requires an $\mathcal{O}(n)$
-   operatorion to allocate a new array and copying old values, happens so
-   infrequently that they can be completely amortized. Shrinking is more
-   complicated. Generally, this is implemented with an occupancy threshold, but
-   it is tricky to get this shrink threshold perfect because an adversary can
-   force a type of "thrashing" where we repeatedly shrink and grow. Ignoring the
-   resizing of $\boldsymbol{w}$, we can fake shrinking by replacing the old
-   value with $\textsf{null}$. There's a better implementation when $\oplus$ is
+ * Support for growing and shrinking: We support **growing** by maintaining an
+   underlying array that is always slightly larger than we need&mdash;---which
+   we're *already* in heap datastructure. Doubling the size of the underlying
+   array (i.e., rounding up to the next power of two) has the added benefit of
+   allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!  This is because
+   the resize operation, which requires an $\mathcal{O}(n)$ time to allocate a
+   new array and copying old values, happens so infrequently that they can be
+   completely amortized. **Shrinking** is a little more complicated. Generally,
+   this is implemented with an occupancy threshold, but it is tricky to get this
+   shrink threshold perfect because an adversary can force a type of "thrashing"
+   where we repeatedly shrink and grow. Ignoring the resizing of
+   $\boldsymbol{w}$, we can fake shrinking by replacing the old value with
+   $\textsf{null}$. There's a better implementation when $\oplus$ is
    commutative, where we swap the last element of the array into the deleted
    position and replace the last element with $\textsf{null}$.
 
 
-**Application: Sampling from an evolving distribution**: Suppose that
-  $\boldsymbol{w}$ corresponds to a categorical distributions over $\{1, \ldots,
-  n\}$ and that we'd like to sample elements from in proportion to this
-  (unnormalized) distribution.
+Application
+-----------
 
-  It turns out that the heap structure has yet another advantage for sampling!
-  Namely, the intermediate sums allow us to perform binary search of the sampled
-  element!
+**Sampling from an evolving distribution**: Suppose that $\boldsymbol{w}$
+corresponds to a categorical distributions over $\{1, \ldots, n\}$ and that we'd
+like to sample elements from in proportion to this (unnormalized) distribution.
 
-  Other methods like the [alias](http://www.keithschwarz.com/darts-dice-coins/)
-  or inverse cdf methods are efficient after a somewhat costly initialization
-  step, but they are not as efficient as the heap sampler when the distribution
-  is being updated. (I'm not sure about whether variants of alias that support
-  updates.)
+It turns out that the heap structure has yet another advantage for sampling!
+Namely, the intermediate sums allow us to perform binary search of the sampled
+element!
+
+Other methods like the [alias](http://www.keithschwarz.com/darts-dice-coins/) or
+inverse CDF methods are efficient after a somewhat costly initialization
+step. But! they are not as efficient as the heap sampler when the distribution
+is being updated. (I'm not sure about whether variants of alias that support
+updates.)
 
 <center>
 
   | Method |  Sample  |  Update  | Init |
   | ------ | -------- | -------- | ---- |
   |  alias |   O(1)   |  O(n)?   | O(n) |
-  |  i-cdf | O(log n) |  O(n)    | O(n) |
+  |  i-CDF | O(log n) |  O(n)    | O(n) |
   |  heap  | O(log n) | O(log n) | O(n) |
 
 </center>
 
+Use cases include
 
-Some use cases include
-[Gibbs sampling](https://en.wikipedia.org/wiki/Gibbs_sampling), where
-distributions are constantly being modified (changes may not be sparse so
-YMMV). [EXP3](https://jeremykun.com/2013/11/08/adversarial-bandits-and-the-exp3-algorithm/)
-([mutli-armed bandit algorithm](https://en.wikipedia.org/wiki/Multi-armed_bandit))
-is an excellent example of an algorithm that samples and modifies a distribution
-as it runs. *Stochastic priority queues* where we sample proportional to
-priority and the weights on items in the queue may change, elements are possibly
-removed after they are sampled (i.e., sampling without replacement), and
-elements are added.
+* [Gibbs sampling](https://en.wikipedia.org/wiki/Gibbs_sampling), where
+  distributions are constantly modified and sampled from (changes may not be
+  sparse so YMMV)
+
+* [EXP3](https://jeremykun.com/2013/11/08/adversarial-bandits-and-the-exp3-algorithm/)
+  ([mutli-armed bandit algorithm](https://en.wikipedia.org/wiki/Multi-armed_bandit))
+  is an excellent example of an algorithm that samples and modifies a single
+  weight in the distribution.
+
+* *Stochastic priority queues* where we sample proportional to priority and the
+  weights on items in the queue may change, elements are possibly removed after
+  they are sampled (i.e., sampling without replacement), and elements are added.
 
 Again, I won't spell out all of the details of these algorithm. Instead, I'll
-just give the code. Complete code and test cases for heap sampling are available
-in this
-[gist](https://gist.github.com/timvieira/da31b56436045a3122f5adf5aafec515).
+just give the code.
 
-
-Inverse cdf sampling method:
+**Inverse CDF sampling**
 
 ```python
 def sample(w):
     "Ordinary sampling method, O(n) init, O(log n) per sample."
     c = w.cumsum()            # build cdf, O(n)
-    p = uniform() * c[-1]     # random probe
+    p = uniform() * c[-1]     # random probe, p ~ Uniform(0, z)
     return c.searchsorted(p)  # binary search, O(log n)
 ```
 
-The heap sampling method is essentially the same, except the cdf is stored as
-heap, which is perfect for binary search!
+**Heap sampling** is essentially the same, except the cdf is stored as heap,
+which is perfect for binary search!
 
 ```python
 def hsample(S):
     "Sample from sumheap, O(log n) per sample."
-    d = S.shape[0]//2  # number of internal nodes.
-    # random probe
-    u = uniform()
-    p = S[1] * u
+    d = S.shape[0]//2     # number of internal nodes.
+    p = uniform() * S[1]  # random probe, p ~ Uniform(0, z)
     # Use binary search to find the index of the largest CDF (represented as a
     # heap) value that is less than a random probe.
     i = 1
     while i < d:
         # Determine if the value is in the left or right subtree.
-        i *= 2
+        i *= 2         # Point at left child
         left = S[i]    # Probability mass under left subtree.
-        if p > left:
-            # Value is in right subtree.
+        if p > left:   # Value is in right subtree.
             p -= left  # Subtract mass from left subtree
-            i += 1
+            i += 1     # Point at right child
     return i - d
 ```
+
+**Code**: Complete code and test cases for heap sampling are available in this
+[gist](https://gist.github.com/timvieira/da31b56436045a3122f5adf5aafec515).
