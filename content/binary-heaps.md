@@ -73,10 +73,9 @@ $$
 z = (((((((w_1 \oplus w_2) \oplus w_3) \oplus w_4) \oplus w_5) \oplus w_6) \oplus w_7) \oplus w_8).
 $$
 
-<br/>
-Heap structure: Here the parentheses form a balance tree, which looks much more
-like a recursive implementation the does each half $\boldsymbol{w}$ and combines
-their results (divide-and-conquer style),
+<br/> Heap structure: Here the parentheses form a balanced tree, which looks
+much more like a recursive implementation that computes the left and right
+halves and $\oplus$s the results (divide-and-conquer style),
 
 $$
 z = (((w_1 \oplus w_2) \oplus (w_3 \oplus w_4)) \oplus ((w_5 \oplus w_6) \oplus (w_7 \oplus w_8))).
@@ -90,11 +89,10 @@ parenthesized expressions.
 
 Since fewer intermediate quantities depend on a given input, fewer intermediates
 need to be adjusted upon a change to the input. Therefore, we get faster
-algorithms for *maintaining* the output quantity $z$ as the inputs change (we
-also maintain the values of the intermediate quantities).
+algorithms for *maintaining* the output quantity $z$ as the inputs change.
 
-**Heap datastructure**: We're going to maintain the values of the intermediates
-quantities by storing them in a heap datastructure, which is a *complete* binary
+**Heap datastructure**: We're going to store the values of the intermediates
+quantities and inputs in a heap datastructure, which is a *complete* binary
 tree. In our case, the tree has depth $1 + \lceil \log_2 n \rceil$, with the
 values of $\boldsymbol{w}$ at it's leaves (aligned left) and padding with
 $\boldsymbol{0}$ for remaining leaves. Thus, $\boldsymbol{S} < 4 n$.
@@ -128,12 +126,12 @@ def sumheap(w):
 ```
 
 **Updating $w_k$** boils down to fixing intermediate sums that (transitively)
-  depend on $w_k$. I won't go into all of the details here, instead I'll give
+  depend on $w_k.$ I won't go into all of the details here, instead I'll give
   code (below). I'd like to quickly point out that the term "parents" is not
-  great for our purposes because they are the *dependents*: when an input
-  changes the value the parents, grand parents, great grand parents, etc, become
-  stale and need to be recomputed bottom up (from the leaves). The code below
-  implements the update method for changing the value of $w_k$ and runs in
+  great for our purposes because they are actually the *dependents*: when an
+  input changes the value the parents, grand parents, great grand parents, etc,
+  become stale and need to be recomputed bottom up (from the leaves). The code
+  below implements the update method for changing the value of $w_k$ and runs in
   $\mathcal{O}(\log n)$ time.
 
 
@@ -211,10 +209,6 @@ Application
 **Sampling from an evolving distribution**: Suppose that $\boldsymbol{w}$
 corresponds to a categorical distributions over $\{1, \ldots, n\}$ and that we'd
 like to sample elements from in proportion to this (unnormalized) distribution.
-
-It turns out that the heap structure has yet another advantage for sampling!
-Namely, the intermediate sums allow us to perform binary search of the sampled
-element!
 
 Other methods like the [alias](http://www.keithschwarz.com/darts-dice-coins/) or
 inverse CDF methods are efficient after a somewhat costly initialization
