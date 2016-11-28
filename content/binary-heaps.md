@@ -188,7 +188,7 @@ Generalizations
 
  * Support for growing and shrinking: We support **growing** by maintaining an
    underlying array that is always slightly larger than we need&mdash;which
-   we're *already* doing in heap datastructure. Doubling the size of the underlying
+   we're *already* doing in the heap datastructure. Doubling the size of the underlying
    array (i.e., rounding up to the next power of two) has the added benefit of
    allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!  This is because
    the resize operation, which requires an $\mathcal{O}(n)$ time to allocate a
