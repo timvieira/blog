@@ -95,7 +95,7 @@ algorithms for *maintaining* the output quantity $z$ as the inputs change.
 quantities and inputs in a heap datastructure, which is a *complete* binary
 tree. In our case, the tree has depth $1 + \lceil \log_2 n \rceil$, with the
 values of $\boldsymbol{w}$ at it's leaves (aligned left) and padding with
-$\boldsymbol{0}$ for remaining leaves. Thus, $\boldsymbol{S} < 4 n$.
+$\boldsymbol{0}$ for remaining leaves. Thus, the array's length is $< 4 n$.
 
 This structure makes our implementation really nice and efficient because we
 don't need pointers to find the parent or children of a node (i.e., no need to
@@ -166,11 +166,11 @@ Remarks
    ``make`` at the command line! The general technique goes by many
    names&mdash;including change propagation, incremental maintenance, and
    functional reactive programming&mdash;and applies to basically *any*
-   side-effect-free computation. However, most effective when the dependency
-   structure of the computation is sparsity and requires little overhead to find
-   and refresh stale values. In our example of computing $z$, these
-   considerations manifest themselves as the heap vs linear structures and our
-   fast array implementation instead of a generic tree datastructure.
+   side-effect-free computation. However, it's most effective when the
+   dependency structure of the computation is sparse and requires little
+   overhead to find and refresh stale values. In our example of computing $z$,
+   these considerations manifest themselves as the heap vs linear structures and
+   our fast array implementation instead of a generic tree datastructure.
 
 
 Generalizations
@@ -187,8 +187,8 @@ Generalizations
    array.
 
  * Support for growing and shrinking: We support **growing** by maintaining an
-   underlying array that is always slightly larger than we need&mdash;---which
-   we're *already* in heap datastructure. Doubling the size of the underlying
+   underlying array that is always slightly larger than we need&mdash;which
+   we're *already* doing in heap datastructure. Doubling the size of the underlying
    array (i.e., rounding up to the next power of two) has the added benefit of
    allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!  This is because
    the resize operation, which requires an $\mathcal{O}(n)$ time to allocate a
@@ -214,7 +214,7 @@ Other methods like the [alias](http://www.keithschwarz.com/darts-dice-coins/) or
 inverse CDF methods are efficient after a somewhat costly initialization
 step. But! they are not as efficient as the heap sampler when the distribution
 is being updated. (I'm not sure about whether variants of alias that support
-updates.)
+updates exist.)
 
 <center>
 
@@ -241,7 +241,7 @@ Use cases include
   weights on items in the queue may change, elements are possibly removed after
   they are sampled (i.e., sampling without replacement), and elements are added.
 
-Again, I won't spell out all of the details of these algorithm. Instead, I'll
+Again, I won't spell out all of the details of these algorithms. Instead, I'll
 just give the code.
 
 **Inverse CDF sampling**
