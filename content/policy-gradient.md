@@ -4,65 +4,129 @@ comments: true
 status: draft
 tags: math, optimization, rl, policy-gradient
 
-Policy search methods are a popular approach to reinforcement learning (RL)
-problems due to their ability to scale to large state spaces including
-continuous and partially observed domains. Policy search methods operate by
-directly searching the space of policies, as opposed to indirect methods, which
-learn a model of the environment and derive a policy from it. The most common
-policy search methods are based on stochastic gradient ascent, termed policy
-gradient methods
-([Williams,92](http://incompleteideas.net/sutton/williams-92.pdf);
-[Sutton+,99](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)).
 
-Since we are in the RL setting, we will be searching for a good policy *without
-a priori knowledge of the dynamics model or the reward function*.
+**Setup**: We're trying to optimize a function of the form
 
-A **Markov Decision Process** (MDP) over a state set $\mathcal{S}$ and action
-set $\mathcal{A}$ consists of:
+$$
+J(\theta) = \underset{p_\theta}{\mathbb{E}} \left[ r(x) \right] = \sum_{x \in \mathcal{X}} p_\theta(x) r(x).
+$$
 
-  * $p(s_{t+1}|s_t,a_t)$: A **dynamics model** that specifies the probability of
-    transition to each state $s_{t+1}$ upon execution of action $a_t$ in state
-    $s_t$.
+The problem is that we can't enumerate $\mathcal{X}$ and $p$ times $r$ has no
+structure over $\mathcal{X}$ which we can exploit (e.g., for dynamic
+programming).
 
-  * $R(s_t)$: A **reward function** that specifies a scalar value for being in
-    state $s_t$.
+Suppose we can sample $x^{(j)} \sim p_\theta$. This opens up the following
+(unbiased) Monte Carlo estimators for $J$ and its gradient,
 
-We'll assume that periodically (after every $H$ steps) the environment will
-terminate the current **episode** and drop us in an initial state $s_0$.
+$$
+J(\theta) \approx \frac{1}{m} \sum_{j=1}^m r(x^{(j)})
+$$
 
-Our goal is to attain a policy, $\pi$, a mapping from states to action, such
-that the **utility** $J(\pi)$ is maximized,
+$$
+\nabla_{\!\theta} J(\theta) \approx \frac{1}{m} \sum_{j=1}^m r(x^{(j)}) \nabla_{\!\theta} \log p_{\theta}(x^{(j)}).
+$$
 
-\begin{equation}\label{def:policyperformance}
-  J(\pi) = \mathbb{E}\left[ R(s_0) + R(s_1) + \dots + R(s_H) \Biggr| \pi \right].
-\end{equation}
 
-Computing $J(\pi)$ is a common subroutine in many RL algorithms called **policy
-evaluation**.
+I'm going to work with a more general version based on
+[importance Sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/)
+because it will give us some interesting freedom later on. Here $x^{(j)} \sim q$
+instead of $p_\theta$. Note that we need the follow condition on $q$ to hold for
+all $x$, $p(x) > 0 \Rightarrow q(x) > 0$.
 
-Given this definition it is natural to want to try to optimize $J(\pi)$ by
-gradient ascent. We'll get there in a minute; let's talk a little bit more about
-notation and assumptions.
+$$
+J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)})
+$$
 
-Policy gradient assumes that $\pi$ is a **stochastic policy**, i.e., actions are
-drawn randomly $a \sim \pi(\cdot|s)$. Additionally, $\pi$ is parametrized by a
-vector, $\theta \in \mathbb{R}^d$, and $\frac{\partial
-\pi_\theta}{\partial\theta}$ exists.
+$$
+\nabla_{\!\theta} J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)}) \nabla_{\!\theta} \log p_{\theta}(x^{(j)}).
+$$
 
-A **trajectory** in an MDP, is a sequence of random variables representing
-states and actions drawn from environment $\tau=[s_0,a_0,s_1,a_1\dots,s_H,a_H]$
-by following a policy, $\pi_\theta$ in the environment for $H$ steps ($a_H$ is a
-dummy action so we don't count it towards the trajectory length). Let
-$p(\tau|\pi_\theta)$ denote the distribution over trajectories in the
-environment given that we are following a particular policy.
+where $w^{(j)}_{\theta} = p_{\theta}(x^{(j)}) / q(x^{(j)})$
 
-The conditional independence assumptions of the MDP imply the following
-factorization of $p(\tau|\pi_\theta)$,
 
-\begin{equation}\label{eq:mdp-prob}
-p(\tau|\pi_\theta) = p(s_0) \prod_{t=0}^H p(s_{t+1}|s_t,a_t) \pi_\theta(a_t|s_t)
-\end{equation}
+<style>
+.toggle-button {
+    background-color: #555555;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+.derivation {
+  background-color: #f2f2f2;
+  border: thin solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+</style>
 
+<script>
+// workaround for when markdown/mathjax gets confused by the
+// javascript dollar function.
+function toggle(x) { $(x).toggle(); }
+</script>
+
+<button class="toggle-button" onclick="toggle('#likelihood-ratio-derivation');">Derivation</button>
+<div id="likelihood-ratio-derivation" class="derivation">
+The derivation is pretty simple
+$$
+\begin{eqnarray}
+  \nabla_{\!\theta} \, \underset{p_\theta}{\mathbb{E}}\left[ r(x) \right]
+  &=& \nabla_{\!\theta} \left[ \sum_x p_{\theta}(x) r(x) \right] \\
+  &=& \sum_x \nabla_{\!\theta} \left[ p_{\theta}(x) \right] r(x) \\
+  &=& \sum_x p_{\theta}(x) \frac{\nabla_{\!\theta} \left[ p_{\theta}(x) \right] }{ p_{\theta}(x) } r(x) \\
+  &=& \underset{p}{\mathbb{E}}\left[ r(x) \nabla_{\!\theta} \log p_\theta(x) \right]
+\end{eqnarray}
+$$
+
+<br/>
+We use the identity $\nabla g = g\, \nabla \log g$, assuming $g > 0$.
+
+Importance-weighted version:
+$$
+\begin{eqnarray}
+  \nabla_{\!\theta} \, \underset{p_\theta}{\mathbb{E}}\left[ r(x) \right]
+  &=& \underset{p}{\mathbb{E}}\left[ r(x) \nabla_{\!\theta} \log p_\theta(x) \right] \\
+  &=& \sum_x p_{\theta}(x) r(x) \nabla_{\!\theta} \log p_\theta(x) \\
+  &=& \sum_x \frac{q(x)}{q(x)} p_{\theta}(x) r(x) \nabla_{\!\theta} \log p_\theta(x) \\
+  &=& \underset{q}{\mathbb{E}}\left[ \frac{p_{\theta}(x)}{q(x)} r(x) \nabla_{\!\theta} \log p_\theta(x) \right]
+\end{eqnarray}
+$$
+</div>
+
+The real power of this method is when you have the ability to sample $x$, but
+*not* the ability to compute all factors of the joint probability of $x$. For
+example, some components of the joint probability's *generative process* might
+pass through factors which are *only accessible through sampling*, e.g., because
+they require performing *actual experiments* in the real world or a complex
+simulation!
+
+So, let's think about being two types of conditional probability distributions
+this graphical model: the ones we control via $\theta$ and those that are
+independent of $\theta$.
+
+A classic example is a Markov decision process (MDP). The random variable $x$ in
+this context is a sequence of states and actions, $(s_0, a_0, s_1, a_1, \ldots
+a_{T-1}, s_T)$ and the "generative process" consists of an unknown transition
+function $p(s_{t+1}|s_t,a_t)$ that is only accessible through sampling and a
+policy $p_{\theta}(a_t|s_t)$ which we in control of.
+
+
+> The beauty of the likelihood ratio is the cancellation of unknown terms.
+
+
+This wonderful cancellation occurs in many contexts, including the
+Metropolis-Hastings accept-reject criteria.
+
+
+<hr/>
+<hr/>
+<hr/>
 
 **Deriving the policy gradient**: Here we describe the a basic method for
 estimating $\nabla_\theta J(\pi_\theta)$, known as the likelihood-ratio
@@ -72,32 +136,6 @@ Let $q(\tau)$ be distribution over trajectories, which comes from following a
 policy $q$. (See my earlier post on
 [Importance Sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/).)
 
-\begin{eqnarray}
-  \nabla_\theta J(\theta)
-  &=& \nabla_\theta \mathbb{E}_{\tau \sim p(\cdot|\pi_\theta) }\left[ \sum_{t=0}^H R(s_t) \Biggr| \pi_\theta \right]  \\
-  &=& \nabla_\theta \sum_\tau p(\tau|\pi_\theta) R(\tau) \\
-  &=& \sum_\tau \nabla_\theta p(\tau|\pi_\theta) R(\tau) \label{eq:requires-interchange} \\
-  &=& \sum_\tau q(\tau) \frac{\nabla_\theta p(\tau|\pi_\theta)}{q(\tau)} R(\tau) \label{eq:likelihoodratio-sum-version} \\
-  &=& \mathbb{E}_{\tau \sim q}\left[ \frac{\nabla_\theta p(\tau|\pi_\theta)}{q(\tau)} R(\tau) \Biggr| \pi_\theta \right] \label{eq:likelihoodratio}
-\end{eqnarray}
-
-A few notes on the derivation:
-
- * Note that even if $q = p_\theta$, we still need to "correct" for the bias
-   via importance weights (i.e., we divide by $q$ in our sampled gradients even
-   if $q=p_\theta$).
-
- * Technical note: Line \ref{eq:requires-interchange} requires an interchange of
-   derivative and integral, which can be troublesome if any bits of the math can
-   explode. We're not going to worry about it.
-
- * It's interesting that we can obtain unbiased gradient estimates for
-   $\pi_\theta$ by evaluating on samples from a completely different policy!
-   For example, $q(\tau)=p(\tau|\pi_\theta)$ ("on policy") is a valid choice, as
-   is $p(\tau|\pi_{\theta'})$ ("off policy") for a different set of
-   parameters. In fact, *any* distribution over trajectories, which has support
-   everywhere $p(\tau|\pi_\theta)$ does, is valid (a familiar requirement for
-   importance sampling).
 
 Given the MDP conditional independence assumptions, we can further simplify the
 computation of the ratio term $\nabla_\theta p(\tau|\pi_\theta)/q(\tau),$
@@ -190,11 +228,12 @@ gradient.
    stochastic policies tend to learn to move away from edge of the cliff because
    during learning it tends to fall off.
 
- * Kakade & Langford (2002): the long corridor problem (I prefer "walking a
-   tight rope" since it's more like the cliff problem). In this case, it's
-   difficult to reach final state and thus we never get a reward. It may take
-   exponential time in $H$ to reach the final state even once when we're just
-   sampling random stuff.
+ * [Kakade & Langford (2002)](http://hunch.net/~jl/projects/aoarl/Final.ps)'s
+   long corridor problem (I prefer "walking a tight rope" since it's more like
+   the cliff problem from Sutton & Barto's book, which is also relevant to
+   stochastic policies). In this case, it's difficult to reach final state and
+   thus we never get a reward. It may take exponential time in $H$ to reach the
+   final state even once when we're just sampling random stuff.
 
  * Long trajectories (for example the visual attention paper uses $5$
    steps. Jacob Andreas' recent best paper at NAACL uses $H=1$). Of course,
@@ -202,13 +241,22 @@ gradient.
    (otherwise we could say trivially say that we just have each trajectory as a
    single action making $H=1$ (in a trivial sense).
 
- * State spaces with sparse rewards. We need a strong reward signal to leads
+ * State spaces with sparse rewards. We need a strong reward signal to lead
    policy gradient in the right direction.
 
- * Another case, where it'd be tempting to apply policy gradient is in
-   structured predication where you try to minimize the risk (expected loss
-   under the model). In this situation, normalization constants and samples are
-   often too slow get.
+ * Another case, where its tempting to apply policy gradient is in structured
+   predication where you try to minimize the risk (i.e., the expected cost of
+   samples from the model). Likelihood ratio doesn't help us compute the "usual
+   problems" in structure prediction, which have to do with computing
+   normalization constants, but assuming we can obtain good
+   sample&mdash;preferably exact samples, but MCMC samples might be ok&mdash;the
+   likelihood ratio can help us with complicated blackbox cost functions like
+   human annotators or impenetrable perl scripts. I had this idea back in 2012,
+   but never got around to pushing it out. There appear to be some recent papers
+   that picked up on, including
+   [Sokolov+,2016](http://www.cl.uni-heidelberg.de/~riezler/publications/papers/ACL2016.pdf)
+   and a few papers using it for variational inference.
+
 
 **Misc tricks**:
 
