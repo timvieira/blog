@@ -188,19 +188,15 @@ Generalizations
 
  * Support for growing and shrinking: We support **growing** by maintaining an
    underlying array that is always slightly larger than we need&mdash;which
-   we're *already* doing in the heap datastructure. Doubling the size of the underlying
-   array (i.e., rounding up to the next power of two) has the added benefit of
-   allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!  This is because
-   the resize operation, which requires an $\mathcal{O}(n)$ time to allocate a
-   new array and copying old values, happens so infrequently that they can be
-   completely amortized. **Shrinking** is a little more complicated. Generally,
-   this is implemented with an occupancy threshold, but it is tricky to get this
-   shrink threshold perfect because an adversary can force a type of "thrashing"
-   where we repeatedly shrink and grow. Ignoring the resizing of
-   $\boldsymbol{w}$, we can fake shrinking by replacing the old value with
-   $\textsf{null}$. There's a better implementation when $\oplus$ is
-   commutative, where we swap the last element of the array into the deleted
-   position and replace the last element with $\textsf{null}$.
+   we're *already* doing in the heap datastructure. Doubling the size of the
+   underlying array (i.e., rounding up to the next power of two) has the added
+   benefit of allowing us to grow $\boldsymbol{w}$ at no asymptotic cost!  This
+   is because the resize operation, which requires an $\mathcal{O}(n)$ time to
+   allocate a new array and copying old values, happens so infrequently that
+   they can be completely amortized. We get of effect of **shrinking** by
+   replacing the old value with $\textsf{null}$ (or $\boldsymbol{0}$). We can
+   shrink the underlying array when the fraction of nonzeros dips below
+   $25\%$. This prevents "thrashing" between shrinking and growing.
 
 
 Application
