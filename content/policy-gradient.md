@@ -242,3 +242,4 @@ optimization methods) like Nelder-Mead, FDSA, SPSA, and CMA-ES.
 
  * Policy gradient is useful in many domains, but usually doesn't work out of
    the box. It's an interesting set of math tricks nonetheless.
+
