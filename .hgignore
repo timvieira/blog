@@ -1,0 +1,10 @@
+syntax: glob
+
+output/*
+*.pid
+*.pyc
+.hgsub
+.ipynb_checkpoints
+cache/
+
+.git
