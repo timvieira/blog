@@ -13,8 +13,8 @@ $$
 
 The problem is that it's too costly to evaluate $r(x)$ for all $\mathcal{X}$ and
 that $p$ times $r$ has no structure which we can exploit (e.g., for dynamic
-programming). We also do not assume full knowledge of $r(x)$; sometimes called
-"bandit feedback."
+programming). We also do not assume full knowledge of $r(x)$ and evaluations of
+$r(x)$ might be noisy.
 
 Suppose we can sample $x^{(j)} \sim p_\theta$. This opens up the following
 (unbiased) Monte Carlo estimators for $J$ and its gradient,
@@ -26,23 +26,6 @@ $$
 $$
 \nabla_{\!\theta} J(\theta) \approx \frac{1}{m} \sum_{j=1}^m r(x^{(j)}) \nabla_{\!\theta} \log p_{\theta}(x^{(j)}).
 $$
-
-
-I'm going to work with a more general version based on
-[importance sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/)
-because it will give us some interesting freedom later on. Here $x^{(j)} \sim q$
-instead of $p_\theta$. Note that we need the following condition on $q$ to hold
-for all $x$, $p(x) > 0 \Rightarrow q(x) > 0$.
-
-$$
-J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)})
-$$
-
-$$
-\nabla_{\!\theta} J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)}) \nabla_{\!\theta} \log p_{\theta}(x^{(j)}).
-$$
-
-where $w^{(j)}_{\theta} = p_{\theta}(x^{(j)}) / q(x^{(j)})$
 
 
 <style>
@@ -188,23 +171,56 @@ and a few papers using it for variational inference.
 
 
 I'd like to stress an important point. Although the likelihood-ratio gives us an
-unbiased estimate of the gradient. It can even give us a surrogate objective to
-optimize offline.
+unbiased estimate of the gradient, don't be fooled.
 
-Don't be fooled. Just because there is a (stochastic) gradient used in the
-method, this does not mean that you get the convergence rate that you might be
-used to with your stochastic gradient method! In particular, the gradient
-estimates will have high variance as it depends on variation in $r(x)$, which
-might be crazy-large if, for example, $r(x)$ is sparse corresponding to winning
-the lottery, completing a maze, winning at Go, finding some poor sap to click on
+The particular gradient estimate used in the method has an impractical
+signal-to-noise ratio, which make it very hard use in optimization.
+
+this does not mean that you get the convergence rate that you might be used to
+with your stochastic gradient method! In particular, the gradient estimates will
+have high variance as it depends on variation in $r(x)$, which might be
+crazy-large if, for example, $r(x)$ is sparse corresponding to winning the
+lottery, completing a maze, winning at Go, finding some poor sap to click on
 your ad. Compare this to the benign amount of noisy you get from subsampling the
 data, which is the sgd that people are familiar with.
 
 This gradient estimate is "zero order" it is essentially probing the function in
 $x$ space, which might be higher dimensional that $\theta$. As a result, you
 might be better off with gradient estimators that are based on perturbing
-$\theta$ directly, e.g., so called "direct search" methods (or zeroth-order
-optimization methods) like Nelder-Mead, FDSA, SPSA, and CMA-ES.
+$\theta$ directly, e.g., zeroth-order methods (sometimes called *direct search*
+or *gradient-free* optimization methods) like Nelder-Mead simplex, FDSA, SPSA,
+and CMA-ES (related to the Cross Entropy method).
+
+One way to combat this is to average together many samples per estimate (i.e.,
+use large $m$).
+
+
+
+
+Importance sampling version
+===========================
+
+Let's look at a more general version based on
+[importance sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/)
+because it will give us some interesting freedom later on. Here $x^{(j)} \sim q$
+instead of $p_\theta$. Note that we need the following condition on $q$ to hold
+for all $x$, $p(x) > 0 \Rightarrow q(x) > 0$.
+
+$$
+J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)})
+$$
+
+$$
+\nabla_{\!\theta} J(\theta) \approx \frac{1}{m} \sum_{j=1}^m w^{(j)}_{\theta} r(x^{(j)}) \nabla_{\!\theta} \log p_{\theta}(x^{(j)}).
+$$
+
+where $w^{(j)}_{\theta} = p_{\theta}(x^{(j)}) / q(x^{(j)})$
+
+
+
+
+
+
 
 
 **Remarks**
@@ -242,4 +258,3 @@ optimization methods) like Nelder-Mead, FDSA, SPSA, and CMA-ES.
 
  * Policy gradient is useful in many domains, but usually doesn't work out of
    the box. It's an interesting set of math tricks nonetheless.
-
