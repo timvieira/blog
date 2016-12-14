@@ -2,7 +2,7 @@ title: Learn automatic differentiation
 date: 2016-09-25
 comments: true
 status: draft
-tags: math, calculus, autodiff
+tags: calculus, autodiff
 
 Here are some references for learning autodiff:
 

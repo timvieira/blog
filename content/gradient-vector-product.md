@@ -1,7 +1,7 @@
 title: Gradient-vector product
 date: 2014-02-10
 comments: true
-tags: math, calculus
+tags: calculus
 
 
 We've all written the following test for our gradient code (known as the

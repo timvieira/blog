@@ -1,7 +1,7 @@
 title: Dimensional analysis of gradient ascent
 date: 2016-05-27
 comments: true
-tags: math, optimization
+tags: optimization
 
 In physical sciences, numbers are paired with units and called quantities. In
 this augmented number system, dimensional analysis provides a crucial sanity

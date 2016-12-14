@@ -1,7 +1,7 @@
 Title: Expected value of a quadratic and the Delta method
 date: 2014-07-21
 comments: true
-tags: math
+tags: statistics
 
 **Expected value of a quadratic**: Suppose we'd like to compute the expectation
 of a quadratic function, i.e.,

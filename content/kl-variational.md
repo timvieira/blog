@@ -1,6 +1,6 @@
 title: KL-divergence as an objective function
 date: 2014-10-06
-tags: math, statistics, machine-learning
+tags: statistics, machine-learning
 comments: true
 
 It's well-known that

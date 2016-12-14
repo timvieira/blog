@@ -1,7 +1,7 @@
 title: Evaluating ∇f(x) is as fast as f(x)
 date: 2016-09-25
 comments: true
-tags: math, calculus, autodiff, rant
+tags: calculus, autodiff, rant
 
 Automatic differentiation ('autodiff' or 'backprop') is great&mdash;not just
 because it makes it easy to rapidly prototype deep networks with plenty of

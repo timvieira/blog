@@ -2,7 +2,7 @@ title: Likelihood-ratio gradient
 date: 2016-06-09
 comments: true
 status: draft
-tags: math, optimization, rl, policy-gradient
+tags: optimization, rl, machine-learning
 
 
 **Setup**: We're trying to optimize a function of the form

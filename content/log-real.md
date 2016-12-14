@@ -1,7 +1,7 @@
 title: Log-Real number class
 date: 2015-02-01
 comments: true
-tags: math, numerical
+tags: numerical
 
 Most people know how to avoid numerical underflow in probability computations by
 representing intermediate quantities in the log-domain. This trick turns
