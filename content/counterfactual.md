@@ -36,20 +36,29 @@ I've used the notation $r^{(j)}$ instead of $r(x^{(j)})$ to emphasize that we
 can't evaluate $r$ at $x$ values other than those in the sample. This setup is
 sometimes called *off-line off-policy optimization*.
 
+We'll let the space $\mathcal{X}$ be an arbitrary multivariate space (allowing a
+mix of continuous and discrete components) with appropriate densities,
+$p_{\theta}$ and $q,$ defined over it.
+
+Although, it's not necessarily the case, you can think of $q$ as a specific
+instance of $p_{\theta'}$ for a fixed value $\theta'.$
+
+Each distribution includes two types factors: **policy factors**, which directly
+depend on $\theta$, and **environment factors**, which do not depend directly on
+$\theta$. Note that environment factors are *only* accessible via sampling. For
+now, assume that we can evaluate environment factors; later, I'll discuss how we
+cleverly work around it. For example, a *contextual bandit problem*, where $x$
+is a context-action pair, $x = (s,a)$. Here $q$ is factored $q(x) = q(a|s) p(s)$
+and $p_{\theta}$ is factored as $p_{\theta}(x) = p_{\theta}(a|s) p(s)$. Note
+that $p$ and $q$ share an environment factor $p(s)$, the distribution over
+contexts, and only differ in the action-given-context factor, a policy factor.
+
 Technicalities: To avoid difficulties, we'll assume that $q$ assigns positive
 probability everywhere, $q(x) > 0$ for all $x \in \mathcal{X}$ (assumption
 A1). This means is that the data collection process must be randomized and
 eventually sample all possible configurations. Later, I discuss relaxing this
 assumption (see 'extensions').
 
-In many domains, there are inevitably components of $q$ and $p_{\theta}$ that
-are only accessible via sampling. For example, a *contextual bandit problem*,
-where $x$ is a context-action pair, $x = (s,a)$. Here $q$ is factored as $q(x) =
-q(s,a) = q(a|s) p(s)$ and $p_{\theta}$ is factored as $p_{\theta}(x) =
-p_{\theta}(s,a) = p_{\theta}(a|s) p(s)$. Note that $p$ and $q$ share a factor
-$p(s)$, the distribution over contexts. So they only differ in the the
-distribution of over actions given context. We discuss this further in 'unknown
-factors'.
 
 <!--
 (We can
