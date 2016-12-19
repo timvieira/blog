@@ -24,6 +24,10 @@ data. For the large part, this post is based on things I learned from
 and [Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (two of all-time
 favorite papers).
 
+After reading this post, have a look at the
+[Jupyter notebook](https://gist.github.com/timvieira/788c2c25c94663c49abada60f2e107e9)
+accompanying this post!
+
 **Setup** (*off-line off-policy optimization*): We're trying to optimize a
 function of the form,
 
@@ -37,12 +41,12 @@ policy $q$, $\{ (r^{(j)}, x^{(j)} ) \}_{j=1}^m \overset{\text{i.i.d.}} \sim q.$
 * Although, it's not *necessarily* the case, you can think of $q = p_{\theta'}$
   for a *fixed* value $\theta'.$
 
-* $\mathcal{X}$ be an arbitrary multivariate space, which permits a mix of
+* $\mathcal{X}$ is an arbitrary multivariate space, which permits a mix of
   continuous and discrete components, with appropriate densities, $p_{\theta}$
   and $q$ defined over it.
 
-* The function $r: \mathcal{X} \mapsto \mathbb{R}$ is a black box that outputs a
-  scalar score.
+* $r: \mathcal{X} \mapsto \mathbb{R}$ is a black box that outputs a scalar
+  score.
 
 * I've used the notation $r^{(j)}$ instead of $r(x^{(j)})$ to emphasize that we
   can't evaluate $r$ at $x$ values other than those in the sample.
@@ -109,8 +113,8 @@ q(x)>0$ for all $x \in \mathcal{X}$, which is why we made assumption A1.
 -->
 
 After we've collected a (large) sample it's possible to optimize
-$\hat{J}_{\!\text{IS}}$ using any (deterministic) optimization algorithm (e.g.,
-L-BFGS). Of course, we risk overfitting to the sample if we evaluate
+$\hat{J}_{\!\text{IS}}$ using any optimization algorithm (e.g., L-BFGS). Of
+course, we risk overfitting to the sample if we evaluate
 $\hat{J}_{\!\text{IS}}$. Actually, it's a bit worse: this objective tends to
 favor regions of $\theta$, which are not well represented in the sample because
 the importance sampling estimator has high variance in these regions resulting
@@ -155,8 +159,8 @@ Both V2 and V3 are *biased* (as they are lower bounds), but we can mitigate the
 bias by *tuning* the hyperparameter $R$ on a heldout sample (we can even tune
 $\delta$, if desired). Additionally, V2 and V3 are 'valid' when $q$ has limited
 support since they prevent the importance weights from exploding (of course, the
-bias can be arbitrarily bad, but unavoidable given the learning-from-only-logged
-data setup).
+bias can be arbitrarily bad, but probably unavoidable given the
+learning-from-only-logged data setup).
 
 Extensions
 ----------
@@ -172,10 +176,10 @@ discussion appear towards the end of the post.
 (mentioned above). Here $p$ and $q$ share an *unknown* environment factor: the
 distribution of contexts. Luckily, we do not need to know the value of this
 factor in order to apply any of our estimators because they are all based on
-likelihood *ratios*, thus the shared unknown factors in the importance weights
-cancel out!  Some specific examples are given below. Of course, these factors do
-influence the estimators because they are crucial in *sampling*, they just
-aren't necessary in *evaluation*.
+likelihood *ratios*, thus the shared unknown factors cancel out!  Some specific
+examples are given below. Of course, these factors do influence the estimators
+because they are crucial in *sampling*, they just aren't necessary in
+*evaluation*.
 
   - In contextual bandit example, $x$ is a state-action pair, $w_{\theta}(x) =
     \frac{p_{\theta}(x)}{q(x)} = \frac{ p_{\theta}(s,a) }{ q(s,a) } =
@@ -188,13 +192,14 @@ aren't necessary in *evaluation*.
     p(s_{t+1}|s_t,a_t) q(a_t|s_t) } = \frac{\prod_{t=0}^T \pi_\theta(a_t|s_t)}
     {\prod_{t=0}^T q(a_t|s_t)}.$
 
-**Variance reduction**: Mostly rely on
-[control variates](https://en.wikipedia.org/wiki/Control_variates) of which
-*baseline functions* are a special case. These other variables (covariates) that
-are correlated with $r(x)$ for which we know their expectations (or at least
-they are estimated separately). A great example is how ad click depend strongly
-on time-of-day (fewer people are online late at night so we get fewer clicks),
-thus the time-of-day covariate explains a large part of the variation in $r(x)$.
+**Variance reduction**: These estimators can all be improved with variance
+reduction techniques. Probably the most effective technique is using
+[control variates](https://en.wikipedia.org/wiki/Control_variates) (of which
+baseline functions are a special case). These are random variables correlated
+with $r(x)$ for which we know their expectations (or at least they are estimated
+separately). A great example is how ad clicks depend strongly on time-of-day
+(fewer people are online late at night so we get fewer clicks), thus the
+time-of-day covariate explains a large part of the variation in $r(x)$.
 
 **Estimation instead of optimization**: You can use this general setup for
 estimation instead of optimization, in which case it's fine to let $r$ have
@@ -207,13 +212,13 @@ samples, which is called the **propensity score** (PS). PS attempts to account
 for **confounding variables**, which are hidden causes that control variation in
 the data. Failing to account for confounding variables may lead to
 [incorrect conclusions](https://en.wikipedia.org/wiki/Simpson's_paradox). Unfortunately,
-PS results in a biased estimator for two reasons because we're using a 'ratio of
-expectations' instead of an 'expectation of ratios'. PS is only statistically
-consistent in the (unlikely) event that the density estimate is correctly
-specified (i.e., we can eventually get $q$ correct). In the unknown $q$ setting,
-it's often better to use the **doubly-robust estimator** (DR) which combines
-*two* estimators: a density estimator for $q$ and a function approximation for
-$r$. A great explanation for the bandit case is in
+PS results in a biased estimator because we're using a 'ratio of expectations'
+(we'll divide by the PS estimate) instead of an 'expectation of ratios'. PS is
+only statistically consistent in the (unlikely) event that the density estimate
+is correctly specified (i.e., we can eventually get $q$ correct). In the unknown
+$q$ setting, it's often better to use the **doubly-robust estimator** (DR) which
+combines *two* estimators: a density estimator for $q$ and a function
+approximation for $r$. A great explanation for the bandit case is in
 [Dudík et al. (2011)](https://arxiv.org/abs/1103.4601). The DR estimator is also
 biased, but it has a better bias-variance tradeoff than PS.
 
