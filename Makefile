@@ -19,5 +19,5 @@ clean:
 
 push: html
 	rsync -a output/. ~/projects/self/timvieira.github.com/blog/.
-	( cd ~/projects/self/timvieira.github.com/ && hg ci -m 'update blog' && hg push )
+	( cd ~/projects/self/timvieira.github.com/ && hg ci -m 'update blog' && hg bookmarks -r tip master && hg push )
 
