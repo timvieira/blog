@@ -20,10 +20,12 @@ from a older one.
 
 In this post, I'll discuss some basic techniques for learning from logged
 data. For the large part, this post is based on things I learned from
-[Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (one my favorite
-papers!).
+[Peshkin & Shelton (2002)](http://www.cs.ucr.edu/~cshelton/papers/docs/icml02.pdf)
+and [Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (two of all-time
+favorite papers).
 
-**Setup**: We're trying to optimize a function of the form,
+**Setup** (*off-line off-policy optimization*): We're trying to optimize a
+function of the form,
 
 $$
 J(\theta) = \underset{p_\theta}{\mathbb{E}} \left[ r(x) \right] = \sum_{x \in \mathcal{X}} p_\theta(x) r(x).
@@ -32,32 +34,36 @@ $$
 <br/> But! We only have a *fixed* sample of size $m$ from a data collection
 policy $q$, $\{ (r^{(j)}, x^{(j)} ) \}_{j=1}^m \overset{\text{i.i.d.}} \sim q.$
 
-I've used the notation $r^{(j)}$ instead of $r(x^{(j)})$ to emphasize that we
-can't evaluate $r$ at $x$ values other than those in the sample. This setup is
-sometimes called *off-line off-policy optimization*.
+* Although, it's not *necessarily* the case, you can think of $q = p_{\theta'}$
+  for a *fixed* value $\theta'.$
 
-We'll let the space $\mathcal{X}$ be an arbitrary multivariate space (allowing a
-mix of continuous and discrete components) with appropriate densities,
-$p_{\theta}$ and $q,$ defined over it.
+* $\mathcal{X}$ be an arbitrary multivariate space, which permits a mix of
+  continuous and discrete components, with appropriate densities, $p_{\theta}$
+  and $q$ defined over it.
 
-Although, it's not necessarily the case, you can think of $q$ as a specific
-instance of $p_{\theta'}$ for a fixed value $\theta'.$
+* The function $r: \mathcal{X} \mapsto \mathbb{R}$ is a black box that outputs a
+  scalar score.
 
-Each distribution includes two types factors: **policy factors**, which directly
-depend on $\theta$, and **environment factors**, which do not depend directly on
-$\theta$. Note that environment factors are *only* accessible via sampling. For
-now, assume that we can evaluate environment factors; later, I'll discuss how we
-cleverly work around it. For example, a *contextual bandit problem*, where $x$
-is a context-action pair, $x = (s,a)$. Here $q$ is factored $q(x) = q(a|s) p(s)$
-and $p_{\theta}$ is factored as $p_{\theta}(x) = p_{\theta}(a|s) p(s)$. Note
-that $p$ and $q$ share an environment factor $p(s)$, the distribution over
-contexts, and only differ in the action-given-context factor, a policy factor.
+* I've used the notation $r^{(j)}$ instead of $r(x^{(j)})$ to emphasize that we
+  can't evaluate $r$ at $x$ values other than those in the sample.
 
-Technicalities: To avoid difficulties, we'll assume that $q$ assigns positive
-probability everywhere, $q(x) > 0$ for all $x \in \mathcal{X}$ (assumption
-A1). This means is that the data collection process must be randomized and
-eventually sample all possible configurations. Later, I discuss relaxing this
-assumption (see 'extensions').
+* We'll assume that $q$ assigns positive probability everywhere, $q(x) > 0$ for
+  all $x \in \mathcal{X}$. This means is that the data collection process must
+  be randomized and eventually sample all possible configurations. Later, I
+  discuss relaxing this assumption.
+
+
+Each distribution is a product of one or more factors of the following types:
+**policy factors** (at least one), which directly depend on $\theta$, and
+**environment factors** (possibly none), which do not depend directly on
+$\theta$. Note that environment factors are *only* accessible via sampling
+(i.e., we don't know the *value* they assign to a sample). For example, a
+*contextual bandit problem*, where $x$ is a context-action pair, $x =
+(s,a)$. Here $q(x) = q(a|s) p(s)$ and $p_{\theta}(x) = p_{\theta}(a|s)
+p(s)$. Note that $p_{\theta}$ and $q$ share the environment factor $p(s)$, the
+distribution over contexts, and only differ in the action-given-context
+factor. For now, assume that we can evaluate all environment factors; later,
+I'll discuss how we cleverly work around it.
 
 
 <!--
@@ -66,14 +72,14 @@ even extend it to a full-blown MDP or POMDP by taking $x$ to be a sequence of
 state-action pairs, often called "trajectories".)
 -->
 
-The main challenge of this setting is that we don't have controlled experiments
-to learn from because $q$ is not (completely) in our control. This manifests
-itself as high variance ("noise") in estimating $J(\theta)$. Consider the
-contextual bandit setting, here we sample a state and get to try a single
-action; we never get to rollback to that precise state and try an alternative
-action (#yolo) because we do not control $p(s)$. This is an important paradigm
-for many 'real world' problems, e.g., predicting medical treatments or ad
-selection.
+**The main challenge** of this setting is that we don't have controlled
+experiments to learn from because $q$ is not (completely) in our control. This
+manifests itself as high variance ("noise") in estimating $J(\theta)$. Consider
+the contextual bandit setting, we receive a context $s$ and execute single
+action; we never get to rollback to that precise context and try an alternative
+action (to get a paired sample #yolo) because we do not control $p(s)$. This is
+an important paradigm for many 'real world' problems, e.g., predicting medical
+treatments or ad selection.
 
 <!--
 This is the crucial difference that makes counterfactual learning
@@ -94,9 +100,13 @@ $$
 <br/> This estimator is remarkable: it uses importance sampling as a function
 approximator! We have an *unbiased* estimate of $J(\theta)$ for any value of
 $\theta$ that we like. *The catch* is that we have to pick $\theta$ a priori,
-i.e., with no knowledge of the sample. We also require that the usual 'support
+i.e., with no knowledge of the sample.
+
+<!--
+We also require that the usual 'support
 conditions' for importance sampling conditions ($p_{\theta}(x)>0 \Rightarrow
 q(x)>0$ for all $x \in \mathcal{X}$, which is why we made assumption A1.
+-->
 
 After we've collected a (large) sample it's possible to optimize
 $\hat{J}_{\!\text{IS}}$ using any (deterministic) optimization algorithm (e.g.,
@@ -127,7 +137,8 @@ clipping importance weights, replace $w^{(j)}_{\theta}$ with $\min(R,
 w^{(j)}_{\theta})$.
 
 **Confidence intervals** [V3]: We can augment the V2 lower bound with confidence
-intervals derived from the empirical Bernstein bound (EBB). The EBB *penalizes*
+intervals derived from the empirical Bernstein bound (EBB). We'll require that
+$r$ is bounded and that we know its max/min values. The EBB *penalizes*
 hypotheses (values of $\theta$) which have higher sample variance. (Note: a
 Hoeffding bound wouldn't change the *shape* of the objective, but EBB does
 thanks to the sample variance penalty. EBB tends to be tighter.). The EBB
@@ -157,14 +168,14 @@ these assumptions (and some different questions, of course). Some extensions and
 discussion appear towards the end of the post.
 -->
 
-**Unknown factors**: Consider the contextual bandit setting (mentioned
-above). Here $p$ and $q$ share an *unknown* factor: the distribution of
-contexts. Luckily, we do not need to know the value of this factor in order to
-apply any of our estimators because they are all based on likelihood *ratios*,
-thus the shared unknown factors in the importance weights cancel out! Some
-specific examples are given below. Of course, these factors do influence the
-estimators because they are crucial in *sampling*, they just aren't necessary in
-*evaluation*.
+**Unknown environment factors**: Consider the contextual bandit setting
+(mentioned above). Here $p$ and $q$ share an *unknown* environment factor: the
+distribution of contexts. Luckily, we do not need to know the value of this
+factor in order to apply any of our estimators because they are all based on
+likelihood *ratios*, thus the shared unknown factors in the importance weights
+cancel out!  Some specific examples are given below. Of course, these factors do
+influence the estimators because they are crucial in *sampling*, they just
+aren't necessary in *evaluation*.
 
   - In contextual bandit example, $x$ is a state-action pair, $w_{\theta}(x) =
     \frac{p_{\theta}(x)}{q(x)} = \frac{ p_{\theta}(s,a) }{ q(s,a) } =
@@ -185,52 +196,58 @@ they are estimated separately). A great example is how ad click depend strongly
 on time-of-day (fewer people are online late at night so we get fewer clicks),
 thus the time-of-day covariate explains a large part of the variation in $r(x)$.
 
+**Estimation instead of optimization**: You can use this general setup for
+estimation instead of optimization, in which case it's fine to let $r$ have
+real-valued multivariate output. The confidence intervals are probably useful in
+that setting too.
+
 **Unknown $q$**: Often $q$ is an existing complex system, which does not record
 its probabilities. It is possible to use regression to estimate $q$ from the
-samples, which is called the **propensity score** (PS). Unfortunately, PS
-results in a biased estimator because we're using a 'ratio of expectations'
-instead of an 'expectation of ratios'. PS is only statistically consistent in
-the (unlikely) event that the density estimate is correctly specified. In the
-unknown $q$ setting, it's better to use the **doubly-robust estimator** (DR)
-which combines *two* estimators: a density estimator for $q$ and a function
-approximation for $r$. A great explanation for the bandit case is in
+samples, which is called the **propensity score** (PS). PS attempts to account
+for **confounding variables**, which are hidden causes that control variation in
+the data. Failing to account for confounding variables may lead to
+[incorrect conclusions](https://en.wikipedia.org/wiki/Simpson's_paradox). Unfortunately,
+PS results in a biased estimator for two reasons because we're using a 'ratio of
+expectations' instead of an 'expectation of ratios'. PS is only statistically
+consistent in the (unlikely) event that the density estimate is correctly
+specified (i.e., we can eventually get $q$ correct). In the unknown $q$ setting,
+it's often better to use the **doubly-robust estimator** (DR) which combines
+*two* estimators: a density estimator for $q$ and a function approximation for
+$r$. A great explanation for the bandit case is in
 [Dudík et al. (2011)](https://arxiv.org/abs/1103.4601). The DR estimator is also
 biased, but it has a better bias-variance tradeoff than PS.
 
 **What if $q$ doesn't have support everywhere?** This is an especially important
 setting because it is often the case that data collection policies abide by some
-**safety regulations**, which prevent bad configurations. In many situations,
-evaluating $r(x)$ corresponds to execution a policy ($q$) in the real world and
-as terrible outcomes could occur, such as, breaking a system, giving a patient a
-bad treatment, or losing money. V1 is ok to use as long as we satisfy the
-importance sampling support conditions, which might mean rejecting certain
-values for $\theta$ and consequently finding a less-optimal policy (this might
-be non-trivial to enforce). V2 and V3 are ok to use without an explicit
-constraint, but additional care may be needed to ensure specific safety
-constraints are satisfied (if that's desired).
+**safety regulations**, which prevent known bad configurations. In many
+situations, evaluating $r(x)$ corresponds to executing an action $x$ in the real
+world so terrible outcomes could occur, such as, breaking a system, giving a
+patient a bad treatment, or losing money. V1 is ok to use as long as we satisfy
+the importance sampling support conditions, which might mean rejecting certain
+values for $\theta$ (might be non-trivial to enforce) and consequently finding a
+less-optimal policy. V2 and V3 are ok to use without an explicit constraint, but
+additional care may be needed to ensure specific safety constraints are
+satisfied by the learned policy.
 
 **What if $q$ is deterministic?** This is related to the point above. This is a
-really hard problem. Essentially, this trying to learn without any exploration /
+hard problem. Essentially, this trying to learn without any exploration /
 experimentation! In general, we need exploration to learn. Randomization isn't
 the only way to perform exploration, there are many systematic types of
-experimentation. It's however, more difficult to account for **confounding
-variables**, which are hidden causes that control variation in the data. Failing
-to account for confounding variables may lead to
-[incorrect conclusions](https://en.wikipedia.org/wiki/Simpson's_paradox).
+experimentation.
 
-  - There are some cases of systematic (non-random) exploration /
-    experimentation that are ok. For example, enumerating all elements of
-    $\mathcal{X}$ (almost certainly infeasible). Another example is a contextual
-    bandit where $q$ assigns actions to contexts deterministically via a hash
-    function. This setting is fine because $q$ is essentially a uniform
-    distribution over actions, which is independent of the state. In other
-    special cases, we may be able to characterize systematic exploration as
-    *stratified sampling*.
+  - There are some cases of systematic experimentation that are ok. For example,
+    enumerating all elements of $\mathcal{X}$ (almost certainly
+    infeasible). Another example is a contextual bandit where $q$ assigns
+    actions to contexts deterministically via a hash function (this setting is
+    fine because $q$ is essentially a uniform distribution over actions, which
+    is independent of the state). In other special cases, we *may* be able to
+    characterize systematic exploration as
+    [stratified sampling](https://en.wikipedia.org/wiki/Stratified_sampling).
 
   - A generic solution might be to apply the doubly-robust estimator, which
     "smooths out" deterministic components (by pretending they are random) and
-    accounting for confounds (by explicitly modeling them in the inverse
-    propensity estimate, which often requires careful domain knowledge).
+    accounting for confounds (by explicitly modeling them in the propensity
+    score).
 
 **What if we control data collection ($q$)?** This is an interesting
 setting. Essentially, it asks "how do we explore/experiment optimally (and
@@ -241,9 +258,11 @@ some papers cleverly design $q$. The first that comes to mind is
 [Levine & Koltun (2013)](https://graphics.stanford.edu/projects/gpspaper/gps_full.pdf). Another
 setting is *online* contextual bandits, in which algorithms like
 [EXP4](http://jmlr.org/proceedings/papers/v15/beygelzimer11a/beygelzimer11a.pdf)
-and Thompson sampling, prescribe certain types of exploration. Lastly, I'll
-mention that there is a fair amount of work in choosing importance sampling
-proposal distributions to reduce variance, which may apply.
+and
+[Thompson sampling](http://www.research.rutgers.edu/~lihong/pub/Chapelle12Empirical.pdf),
+prescribe certain types of exploration and work interactively (i.e., they don't
+have a fixed training sample). Lastly, I'll mention that there are many
+techniques for variance reduction by importance sampling, which may apply.
 
 
 Further reading
@@ -267,9 +286,9 @@ Discussed in extensions section.
 > [Safe reinforcement learning](http://psthomas.com/papers/Thomas2015c.pdf).
 > PhD Thesis 2015.
 
-Covers many of the same policy evaluation via importance sampling bounds as
-Bottou et al., but also covers learning algorithms for RL with safety guarantees
-(e.g., so we don't break the robot).
+Covers confidence intervals for policy evaluation similar to Bottou et al., as
+well as learning algorithms for RL with safety guarantees (e.g., so we don't
+break the robot).
 
 > Peshkin and Shelton.
 > [Learning from scarce experience](http://www.cs.ucr.edu/~cshelton/papers/docs/icml02.pdf).
