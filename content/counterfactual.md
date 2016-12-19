@@ -119,7 +119,7 @@ $\hat{J}_{\!\text{IS}}$. Actually, it's a bit worse: this objective tends to
 favor regions of $\theta$, which are not well represented in the sample because
 the importance sampling estimator has high variance in these regions resulting
 from large importance weights (when $q(x)$ is small and $p_{\theta}(x)$ is
-large, $w(x)$ is large and consequently so is $J_{\text{IS}}$ regardless of
+large, $w(x)$ is large and consequently so is $\hat{J}_{\text{IS}}$ regardless of
 whether $r(x)$ is high!). Thus, we want some type of "regularization" to keep
 the optimizer in regions which are sufficiently well-represented by the sample.
 
@@ -146,7 +146,7 @@ $r$ is bounded and that we know its max/min values. The EBB *penalizes*
 hypotheses (values of $\theta$) which have higher sample variance. (Note: a
 Hoeffding bound wouldn't change the *shape* of the objective, but EBB does
 thanks to the sample variance penalty. EBB tends to be tighter.). The EBB
-introduces an additional a "confidence" hyperparameter, $(1-\delta)$. Bottou et
+introduces an additional "confidence" hyperparameter, $(1-\delta)$. Bottou et
 al. recommend maximizing the lower bound as it provides safer improvements. See
 the original paper for the derivation.
 
