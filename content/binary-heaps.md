@@ -91,11 +91,13 @@ Since fewer intermediate quantities depend on a given input, fewer intermediates
 need to be adjusted upon a change to the input. Therefore, we get faster
 algorithms for *maintaining* the output quantity $z$ as the inputs change.
 
-**Heap datastructure**: We're going to store the values of the intermediates
-quantities and inputs in a heap datastructure, which is a *complete* binary
-tree. In our case, the tree has depth $1 + \lceil \log_2 n \rceil$, with the
-values of $\boldsymbol{w}$ at it's leaves (aligned left) and padding with
-$\boldsymbol{0}$ for remaining leaves. Thus, the array's length is $< 4 n$.
+**Heap datastructure** (aka
+[binary index tree or Fenwick tree](https://en.wikipedia.org/wiki/Fenwick_tree)):
+We're going to store the values of the intermediates quantities and inputs in a
+heap datastructure, which is a *complete* binary tree. In our case, the tree has
+depth $1 + \lceil \log_2 n \rceil$, with the values of $\boldsymbol{w}$ at it's
+leaves (aligned left) and padding with $\boldsymbol{0}$ for remaining
+leaves. Thus, the array's length is $< 4 n$.
 
 This structure makes our implementation really nice and efficient because we
 don't need pointers to find the parent or children of a node (i.e., no need to
@@ -226,7 +228,8 @@ Use cases include
 
 * [Gibbs sampling](https://en.wikipedia.org/wiki/Gibbs_sampling), where
   distributions are constantly modified and sampled from (changes may not be
-  sparse so YMMV)
+  sparse so YMMV). The heap sampler is used in
+  [this paper](https://arxiv.org/abs/1412.4986).
 
 * [EXP3](https://jeremykun.com/2013/11/08/adversarial-bandits-and-the-exp3-algorithm/)
   ([mutli-armed bandit algorithm](https://en.wikipedia.org/wiki/Multi-armed_bandit))
