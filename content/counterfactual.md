@@ -119,8 +119,8 @@ $\hat{J}_{\!\text{IS}}$. Actually, it's a bit worse: this objective tends to
 favor regions of $\theta$, which are not well represented in the sample because
 the importance sampling estimator has high variance in these regions resulting
 from large importance weights (when $q(x)$ is small and $p_{\theta}(x)$ is
-large, $w(x)$ is large and consequently so is $\hat{J}_{\text{IS}}$ regardless of
-whether $r(x)$ is high!). Thus, we want some type of "regularization" to keep
+large, $w(x)$ is large and consequently so is $\hat{J}_{\!\text{IS}}$ regardless
+of whether $r(x)$ is high!). Thus, we want some type of "regularization" to keep
 the optimizer in regions which are sufficiently well-represented by the sample.
 
 <!--
