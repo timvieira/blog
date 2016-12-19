@@ -9,7 +9,7 @@ $$
 f'(x) \approx \frac{1}{\varepsilon} \text{Im}\Big[ f(x + i \cdot \varepsilon) \Big]
 $$
 
-Recall, the centered-difference approximation is a fairly accurate method for
+<br/>Recall, the centered-difference approximation is a fairly accurate method for
 approximating derivatives of a univariate function $f$, which only requires two
 function evaluations. A similar derivation, based on the Taylor series expansion
 with a complex perturbation, gives us a similarly-accurate approximation with a
@@ -18,7 +18,7 @@ evaluations. Note: $f$ must support complex inputs (in frameworks, such as numpy
 or matlab, this often requires no modification to source code).
 
 This post is based on
-[Martins+'03](http://mdolab.engin.umich.edu/sites/default/files/Martins2003CSD.pdf)
+[Martins+'03](http://mdolab.engin.umich.edu/sites/default/files/Martins2003CSD.pdf).
 
 **Derivation**: Start with the Taylor series approximation:
 
@@ -31,28 +31,28 @@ f(x + i \cdot \varepsilon) =
 + \cdots
 $$
 
-Take the imaginary part of both sides and solve for $f'(x)$. Note: the $f$ and
+<br/>Take the imaginary part of both sides and solve for $f'(x)$. Note: the $f$ and
 $f''$ term disappear because $i^0$ and $i^2$ are real-valued.
 
 $$
 f'(x) = \frac{1}{\varepsilon} \text{Im}\Big[ f(x + i \cdot \varepsilon) \Big] + \frac{\varepsilon^2}{3!} f'''(x) + \cdots
 $$
 
-As usual, using a small $\varepsilon$ let's us throw out higher-order
+<br/>As usual, using a small $\varepsilon$ let's us throw out higher-order
 terms. And, we arrive at the following approximation:
 
 $$
 f'(x) \approx \frac{1}{\varepsilon} \text{Im}\Big[ f(x + i \cdot \varepsilon) \Big]
 $$
 
-If instead, we take the real part and solve for $f(x)$, we get an approximation
+<br/>If instead, we take the real part and solve for $f(x)$, we get an approximation
 to the function's value at $x$:
 
 $$
 f(x) \approx \text{Re}\Big[ f(x + i \cdot \varepsilon) \Big]
 $$
 
-In other words, a single (complex) function evaluations computes both the
+<br/>In other words, a single (complex) function evaluations computes both the
 function's value and the derivative.
 
 **Code**:
@@ -88,3 +88,7 @@ print complex_step(f)(x)
   evaluation, it's unlikely faster than performing two function evaluations
   because operations on complex numbers are generally much slower than on floats
   or doubles.
+
+
+**Code**: Check out the
+[gist](https://gist.github.com/timvieira/3d3db3e5e78e17cdd103) for this post.
