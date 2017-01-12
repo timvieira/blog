@@ -30,7 +30,7 @@ For example:
 [ inf]   # expected: 1e+300
 ```
 
-This fails because we can't square big
+This fails because we can't square ``big``
 
 ```python
 >>> np.array([big])**2
@@ -40,7 +40,7 @@ This fails because we can't square big
 
 ## A little math
 
-There is a way to avoid overflow on the account of a few large $x_i$.
+There is a way to avoid overflowing because of a few large $x_i$.
 
 Here's a little fact about p-norms: for any $p$ and $\boldsymbol{x}$
 $$

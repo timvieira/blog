@@ -24,7 +24,7 @@ data. For the large part, this post is based on things I learned from
 and [Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (two of all-time
 favorite papers).
 
-After reading this post, have a look at the
+After reading, have a look at the
 [Jupyter notebook](https://gist.github.com/timvieira/788c2c25c94663c49abada60f2e107e9)
 accompanying this post!
 
