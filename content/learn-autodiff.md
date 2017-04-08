@@ -24,7 +24,8 @@ I learned automatic differentiation from section 2 of
     called "adjoints") allow for equally efficient gradient evaluation ("back
     propagation").
 
- - The structure of the backward algorithm is always the same.
+ - The graph structure of the backward algorithm is always the same as
+   forward. (This is surprising.)
 
    We have:
 
