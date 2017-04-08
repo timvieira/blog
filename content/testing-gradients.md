@@ -15,7 +15,7 @@ this stuff useful. You'll probably have to write gradient code without the aid
 of an autodiff library someday... So either way, knowing this stuff is good for
 you. To answer the question, everyone.
 
-**The setup**: Suppose we have a function, $f: \mathbb{R}^n \rightarrow
+**The setup**: Suppose we have a function, $f: \mathbb{R}^d \rightarrow
 \mathbb{R}$, and we want to test code that computes $\nabla f$. Note that these
 techniques also apply when $f$ has multi-variate output; I'll briefly touch on
 that in the section "extra credit 1".
