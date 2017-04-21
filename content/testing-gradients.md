@@ -1,4 +1,4 @@
-title: How to test gradient computation
+title: How to test gradient implementations
 date: 2017-04-21
 comments: true
 tags: testing, calculus
