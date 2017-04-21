@@ -160,9 +160,10 @@ datasets.
 
 **Test that batch = minibatch** (if applicable). It's very easy to get this bit
 wrong. Broadcasting rules (in numpy, for example) makes it easy to hide matrix
-conformability mishaps so make sure you get the same results manual minibatching
-(Of course, you should only do minibatching if are get a speed-up from
-vectorization. You should probably test that it's minibatch actually faster.)
+conformability mishaps. So make sure you get the same results as manual
+minibatching (Of course, you should only do minibatching if are get a speed-up
+from vectorization or parallelism. You should probably test that it's actually
+faster.)
 
 <!--
 Other common sources of bugs
