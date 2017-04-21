@@ -1,5 +1,5 @@
 title: How to test gradient computation
-date: 2017-04-08
+date: 2017-04-21
 comments: true
 tags: testing, calculus
 
