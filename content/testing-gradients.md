@@ -37,9 +37,8 @@ $n$ elementary vectors as the directions, but random directions are just as good
 **Always use the two-sided difference formula**. There is a version which
 doesn't add *and* subtract, just does one or the other. Do not use it ever.
 
-**Make sure you test multiple inputs** (values of $\boldsymbol{x}$), or any
-other things that the function depends on, which might depend on (e.g., the
-minibatch).
+**Make sure you test multiple inputs** (values of $\boldsymbol{x}$) or any thing
+else the function depends on (e.g., the minibatch).
 
 **What directions to use**: When debugging, I tend to use elementary directions
 because they tell me something about which dimensions that are wrong... this
@@ -92,12 +91,12 @@ How to compare vectors
 **Absolute difference is the devil.** You should never compare vectors in
 absolute difference (this is Lecture 1 of any numerical methods course). In this
 case, the problem is that gradients depend strongly on the scale of $f$. If $f$
-takes tiny values then it's easy for differences to be lower than a tiny small
+takes tiny values then it's easy for differences to be lower than a tiny
 threshold.
 
-Most people use **relative error** $= \frac{|\text{expected} -
-\text{got}|}{|\text{expected}|}$, to get a scale-free error measure, but
-unfortunately relative error chokes when $\text{expected}$ is zero.
+Most people use **relative error** $= \frac{|\textbf{want} -
+\textbf{got}|}{|\textbf{want}|}$, to get a scale-free error measure, but
+unfortunately relative error chokes when $\textbf{want}$ is zero.
 
 I compute several error measures with a script that you can import from my
 github
@@ -109,9 +108,9 @@ I use two metrics to test gradients:
    it. I'll rely on the other measure.
 
 2. Pearson correlation: Checks the *direction* of the gradient, but allows a
-   scale and shift transformation. This measures don't have trouble with zeros,
-   but allow scale and shift problems to pass by. Make sure you fix those
-   errors! (e.g. In the CRF example, you might have forgotten to divide by
+   scale and shift transformation. This measure doesn't have trouble with zeros,
+   but allows scale and shift problems to pass by. *Make sure you fix those
+   errors!* (e.g. In the CRF example, you might have forgotten to divide by
    $Z(x)$, which not really a constant... I've made this exact mistake a few
    times.)
 
@@ -131,7 +130,7 @@ which I find super useful when debugging absolutely anything numerical.
 
 ## Bonus tests
 
-**Testing modules**: You can test the different modules of you code as well
+**Testing modules**: You can test the different modules of your code as well
 (assuming you have a composable module-based setup). E.g., I test my DP
 algorithm independent of how the features and downstream loss are computed. You
 can also test feature and downstream loss modules independent of one
@@ -154,12 +153,11 @@ compare(fd, ad)
 
 **Integration tests**: Test that running a gradient-based optimization algorithm
 is successful with your gradient implementation. Use smaller versions of your
-problem if possible. A related test test for machine learning applications is to
-make sure that your model and learning procedure can (over)fit small
-datasets.
+problem if possible. A related test for machine learning applications is to make
+sure that your model and learning procedure can (over)fit small datasets.
 
 **Test that batch = minibatch** (if applicable). It's very easy to get this bit
-wrong. Broadcasting rules (in numpy, for example) makes it easy to hide matrix
+wrong. Broadcasting rules (in numpy, for example) make it easy to hide matrix
 conformability mishaps. So make sure you get the same results as manual
 minibatching (Of course, you should only do minibatching if are get a speed-up
 from vectorization or parallelism. You should probably test that it's actually
