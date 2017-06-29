@@ -75,7 +75,7 @@ approximation instead of rolling code to compute the gradient. (Take $n$
 axis-aligned unit vectors for $\boldsymbol{d}$.) The FD approximation is very
 accurate. Of course, specialized code is probably a little more accurate, but
 that's not *really* why we bother to do it! The reason why we write specialized
-gradient code is *not* improve numerical accuracy, it's to improve
+gradient code is *not* to improve numerical accuracy, it's to improve
 *efficiency*. As I've
 [ranted](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
 before, automatic differentiation techniques guarantee that evaluating $\nabla
