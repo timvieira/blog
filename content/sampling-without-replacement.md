@@ -129,11 +129,12 @@ $$
 
 **Properties**:
 
- - Satisfies our task criteria: it is both unbiased and sparse (i.e., under the
-   evaluation budget).
+ - It satisfies our task criteria: it is both unbiased and sparse (i.e., under
+   the evaluation budget).
 
- - The procedure works as a reservoir sampling scheme, since the keys and
-   threshold can be computed as we run and stopped at any time, in principle.
+ - Can be modified slightly to support streaming $x_i$, since the keys and
+   threshold can be computed as we run, which means it can be stopped at any
+   time, in principle.
 
  - Priority sampling is a near-optimal $m$-sparse estimator for subset sums
    [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf),
@@ -176,5 +177,6 @@ at $m=n$. (Note that MC's x-axis measures raw evaluations, not distinct ones.)
 
 ## Further reading
 
-If you liked this post, you might like my other
-[posts tagged with sampling](http://timvieira.github.io/blog/tag/sampling.html).
+If you liked this post, you might like my other posts tagged with
+[sampling](http://timvieira.github.io/blog/tag/sampling.html) or
+[reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html).
