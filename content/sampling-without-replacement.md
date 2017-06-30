@@ -116,7 +116,7 @@ alternative formulation.
 
 $$
 \begin{align*}
-&\textbf{Input: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \\
+&\textbf{inputs: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \in \{1, \ldots, n\}\\
 &u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
 & k_i \leftarrow x_i/u_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
 &S \leftarrow \{ \text{top-$m$ elements according to $k_i$} \} \\
