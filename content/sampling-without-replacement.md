@@ -1,5 +1,5 @@
 title: Sampling from a finite universe
-date: 2017-06-27
+date: 2017-06-30
 comments: true
 status: draft
 tags: sampling, statistics, reservoir-sampling
@@ -57,23 +57,6 @@ won't get into bigger questions of how to design these algorithms, instead I'll
 focus on this specific type of estimation problem.
 -->
 
-**An alternative formulation:** We can also formulate our estimation problem as
-seeking a sparse, unbiased approximation to $\boldsymbol{p}$, the vector of
-probabillties. We want our approximation, $\boldsymbol{s}$ to satisfy
-$\mathbb{E}[\boldsymbol{s}] = \boldsymbol{p}$ and while $|| \boldsymbol{s} ||_0
-\le m$. This will suffice for estimating $\mu$ (above) because
-$\mathbb{E}[\boldsymbol{s}^\top\! \boldsymbol{f}] =
-\mathbb{E}[\boldsymbol{s}]^\top\! \boldsymbol{f} = \boldsymbol{p}^\top\!
-\boldsymbol{f} = \mu$ where $\boldsymbol{f}$ is a vector of all $n$ values of
-the function $f$. Obviously, you don't need to evaluate $f$ in places where
-$\boldsymbol{s}$ is zero so it works for our budgeted estimation task. Of
-course, unbiased estimation of all probabillties is not *necessary* for unbiased
-estimation of $\mu$ alone. However, this characterization is a good model for
-when we have zero knowledge of $f$. Additionally, this formulation might be of
-independent interest, since a sparse, unbiased representation of a vector might
-be useful in some applications (e.g., replacing dense vector with a sparse
-vector can lead to more efficient computation).
-
 **Monte Carlo:** The most well-known approach to this type of problem is Monte
 Carlo (MC) estimation: sample $x^{(1)}, \ldots, x^{(m)}
 \overset{\tiny\text{i.i.d.}}{\sim} p$, return $\widehat{\mu}_{\text{MC}} =
@@ -108,44 +91,64 @@ which we won't be using!). There are lots of ways to do sample without
 replacement, e.g., any point process over the universe will do as long as we can
 control the size.
 
+**An alternative formulation:** We can also formulate our estimation problem as
+seeking a sparse, unbiased approximation to a vector $\boldsymbol{x}$. We want
+our approximation, $\boldsymbol{s}$ to satisfy $\mathbb{E}[\boldsymbol{s}] =
+\boldsymbol{x}$ and while $|| \boldsymbol{s} ||_0 \le m$. This will suffice for
+estimating $\mu$ (above) when $\boldsymbol{x}=\boldsymbol{p}$, the vector of
+probabillties, because $\mathbb{E}[\boldsymbol{s}^\top\! \boldsymbol{f}] =
+\mathbb{E}[\boldsymbol{s}]^\top\! \boldsymbol{f} = \boldsymbol{p}^\top\!
+\boldsymbol{f} = \mu$ where $\boldsymbol{f}$ is a vector of all $n$ values of
+the function $f$. Obviously, you don't need to evaluate $f$ in places where
+$\boldsymbol{s}$ is zero so it works for our budgeted estimation task. Of
+course, unbiased estimation of all probabillties is not *necessary* for unbiased
+estimation of $\mu$ alone. However, this characterization is a good model for
+when we have zero knowledge of $f$. Additionally, this formulation might be of
+independent interest, since a sparse, unbiased representation of a vector might
+be useful in some applications (e.g., replacing dense vector with a sparse
+vector can lead to more efficient computation).
 
 **Priority sampling**: Priority sampling (Duffield et al., 2005;
 [Duffield et al., 2007](http://nickduffield.net/download/papers/priority.pdf))
 is a remarkable simple and elegant algorithm, which is essentially optimal for
-our task. Here is pseudocode for priority sampling (PS).
+our task. Here is pseudocode for priority sampling (PS), based on the
+alternative formulation.
 
 $$
 \begin{align*}
-&u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \mathcal{U}(0,1] \\
-& k_i \leftarrow p_i/u_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
+&\textbf{Input: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \\
+&u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
+& k_i \leftarrow x_i/u_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
 &S \leftarrow \{ \text{top-$m$ elements according to $k_i$} \} \\
 &\tau \leftarrow (m+1)^{\text{th}}\text{ largest }k_i \\
-&\widehat{\mu}_{\text{PS}} = \sum_{i \in S} \max\left( p_i, \tau \right) \cdot f(i)
+&\text{return }\boldsymbol{s} = \begin{cases}
+  \max\left( x_i, \tau \right)  & \text{ if } i \in S \\
+  0                             & \text{ otherwise}
+\end{cases}
 \end{align*}
 $$
 
+For estimating $\mu$, use the following in place of the last line:
+$$
+\widehat{\mu}_{\text{PS}} = \sum_{i \in S} \max\left( x_i, \tau \right) \cdot f(i)
+$$
 
 **Properties**:
-
- - Priority sampling is a near-optimal $m$-sparse estimator. The proof, given in
-   [Szegedy (2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf),
-   is a bit involved. So I'll only mention the main theorem, which says that the
-   variance of priority sampling with $m$ samples is no worse than the best
-   possible $(m-1)$-sparse estimator in terms of variance, measured as
-   $\textrm{Var}(\sum_i w_i)$, where $w_i$ is an unnormalized version of $p_i$
-   and $\sum_{i \in S} w_i$ is an unbiased estimate of $\sum_{i=1}^n w_i$. The
-   algorithm was designed to estimate sums, which in machine learning is
-   analogous to estimating normalization constants. Absent information about
-   $f$, this the right thing to minimize. But, if you have some knowledge about
-   $f$, you can beat PS (e.g.,. via
-   [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
-   or by modifying PS to sample proportional to $p_i \!\cdot\! |f_i|$ (with a
-   surrogate for $f_i$ because we don't want to evaluate it) instead of $p_i$).
 
  - Samples are uncorrelated, i.e., $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$.
 
  - The procedure works as a reservoir sampling scheme, since the keys and
    threshold can be computed as we run and stopped at any time, in principle.
+
+ - Priority sampling is a near-optimal $m$-sparse estimator for subset sums
+   [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf),
+   i.e., estimating $\sum_{i=1}^n x_i$. The variance of priority sampling with
+   $m$ samples is no worse than the best possible $(m-1)$-sparse estimator in
+   terms of variance. Of course, if you have some knowledge about $f$, you can
+   beat PS (e.g.,. via
+   [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
+   or by modifying PS to sample proportional to $x_i = p_i \!\cdot\! |f_i|$, but
+   presumably with a surrogate for $f_i$ because we don't want to evaluate it).
 
 
 ## Experiments
