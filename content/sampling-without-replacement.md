@@ -81,8 +81,9 @@ Carlo (MC) estimation: sample $x^{(1)}, \ldots, x^{(m)}
 inefficient because it resamples high-probability items over and over again. (2)
 We can improve efficiency&mdash;measured in $f$ evaluations&mdash;somewhat by
 caching past evaluations of $f$. However, this introduces a serious *runtime*
-inefficiency. (3) Even in our simple setting, MC never reaches *zero* error; it
-only converges in an $\epsilon$-$\delta$ sense.
+inefficiency and needs the method needs to be modified to account for the fact
+that $m$ is not fixed ahead of time. (3) Even in our simple setting, MC never
+reaches *zero* error; it only converges in an $\epsilon$-$\delta$ sense.
 
 <!---
 Remarks
@@ -102,14 +103,16 @@ Remarks
 the same elements multiple times by simply *eliminating* them from consideration
 after they have been sampled once. This is called a sampling *without
 replacement* (SWOR) scheme. Note that there is no unique sampling without
-replacement scheme; although, there does seem to be a de facto method. There are
-lots of ways to do sample without replacement, e.g., any point process over the
-universe will do as long as we can control the size.
+replacement scheme; although, there does seem to be a de facto method (PPSWOR;
+which we won't be using!). There are lots of ways to do sample without
+replacement, e.g., any point process over the universe will do as long as we can
+control the size.
 
 
-**Priority sampling**: Priority sampling (Duffield et al., 2005; Duffield et
-al., 2007) is a remarkable simple and elegant algorithm, which is nearly optimalfor our task. Here is pseudocode for priority sampling (PS). (I'll give actual
-Python code at the end).
+**Priority sampling**: Priority sampling (Duffield et al., 2005;
+[Duffield et al., 2007](http://nickduffield.net/download/papers/priority.pdf))
+is a remarkable simple and elegant algorithm, which is essentially optimal for
+our task. Here is pseudocode for priority sampling (PS).
 
 $$
 \begin{align*}
@@ -124,25 +127,48 @@ $$
 
 **Properties**:
 
- - The procedure works as a reservoir sampling scheme, since the keys and
-   threshold can be computed as we run and stopped at any time, in principle.
-
- - Priority sampling is a near-optimal m-sparse estimator. The proof
-   [(Szegedy, 2005)](
-   https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf) seems to be a bit
-   involved. So I'll only mention the main theorem, which says that the variance
-   of priority sampling with $m$ samples is no worse than the best possible
-   $(m-1)$-sparse estimator in terms of variance, measured as
-   $\textrm{Var}(\sum_i w_i)$, which notably ignores $f$.
+ - Priority sampling is a near-optimal $m$-sparse estimator. The proof, given in
+   [Szegedy (2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf),
+   is a bit involved. So I'll only mention the main theorem, which says that the
+   variance of priority sampling with $m$ samples is no worse than the best
+   possible $(m-1)$-sparse estimator in terms of variance, measured as
+   $\textrm{Var}(\sum_i w_i)$, where $w_i$ is an unnormalized version of $p_i$
+   and $\sum_{i \in S} w_i$ is an unbiased estimate of $\sum_{i=1}^n w_i$. The
+   algorithm was designed to estimate sums, which in machine learning is
+   analogous to estimating normalization constants. Absent information about
+   $f$, this the right thing to minimize. But, if you have some knowledge about
+   $f$, you can beat PS (e.g.,. via
+   [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
+   or by modifying PS to sample proportional to $p_i \!\cdot\! |f_i|$ (with a
+   surrogate for $f_i$ because we don't want to evaluate it) instead of $p_i$).
 
  - Samples are uncorrelated, i.e., $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$.
+
+ - The procedure works as a reservoir sampling scheme, since the keys and
+   threshold can be computed as we run and stopped at any time, in principle.
 
 
 ## Experiments
 
-You can get the code for replicating these experiments in this gist.
+You can get the Jupyter notebook for replicating these experiments
+[here](https://github.com/timvieira/blog/blob/master/content/notebook/Priority%20Sampling.ipynb).
+So download the notebook and play with it!
 
-The improvement of PS over MC is shocking, check it out:
+The improvement of priority sampling (PS) over Monte Carlo (MC) is pretty nice,
+check it out:
+
+<center>
+![Priority sampling vs. Monte Carlo](http://timvieira.github.io/blog/images/ps-mc.png)
+</center>
+
+The shaded region indicates the 10% and 90% percentiles over 20,000
+replications, which gives a sense of the variability of each estimator. The
+x-axis is the sampling budget, $m \le n$.
+
+The plot shows a small example with $n=50$. We see that PS's variability
+actually goes to zero, unlike Monte Carlo, which is still pretty inaccurate even
+at $m=n$. (Note that MC's x-axis measures raw evaluations, not distinct ones.)
+
 
 
 ## Further reading
