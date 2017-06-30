@@ -121,10 +121,11 @@ $$
 & k_i \leftarrow x_i/u_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
 &S \leftarrow \{ \text{top-$m$ elements according to $k_i$} \} \\
 &\tau \leftarrow (m+1)^{\text{th}}\text{ largest }k_i \\
-&\text{return }\boldsymbol{s} = \begin{cases}
+& s_i = \begin{cases}
   \max\left( x_i, \tau \right)  & \text{ if } i \in S \\
   0                             & \text{ otherwise}
-\end{cases}
+\end{cases} \\
+&\textbf{return }\boldsymbol{s}
 \end{align*}
 $$
 
