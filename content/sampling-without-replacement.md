@@ -103,7 +103,7 @@ vector can lead to more efficient computations).
 
 **Priority sampling**: Priority sampling (Duffield et al., 2005;
 [Duffield et al., 2007](http://nickduffield.net/download/papers/priority.pdf))
-is a remarkable simple algorithm, which is essentially optimal for our task if
+is a remarkably simple algorithm, which is essentially optimal for our task if
 we assume no knowledge of $f$. Here is pseudocode for priority sampling (PS),
 based on the alternative formulation.
 
@@ -129,32 +129,41 @@ $$
 
 **Properties**:
 
- - It satisfies our task criteria: it is both unbiased and sparse (i.e., under
-   the evaluation budget).
+ - Priority sampling satisfies our task criteria: it is both unbiased and sparse
+   (i.e., under the evaluation budget).
 
- - Can be modified slightly to support streaming $x_i$, since the keys and
-   threshold can be computed as we run, which means it can be stopped at any
-   time, in principle.
+ - Priority sampling can be straighforwardly generalized to support streaming
+   $x_i$, since the keys and threshold can be computed as we run, which means it
+   can be stopped at any time, in principle.
 
- - Priority sampling is a near-optimal $m$-sparse estimator for subset sums
-   [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf),
-   i.e., estimating $\sum_{i=1}^n x_i$. The variance of priority sampling with
-   $m$ samples is no worse than the best possible $(m-1)$-sparse estimator in
-   terms of variance. Of course, if we have some knowledge about $f$, we can
-   beat PS (e.g.,. via
+ - Priority sampling was designed for estimating subset sums, i.e., estimating
+   $\sum_{i \in I} x_i$ for any $I \subseteq \{1,\ldots,n\}$. In this setting,
+   the set of sampled items $S$ is chosen to be representative of the
+   population, albeit much smaller. Under these conditions, priority sampling
+   has been show to have near-optimal variance
+   [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf).
+   Specifically, priority sampling with $m$ samples is no worse than the best
+   possible $(m-1)$-sparse estimator in terms of variance. Of course, when
+   estimating $\mu$ some knowledge about $f$, we can obviously be used to beat
+   PS. We can relate subset sums to estimating $\mu$ by interpreting
+   $\boldsymbol{x} = \alpha\!\cdot\! \boldsymbol{p}$ for some $\alpha$, scaling
+   $f$ appropriately by $\alpha$, and encoding the subset via indicators in
+   $f$'s dimensions.
+   <!-- (e.g.,. via
    [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
    or by modifying PS to sample proportional to $x_i = p_i \!\cdot\! |f_i|$ (as
    well as other straightforward modifications), but presumably with a surrogate
-   for $f_i$ because we don't want to evaluate it).
+   for $f_i$ because we don't want to evaluate it). -->
 
- - Samples are uncorrelated, i.e., $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$
-   and $m \ge 2$. This is surprising since $s_i$ and $s_j$ are related via the
-   threshold $\tau$.
+ - Components of the estimate $\boldsymbol{s}$ are uncorrelated, i.e.,
+   $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$ and $m \ge 2$. This is surprising
+   since $s_i$ and $s_j$ are related via the threshold $\tau$, but these effects
+   seem to cancel each other out.
 
 
 ## Experiments
 
-You can get the Jupyter notebook for replicating these experiments
+You can get the Jupyter notebook for replicating this experiment
 [here](https://github.com/timvieira/blog/blob/master/content/notebook/Priority%20Sampling.ipynb).
 So download the notebook and play with it!
 
@@ -175,8 +184,6 @@ at $m=n$. (Note that MC's x-axis measures raw evaluations, not distinct ones.)
 
 
 
-## Further reading
-
-If you liked this post, you might like my other posts tagged with
+**Further reading:** If you liked this post, you might like my other posts tagged with
 [sampling](http://timvieira.github.io/blog/tag/sampling.html) or
 [reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html).
