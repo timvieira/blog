@@ -54,7 +54,7 @@ reservior sampling
 
 $a = -\infty; b = \text{null}$
 for $i=1,2,\cdots;$ do:
-:  \# Additively perturb each weight by a Gumbel random variate,
+:  \# compute randomized key
 :  $u_i \sim \text{Uniform}(0,1)$
 :  $e_i = u_i^{(\frac{1}{x_i})}$
 :  \# Keep around the largest $e_i$
@@ -62,7 +62,19 @@ for $i=1,2,\cdots;$ do:
 :  $\ \ \ \ a = k_i$
 :  $\ \ \ \ b = i$
 
-Again, if interrupt this algorithm at any point, we have our sample $b$.
+Again, if interrupt this algorithm at any point, we have our sample $b$. Note
+that you can simplify $e_i$ so that you don't have to compute pow (which is nice
+because pow is pretty slow). It's equivalent to use $e'_i = \log(e_i) =
+\log(u_i)/x_i$ because $\log$ is monotonic. (Note that $-e'_i \sim
+\textrm{Exponential}(x_i)$.)
+
+<!--
+I find this version of the algorithm more intuitive, since it's well-known that
+$\left(\underset{{i=1 \ldots t}}{\min} \textrm{Exponential}(x_i) \right) =
+\textrm{Exponential}\left(\sum_{i=1}^t x_i \right)$. This version makes it clear
+that minimizing is actually summing. However, we want the argmin, which is
+distributed according to $\pi_t$.
+-->
 
 **Relationship**: Let's try to relate these algorithms. At a high level, both
 algorithms compute a randomized key and take an argmax. What's the relationship

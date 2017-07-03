@@ -1,5 +1,5 @@
-title: Sampling from a finite universe
-date: 2017-06-30
+title: Estimating means in a finite universe
+date: 2017-07-03
 comments: true
 status: draft
 tags: sampling, statistics, reservoir-sampling
@@ -31,6 +31,11 @@ tags: sampling, statistics, reservoir-sampling
 function toggle(x) { $(x).toggle(); }
 </script>
 
+**Introduction**: In this post, I'm going to describe some efficient approaches
+to estimating the mean of a random variable that can only take on finitely many
+values. Despite the ubiquity of Monte Carlo estimation, it is really inefficient
+for finite domains. I'll describe some lesser-known algorithms based on sampling
+without replacement that can be adapted to estimating means.
 
 **Setup**: Suppose we want to estimate an expectation of a derministic function
 $f$ over a (large) finite universe of $n$ elements where each element $i$ has
@@ -80,9 +85,9 @@ Remarks
 the same elements multiple times by sampling $m$ distinct elements. This is
 called a sampling *without replacement* (SWOR) scheme. Note that there is no
 unique sampling without replacement scheme; although, there does seem to be a
-*de facto* method (PPSWOR; which we won't be using in this post!). There are
-lots of ways to do sample without replacement, e.g., any point process over the
-universe will do as long as we can control the size.
+*de facto* method (more on that later). There are lots of ways to do sample
+without replacement, e.g., any point process over the universe will do as long
+as we can control the size.
 
 **An alternative formulation:** We can also formulate our estimation problem as
 seeking a sparse, unbiased approximation to a vector $\boldsymbol{x}$. We want
@@ -103,29 +108,63 @@ vector can lead to more efficient computations).
 
 **Priority sampling**: Priority sampling (Duffield et al., 2005;
 [Duffield et al., 2007](http://nickduffield.net/download/papers/priority.pdf))
-is a remarkably simple algorithm, which is essentially optimal for our task if
-we assume no knowledge of $f$. Here is pseudocode for priority sampling (PS),
-based on the alternative formulation.
+is a remarkably simple algorithm, which is essentially optimal for our task, if
+we assume no prior knowledge about $f$. Here is pseudocode for priority sampling
+(PS), based on the alternative formulation.
 
 $$
 \begin{align*}
 &\textbf{inputs: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \in \{1, \ldots, n\}\\
 &u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
-& k_i \leftarrow x_i/u_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
-&S \leftarrow \{ \text{top-$m$ elements according to $k_i$} \} \\
-&\tau \leftarrow (m+1)^{\text{th}}\text{ largest }k_i \\
+& k_i \leftarrow u_i/x_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
+&S \leftarrow \{ \text{$m$-smallest elements according to $k_i$} \} \\
+&\tau \leftarrow (m+1)^{\text{th}}\text{ smallest }k_i \\
 & s_i = \begin{cases}
-  \max\left( x_i, \tau \right)  & \text{ if } i \in S \\
-  0                             & \text{ otherwise}
+  \max\left( x_i, 1/\tau \right)  & \text{ if } i \in S \\
+  0                               & \text{ otherwise}
 \end{cases} \\
 &\textbf{return }\boldsymbol{s}
 \end{align*}
 $$
 
-For estimating $\mu$, use the following in place of the last line:
+For estimating $\mu$, use the following:
 $$
-\widehat{\mu}_{\text{PS}} = \sum_{i \in S} \max\left( x_i, \tau \right) \cdot f(i)
+\widehat{\mu}_{\text{PS}} = \sum_{i \in S} s_i \!\cdot\! f(i)
 $$
+
+The definition of $s_i$ might look a little mysterious. In the $(i \in S)$ case,
+it comes from $s_i = \frac{p_i}{p(i \in S | \tau)} = \frac{p_i}{\min(1, x_i
+\cdot \tau)} = \max(x_i,\ 1/\tau)$. The factor $p(i \in S | \tau)$ is an
+importance-weighting correction that comes from the Horvitz-Thompson estimator
+(modified slightly from its usual presentation to accomodate estimating means),
+$\sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S]$, where
+$S$ is sampled according to some process with inclusion probabilities $q_i = p(i
+\in S)$. In the case of priority sampling, we have an auxiliary variable for
+$\tau$ that makes computing $q_i$ easy. Thus, for priority sampling, we can use
+$q_i = p(i \in S | \tau)$. This auxillary variable adds a tiny bit extra noise
+in our estimator, which is tantamount to one extra sample.
+
+<button class="toggle-button" onclick="toggle('#ps-unbiased');">Proof of unbiasedness</button>
+<div id="ps-unbiased" class="derivation" style="display:none;">
+**Proof of unbiasedness**. The following proof is a little different from that
+in the priority sampling papers. I think it's more more straightforward. More
+importantly, it shows how we can extend the method to sample from slightly
+different distributions without replacement distributions.
+
+$$
+\begin{eqnarray}
+\mathbb{E}\left[ \widehat{\mu}_{\text{PS}} \right]
+&=& \mathbb{E}_{\tau, u_1, \ldots u_n}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S] \right] \\
+&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \mathbb{E}_{u_i | \tau}\!\left[ \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S] \right] \right] \\
+&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \mathbb{E}_{u_i | \tau}\!\Big[ \boldsymbol{1}[ i \in S] \Big] \right] \\
+&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot q_i \right] \\
+&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n p_i \cdot f(i) \right] \\
+&=& \sum_{i=1}^n p_i \cdot f(i) \\
+&=& \mu
+\end{eqnarray}
+$$
+</div>
+
 
 **Properties**:
 
@@ -137,18 +176,18 @@ $$
    can be stopped at any time, in principle.
 
  - Priority sampling was designed for estimating subset sums, i.e., estimating
-   $\sum_{i \in I} x_i$ for any $I \subseteq \{1,\ldots,n\}$. In this setting,
-   the set of sampled items $S$ is chosen to be representative of the
-   population, albeit much smaller. Under these conditions, priority sampling
+   $\sum_{i \in I} x_i$ for some $I \subseteq \{1,\ldots,n\}$. In this setting,
+   the set of sampled items $S$ is chosen to be "representative" of the
+   population, albeit much smaller. In the subset sum setting, priority sampling
    has been show to have near-optimal variance
    [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf).
    Specifically, priority sampling with $m$ samples is no worse than the best
    possible $(m-1)$-sparse estimator in terms of variance. Of course, when
    estimating $\mu$ some knowledge about $f$, we can obviously be used to beat
-   PS. We can relate subset sums to estimating $\mu$ by interpreting
+   PS. <!-- We can relate subset sums to estimating $\mu$ by interpreting
    $\boldsymbol{x} = \alpha\!\cdot\! \boldsymbol{p}$ for some $\alpha$, scaling
    $f$ appropriately by $\alpha$, and encoding the subset via indicators in
-   $f$'s dimensions.
+   $f$'s dimensions. -->
    <!-- (e.g.,. via
    [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
    or by modifying PS to sample proportional to $x_i = p_i \!\cdot\! |f_i|$ (as
@@ -159,6 +198,23 @@ $$
    $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$ and $m \ge 2$. This is surprising
    since $s_i$ and $s_j$ are related via the threshold $\tau$, but these effects
    seem to cancel each other out.
+
+ - If we instead sample $u_1, \ldots, u_n \overset{\text{i.i.d.}}{\sim}
+   -\textrm{Exponential}(1)$, then $S$ will be sampled according to the canonical
+   sampling without replacement scheme (i.e., ``numpy.random.sample(..., replace=False)``), known as probability proportional to
+   size without replacement distribution (PPSWOR). To we can then adjust our estimator
+   $$
+   \widehat{\mu}_{\text{PPSWOR}} = \sum_{i \in S} \frac{p_i}{q_i} f(i)
+   $$
+   where $q_i = p(i \in S|\tau) = p(k_i > \tau) = 1-\exp(-x_i \!\cdot\!
+   \tau)$. This estimator performs about as well as priority sampling. It
+   inherits my proof of unbiasedness (above).
+
+ - $\tau$ is an auxiliary variable that is introduced to break complex
+   dependencies between keys. Computing $\tau$'s distribution is complicated
+   because it is an order statistic of non-identically distributed random
+   variates; this means we can't rely on symmetry to make summing over
+   permutations efficient.
 
 
 ## Experiments
