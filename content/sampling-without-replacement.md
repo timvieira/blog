@@ -84,7 +84,7 @@ Remarks
 the same elements multiple times by sampling $m$ distinct elements. This is
 called a sampling *without replacement* (SWOR) scheme. Note that there is no
 unique sampling without replacement scheme; although, there does seem to be a
-*de facto* method (more on that later). There are lots of ways to do sample
+*de facto* method (more on that later). There are lots of ways to do sampling
 without replacement, e.g., any point process over the universe will do as long
 as we can control the size.
 
@@ -143,12 +143,13 @@ $\tau$ that makes computing $q_i$ easy. Thus, for priority sampling, we can use
 $q_i = p(i \in S | \tau)$. This auxillary variable adds a tiny bit extra noise
 in our estimator, which is tantamount to one extra sample.
 
-<button class="toggle-button" onclick="toggle('#ps-unbiased');">Proof of unbiasedness</button>
-<div id="ps-unbiased" class="derivation" style="display:none;">
-**Proof of unbiasedness**. The following proof is a little different from that
-in the priority sampling papers. I think it's more more straightforward. More
-importantly, it shows how we can extend the method to sample from slightly
-different distributions without replacement distributions.
+<button class="toggle-button" onclick="toggle('#ps-unbiased');">Proof of
+unbiasedness</button> <div id="ps-unbiased" class="derivation"
+style="display:none;"> **Proof of unbiasedness**. The following proof is a
+little different from that in the priority sampling papers. I think it's more
+more straightforward. More importantly, it shows how we can extend the method to
+sample from slightly different distributions without replacement distributions
+(as long as we can compute $q_i = p(i \in S | \tau)$).
 
 $$
 \begin{eqnarray}
@@ -165,7 +166,7 @@ $$
 </div>
 
 
-**Properties**:
+**Remarks**:
 
  - Priority sampling satisfies our task criteria: it is both unbiased and sparse
    (i.e., under the evaluation budget).
@@ -199,8 +200,8 @@ $$
 
  - If we instead sample $u_1, \ldots, u_n \overset{\text{i.i.d.}}{\sim}
    -\textrm{Exponential}(1)$, then $S$ will be sampled according to the *de facto*
-   sampling without replacement scheme (e.g., ``numpy.random.sample(..., replace=False)``), 
-   known as probability proportional to size without replacement distribution (PPSWOR). 
+   sampling without replacement scheme (e.g., ``numpy.random.sample(..., replace=False)``),
+   known as probability proportional to size without replacement distribution (PPSWOR).
    To we can then adjust our estimator
    $$
    \widehat{\mu}_{\text{PPSWOR}} = \sum_{i \in S} \frac{p_i}{q_i} f(i)
