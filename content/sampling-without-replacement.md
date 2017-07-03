@@ -32,7 +32,7 @@ function toggle(x) { $(x).toggle(); }
 </script>
 
 **Introduction**: In this post, I'm going to describe some efficient approaches
-to estimating the mean of a random variable that can only take on finitely many
+to estimating the mean of a random variable that takes on only finitely many
 values. Despite the ubiquity of Monte Carlo estimation, it is really inefficient
 for finite domains. I'll describe some lesser-known algorithms based on sampling
 without replacement that can be adapted to estimating means.
@@ -179,7 +179,7 @@ $$
    $\sum_{i \in I} x_i$ for some $I \subseteq \{1,\ldots,n\}$. In this setting,
    the set of sampled items $S$ is chosen to be "representative" of the
    population, albeit much smaller. In the subset sum setting, priority sampling
-   has been show to have near-optimal variance
+   has been shown to have near-optimal variance
    [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf).
    Specifically, priority sampling with $m$ samples is no worse than the best
    possible $(m-1)$-sparse estimator in terms of variance. Of course, when
@@ -196,13 +196,13 @@ $$
 
  - Components of the estimate $\boldsymbol{s}$ are uncorrelated, i.e.,
    $\textrm{Cov}[s_i, s_j] = 0$ for $i \ne j$ and $m \ge 2$. This is surprising
-   since $s_i$ and $s_j$ are related via the threshold $\tau$, but these effects
-   seem to cancel each other out.
+   since $s_i$ and $s_j$ are related via the threshold $\tau$.
 
  - If we instead sample $u_1, \ldots, u_n \overset{\text{i.i.d.}}{\sim}
-   -\textrm{Exponential}(1)$, then $S$ will be sampled according to the canonical
-   sampling without replacement scheme (i.e., ``numpy.random.sample(..., replace=False)``), known as probability proportional to
-   size without replacement distribution (PPSWOR). To we can then adjust our estimator
+   -\textrm{Exponential}(1)$, then $S$ will be sampled according to the *de facto*
+   sampling without replacement scheme (e.g., ``numpy.random.sample(..., replace=False)``), 
+   known as probability proportional to size without replacement distribution (PPSWOR). 
+   To we can then adjust our estimator
    $$
    \widehat{\mu}_{\text{PPSWOR}} = \sum_{i \in S} \frac{p_i}{q_i} f(i)
    $$
