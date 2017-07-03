@@ -1,7 +1,6 @@
 title: Estimating means in a finite universe
 date: 2017-07-03
 comments: true
-status: draft
 tags: sampling, statistics, reservoir-sampling
 
 
