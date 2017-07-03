@@ -216,6 +216,8 @@ $$
    variates; this means we can't rely on symmetry to make summing over
    permutations efficient.
 
+ - The one downside of this method is that sampling seems to require looking at
+   all $n$ items.
 
 ## Experiments
 
@@ -223,8 +225,9 @@ You can get the Jupyter notebook for replicating this experiment
 [here](https://github.com/timvieira/blog/blob/master/content/notebook/Priority%20Sampling.ipynb).
 So download the notebook and play with it!
 
-The improvement of priority sampling (PS) over Monte Carlo (MC) is pretty nice,
-check it out:
+The improvement of priority sampling (PS) over Monte Carlo (MC) is pretty
+nice. I've also included PPSWOR, which seems pretty indistinguishable from PS so
+I won't really bother to discuss it. Check out the results!
 
 <center>
 ![Priority sampling vs. Monte Carlo](http://timvieira.github.io/blog/images/ps-mc.png)
@@ -239,7 +242,18 @@ actually goes to zero, unlike Monte Carlo, which is still pretty inaccurate even
 at $m=n$. (Note that MC's x-axis measures raw evaluations, not distinct ones.)
 
 
-
-**Further reading:** If you liked this post, you might like my other posts tagged with
-[sampling](http://timvieira.github.io/blog/tag/sampling.html) or
+**Further reading:** If you liked this post, you might like my other posts
+tagged with [sampling](http://timvieira.github.io/blog/tag/sampling.html) and
 [reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html).
+
+ - Edith Cohen, "The Magic of Random Sampling"
+   ([slides](http://www.cohenwang.com/edith/Talks/MagicSampling201611.pdf),
+   [talk](https://www.youtube.com/watch?v=jp83HyDs8fs))
+
+ - [Duffield et al., (2007)](http://nickduffield.net/download/papers/priority.pdf)
+   has plenty good stuff that I didn't cover.
+
+ - Alex Smola's [post](http://blog.smola.org/post/1078486350/priority-sampling)
+
+ - Suresh Venkatasubramanian's
+   [post](http://blog.geomblog.org/2005/10/priority-sampling.html)
