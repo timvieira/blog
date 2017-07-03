@@ -134,7 +134,7 @@ $$
 The definition of $s_i$ might look a little mysterious. In the $(i \in S)$ case,
 it comes from $s_i = \frac{p_i}{p(i \in S | \tau)} = \frac{p_i}{\min(1, x_i
 \cdot \tau)} = \max(x_i,\ 1/\tau)$. The factor $p(i \in S | \tau)$ is an
-importance-weighting correction that comes from the Horvitz-Thompson estimator
+importance-weighting correction that comes from the [Horvitz-Thompson estimator](https://en.wikipedia.org/wiki/Horvitz%E2%80%93Thompson_estimator)
 (modified slightly from its usual presentation to accomodate estimating means),
 $\sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S]$, where
 $S$ is sampled according to some process with inclusion probabilities $q_i = p(i
@@ -147,8 +147,8 @@ in our estimator, which is tantamount to one extra sample.
 unbiasedness</button> <div id="ps-unbiased" class="derivation"
 style="display:none;"> **Proof of unbiasedness**. The following proof is a
 little different from that in the priority sampling papers. I think it's more
-more straightforward. More importantly, it shows how we can extend the method to
-sample from slightly different distributions without replacement distributions
+straightforward. More importantly, it shows how we can extend the method to
+sample from slightly different without replacement distributions
 (as long as we can compute $q_i = p(i \in S | \tau)$).
 
 $$
@@ -159,7 +159,7 @@ $$
 &=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \mathbb{E}_{u_i | \tau}\!\Big[ \boldsymbol{1}[ i \in S] \Big] \right] \\
 &=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot q_i \right] \\
 &=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n p_i \cdot f(i) \right] \\
-&=& \sum_{i=1}^n p_i \cdot f(i) \\
+&=& \mathbb{E}_{\tau}\! \left[ \mu \right] \\
 &=& \mu
 \end{eqnarray}
 $$
@@ -201,7 +201,7 @@ $$
  - If we instead sample $u_1, \ldots, u_n \overset{\text{i.i.d.}}{\sim}
    -\textrm{Exponential}(1)$, then $S$ will be sampled according to the *de facto*
    sampling without replacement scheme (e.g., ``numpy.random.sample(..., replace=False)``),
-   known as probability proportional to size without replacement distribution (PPSWOR).
+   known as probability proportional to size without replacement (PPSWOR).
    To we can then adjust our estimator
    $$
    \widehat{\mu}_{\text{PPSWOR}} = \sum_{i \in S} \frac{p_i}{q_i} f(i)
@@ -216,8 +216,10 @@ $$
    variates; this means we can't rely on symmetry to make summing over
    permutations efficient.
 
+<!--
  - The one downside of this method is that sampling seems to require looking at
    all $n$ items.
+-->
 
 ## Experiments
 
