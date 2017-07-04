@@ -128,7 +128,11 @@ $$
 \end{align*}
 $$
 
-For estimating $\mu$, use the following:
+$\textrm{PrioritySample}$ can be applied to obtain a sparse and unbiased
+representation of any vector in $\mathbb{R}^n$. We make use of such a
+representation for our original problem of budgeted mean estimation ($\mu$) as
+follows:
+
 $$
 \begin{align*}
 & \boldsymbol{s} \gets \textrm{PrioritySample}(\boldsymbol{p}, m) \\
@@ -136,10 +140,11 @@ $$
 \end{align*}
 $$
 
-The definition of $s_i$ might look a little mysterious. In the $(i \in S)$ case,
-it comes from $s_i = \frac{p_i}{p(i \in S | \tau)} = \frac{p_i}{\min(1, x_i
-\cdot \tau)} = \max(x_i,\ 1/\tau)$. The factor $p(i \in S | \tau)$ is an
-importance-weighting correction that comes from the [Horvitz-Thompson estimator](https://en.wikipedia.org/wiki/Horvitz%E2%80%93Thompson_estimator)
+Explanation: The definition of $s_i$ might look a little mysterious. In the $(i
+\in S)$ case, it comes from $s_i = \frac{p_i}{p(i \in S | \tau)} =
+\frac{p_i}{\min(1, x_i \cdot \tau)} = \max(x_i,\ 1/\tau)$. The factor $p(i \in S
+| \tau)$ is an importance-weighting correction that comes from the
+[Horvitz-Thompson estimator](https://en.wikipedia.org/wiki/Horvitz%E2%80%93Thompson_estimator)
 (modified slightly from its usual presentation to accomodate estimating means),
 $\sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S]$, where
 $S$ is sampled according to some process with inclusion probabilities $q_i = p(i
@@ -148,7 +153,7 @@ $\tau$ that makes computing $q_i$ easy. Thus, for priority sampling, we can use
 $q_i = p(i \in S | \tau)$. This auxillary variable adds a tiny bit extra noise
 in our estimator, which is tantamount to one extra sample.
 
-<button class="toggle-button" onclick="toggle('#ps-unbiased');">Proof of
+<button class="toggle-button" onclick="toggle('#ps-unbiased');">Show proof of
 unbiasedness</button> <div id="ps-unbiased" class="derivation"
 style="display:none;"> **Proof of unbiasedness**. The following proof is a
 little different from that in the priority sampling papers. I think it's more
