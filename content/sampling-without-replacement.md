@@ -109,26 +109,31 @@ vector can lead to more efficient computations).
 [Duffield et al., 2007](http://nickduffield.net/download/papers/priority.pdf))
 is a remarkably simple algorithm, which is essentially optimal for our task, if
 we assume no prior knowledge about $f$. Here is pseudocode for priority sampling
-(PS), based on the alternative formulation.
+(PS), based on the *alternative formulation*.
 
 $$
 \begin{align*}
+&\textbf{procedure } \textrm{PrioritySample} \\
 &\textbf{inputs: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \in \{1, \ldots, n\}\\
-&u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
-& k_i \leftarrow u_i/x_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
-&S \leftarrow \{ \text{$m$-smallest elements according to $k_i$} \} \\
-&\tau \leftarrow (m+1)^{\text{th}}\text{ smallest }k_i \\
-& s_i = \begin{cases}
+&\textbf{output: } \text{sparse and unbiased representation of $\boldsymbol{x}$} \\
+&\quad u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
+&\quad  k_i \leftarrow u_i/x_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
+&\quad S \leftarrow \{ \text{$m$-smallest elements according to $k_i$} \} \\
+&\quad \tau \leftarrow (m+1)^{\text{th}}\text{ smallest }k_i \\
+&\quad  s_i \gets \begin{cases}
   \max\left( x_i, 1/\tau \right)  & \text{ if } i \in S \\
   0                               & \text{ otherwise}
 \end{cases} \\
-&\textbf{return }\boldsymbol{s}
+&\quad \textbf{return }\boldsymbol{s}
 \end{align*}
 $$
 
 For estimating $\mu$, use the following:
 $$
-\widehat{\mu}_{\text{PS}} = \sum_{i \in S} s_i \!\cdot\! f(i)
+\begin{align*}
+& \boldsymbol{s} \gets \textrm{PrioritySample}(\boldsymbol{p}, m) \\
+& \widehat{\mu}_{\text{PS}} = \sum_{i \in S} s_i \!\cdot\! f(i)
+\end{align*}
 $$
 
 The definition of $s_i$ might look a little mysterious. In the $(i \in S)$ case,
