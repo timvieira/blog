@@ -145,7 +145,7 @@ Explanation: The definition of $s_i$ might look a little mysterious. In the $(i
 \frac{p_i}{\min(1, x_i \cdot \tau)} = \max(x_i,\ 1/\tau)$. The factor $p(i \in S
 | \tau)$ is an importance-weighting correction that comes from the
 [Horvitz-Thompson estimator](https://en.wikipedia.org/wiki/Horvitz%E2%80%93Thompson_estimator)
-(modified slightly from its usual presentation to accomodate estimating means),
+(modified slightly from its usual presentation to estimate means),
 $\sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S]$, where
 $S$ is sampled according to some process with inclusion probabilities $q_i = p(i
 \in S)$. In the case of priority sampling, we have an auxiliary variable for
