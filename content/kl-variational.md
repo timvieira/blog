@@ -28,7 +28,8 @@ $\textbf{KL}(q || p)$
 [Philip Resnik](https://www.umiacs.umd.edu/~resnik/) has an excellent
 mantra/mnemonic: "the truth comes first." This&mdash;combined with the fact that
 inclusive KL is the more principled choice for fitting a
-distribution&mdash;makes the order really easy to remember!
+distribution&mdash;makes the order really easy to remember! (Alternatively, why
+would your model be "the truth"?)
 
 As far as remembering the equation, I pretend that "$||$" is a division symbol,
 which happens to correspond nicely to a division symbol in the equation (I'm not
