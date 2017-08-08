@@ -178,5 +178,5 @@ been used in a number of place, including
 * [The basics](https://gist.github.com/timvieira/d2ac72ec3af7972d2471035011cbf1e2):
   Simple implementation complete with test cases.
 
-* [Memory-efficient backprop in an RNN](https://gist.github.com/timvieira/aceb64047aed1b13bf4e4da3b9a4c0e):
+* [Memory-efficient backprop in an RNN](https://gist.github.com/timvieira/aceb64047aed1b13bf4e4da3b9a4c0ea):
   A simple application with test cases, of course.
