@@ -165,15 +165,18 @@ been used in a number of place, including
 * The classic computer science interview problem of reversing a singly-linked list
   under a tight budget on *additional* memory.
 
-* Backpropagation for computing gradients in sequence models, including HMMs
-  ([Zweig & Padmanabhan, 2000](https://www.microsoft.com/en-us/research/wp-content/uploads/2000/01/icslp00_logspace.pdf))
-  and RNNs ([Chen et al., 2016](https://arxiv.org/abs/1604.06174v2)).
+* Backpropagation for computing gradients in sequence models, including HMMs ([Zweig & Padmanabhan, 2000](https://www.microsoft.com/en-us/research/wp-content/uploads/2000/01/icslp00_logspace.pdf))
+  and RNNs ([Chen et al., 2016](https://arxiv.org/abs/1604.06174v2)). I have
+  sample code that illustrates the basic idea below.
 
 * Memory-efficient [omniscient debugging](https://arxiv.org/pdf/cs/0310016v1),
   which allows a user to inspect program state while moving forward *and
   backward* in time.
 
+## Sample code
 
-Here's the
-[code gist](https://gist.github.com/timvieira/d2ac72ec3af7972d2471035011cbf1e2),
-complete with test cases.
+* [The basics](https://gist.github.com/timvieira/d2ac72ec3af7972d2471035011cbf1e2):
+  Simple implementation complete with test cases.
+
+* [Memory-efficient backprop in an RNN](https://gist.github.com/timvieira/aceb64047aed1b13bf4e4da3b9a4c0e):
+  A simple application with test cases, of course.
