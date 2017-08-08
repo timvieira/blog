@@ -24,12 +24,10 @@ $\textbf{KL}(q || p)$
   - no normalization wrt $p$ (i.e., computationally convenient)
 
 
-**How I remember which is which**:
-[Philip Resnik](https://www.umiacs.umd.edu/~resnik/) has an excellent
-mantra/mnemonic: "the truth comes first." This&mdash;combined with the fact that
-inclusive KL is the more principled choice for fitting a
-distribution&mdash;makes the order really easy to remember! (Alternatively, why
-would your model be "the truth"?)
+**How I remember which is which**: mnemonic: "When the truth comes first, you
+get the whole truth" (h/t
+[Philip Resnik](https://www.umiacs.umd.edu/~resnik/)). Here "whole truth"
+corresponds to the *inclusiveness* of $\textbf{KL}(p || q)$.
 
 As far as remembering the equation, I pretend that "$||$" is a division symbol,
 which happens to correspond nicely to a division symbol in the equation (I'm not
