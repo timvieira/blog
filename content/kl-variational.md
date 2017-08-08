@@ -11,20 +11,29 @@ First, which one is which?
 
 **Cheat sheet**: If we're fitting $q$ to $p$ using
 
-$\textbf{KL}(q || p)$
-  - mode-seeking, exclusive
-  - no normalization wrt $p$
-
 $\textbf{KL}(p || q)$
-  - mean-seeking, inclusive
-  - results in a moment-matching problem when $q$ is in the exponential family
-  - requires normalization wrt $p$ 
 
-**How I remember which is which**: The KL notation is a little strange with the
-"$||$". I pretend it's a division symbol. This happens to correspond nicely to a
-division symbol in the corresponding equation (I'm not sure it's
-intentional). It helps to remember that you always normalize wrt the "numerator"
-(and $q$).
+  - mean-seeking, inclusive (more principled because approximates the *full* distribution)
+
+  - requires normalization wrt $p$ (i.e., often *not* computationally convenient)
+
+$\textbf{KL}(q || p)$
+
+  - mode-seeking, exclusive
+
+  - no normalization wrt $p$ (i.e., computationally convenient)
+
+
+**How I remember which is which**:
+[Philip Resnik](https://www.umiacs.umd.edu/~resnik/) has an excellent
+mantra/mnemonic: "the truth comes first." This&mdash;combined with the fact that
+inclusive KL is the more principled choice for fitting a
+distribution&mdash;makes the order really easy to remember!
+
+As far as remembering the equation, I pretend that "$||$" is a division symbol,
+which happens to correspond nicely to a division symbol in the equation (I'm not
+sure it's intentional).
+
 
 
 ## Computational perspecive
