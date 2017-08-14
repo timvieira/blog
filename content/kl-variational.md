@@ -7,30 +7,23 @@ It's well-known that
 [KL-divergence](http://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)
 is not symmetric, but which direction is right for fitting your model?
 
-First, which one is which?
+#### Which KL is which? A cheat sheet
+If we're fitting $q_\theta$ to $p$ using
 
-**Cheat sheet**: If we're fitting $q$ to $p$ using
+$\textbf{KL}(p || q_\theta)$
 
-$\textbf{KL}(p || q)$
-
-  - mean-seeking, inclusive (more principled because approximates the *full* distribution)
+  - mean-seeking, *inclusive* (more principled because approximates the *full* distribution)
 
   - requires normalization wrt $p$ (i.e., often *not* computationally convenient)
 
-$\textbf{KL}(q || p)$
+$\textbf{KL}(q_\theta || p)$
 
-  - mode-seeking, exclusive
+  - mode-seeking, *exclusive*
 
   - no normalization wrt $p$ (i.e., computationally convenient)
 
-![illustration of inclusive vs. exclusive KL divergence](http://timvieira.github.io/blog/images/KL-inclusive-exclusive.png)
 
-(Figure by [John Winn](http://www.johnwinn.org/) (hence the spelling
-"minimising"). Thanks to [@sjmielke](https://twitter.com/sjmielke) for the
-suggestion to add the image.)
-
-**How I remember which is which**: mnemonic: "When the truth comes first, you
-get the whole truth" (h/t
+**Mnemonic**: "When the truth comes first, you get the whole truth" (h/t
 [Philip Resnik](https://www.umiacs.umd.edu/~resnik/)). Here "whole truth"
 corresponds to the *inclusiveness* of $\textbf{KL}(p || q)$.
 
@@ -38,6 +31,16 @@ As far as remembering the equation, I pretend that "$||$" is a division symbol,
 which happens to correspond nicely to a division symbol in the equation (I'm not
 sure it's intentional).
 
+## Inclusive vs. exclusive divergence
+
+<div style="background-color: #f2f2f2; border: 2px solid #ggg; padding: 10px;">
+
+<img src="http://timvieira.github.io/blog/images/KL-inclusive-exclusive.png" />
+Figure by <a href="http://www.johnwinn.org/">John Winn</a>. Thanks to <a
+href="https://twitter.com/sjmielke">@sjmielke</a> for the suggestion to add this
+image.
+</div>
+<br/>
 
 
 ## Computational perspecive
@@ -72,8 +75,8 @@ we're optimizing.
 
 This leaves us with the following optimization problem:
 \begin{align*}
-& \text{argmin}_\theta \textbf{KL}(q_\theta || p) \\
-&\qquad = \text{argmin}_\theta \sum_d q_\theta(d) \log q_\theta(d) - \sum_d q_\theta(d) \log \bar{p}(d)
+& \underset{\theta}{\text{argmin}}\, \textbf{KL}(q_\theta || p) \\
+&\qquad = \underset{\theta}{\text{argmin}}\, \sum_d q_\theta(d) \log q_\theta(d) - \sum_d q_\theta(d) \log \bar{p}(d)
 \end{align*}
 
 Let's work out the gradient
@@ -90,8 +93,8 @@ We killed the one in the last equality because $\sum_d \nabla
 \left[ 1 \right] = 0$, for any $q$ which is a probability distribution.
 
 This direction is convenient because we don't need to normalize
-$p$. Unfortunately, the "easy" direction is nonconvex in general --- unlike the
-"hard" direction, which is convex.
+$p$. Unfortunately, the "easy" direction is nonconvex in general&mdash;unlike
+the "hard" direction, which (as we'll see shortly) is convex.
 
 ### Harder direction $\textbf{KL}(p || q_\theta)$
 
@@ -143,18 +146,24 @@ Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
 
 ## Remarks
 
-- Both directions of KL are special cases of $\alpha$-divergence. For a unified
-  account of both directions consider looking into $\alpha$-divergence.
+- In many ways, optimizing exclusive KL makes no sense at all! Except for the
+  fact that it's computable when inclusive KL is often not. Exclusive KL is
+  generally regarded as "an approximation" to inclusive KL. This bias in this
+  approximation can be quite large.
 
-- Inclusive divergences require $q > 0$ whenever $p > 0$. No "false negatives".
-
-- Exclusive divergences will often favor a single mode.
-
-- Computing the value of KL (not just the gradient) in either direction requires
-  normalization. However, in the "easy" direction, using unnormalized $p$
-  results in only an additive constant difference. So, it's still just as
-  useful, if all you care about is optimization (fitting the model).
+- Inclusive vs. exclusive is an important distinction: Inclusive divergences
+  require $q > 0$ whenever $p > 0$ (i.e., no "false negatives"), whereas
+  exclusive divergences favor a single mode (i.e., only a good fit around a that
+  mode).
 
 - When $q$ is an exponential family, $\textbf{KL}(p || q_\theta)$ will be convex
   in $\theta$, no matter how complicated $p$ is, whereas $\textbf{KL}(q_\theta
-  || p)$ is in general nonconvex (e.g., if $p$ is multimodal).
+  || p)$ is generally nonconvex (e.g., if $p$ is multimodal).
+
+- Computing the value of either KL divergence requires normalization. However,
+  in the "easy" (exclusive) direction, we can optimize KL without computing
+  $Z_p$ (as it results in only an additive constant difference).
+
+- Both directions of KL are special cases of
+  [$\alpha$-divergence](https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy). For a
+  unified account of both directions consider looking into $\alpha$-divergence.
