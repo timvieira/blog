@@ -23,7 +23,7 @@ $\textbf{KL}(q || p)$
 
   - no normalization wrt $p$ (i.e., computationally convenient)
 
-![illustration of inclusive vs. exclusive KL divergence](/blog/images/KL-inclusive-exclusive.png)
+![illustration of inclusive vs. exclusive KL divergence](http://timvieira.github.io/blog/images/KL-inclusive-exclusive.png)
 
 (Figure by [John Winn](http://www.johnwinn.org/) (hence the spelling
 "minimising"). Thanks to [@sjmielke](https://twitter.com/sjmielke) for the
