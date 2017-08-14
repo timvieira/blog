@@ -1,4 +1,4 @@
-title: Exponential jumps algorithm: reservoir sampling with fewer random numbers
+title: Exponential jumps: Reservoir sampling with much fewer random numbers
 date: 2017-04-22
 comments: true
 status: draft
@@ -62,87 +62,85 @@ simulates the first algorithm.
 
 ### Part 1: The "exponential jump"
 
-The probability that we advance from c to i, is equal to
+The probability that we advance from the current position $c$ to some future
+position $i$ is equal to
 
 $$
-  p\left( \sum_{j=c}^{i-1} w_j < J \le \sum_{j=c}^{i} w_j \right)
+p\left( \sum_{j=c}^{i-1} w_j < J \le \sum_{j=c}^{i} w_j \right)
 $$
-Let $L=\sum_{j=c}^{i-1} w_j$
+
+Let $\ell=\sum_{j=c}^{i-1} w_j$
 
 $$
-\begin{eqnarray}
- &=& p\left(               L < \log(U)/\log(T) \le L + w[i]                 \right) \\
- &=& p\left(       \log(T) L < \log(U)         \le \log(T) (L + w[i])       \right) \\
- &=& p\left( \exp(\log(T) L) < U               \le \exp(\log(T) (L + w[i])) \right) \\
- &=& p\left(           T^{L} < U               \le T^{L + w_i} \right) \\
- &=& T^{L + w_i} - T^L
-\end{eqnarray}
+\begin{eqnarray*}
+ &=& p\left(               \ell < \frac{\log(U)}{\log(T)} \le \ell + w_i         \right) \\
+ &=& p\left(       \log(T) \ell < \log(U)         \le \log(T) (\ell + w_i)       \right) \\
+ &=& p\left( \exp(\log(T) \ell) < U               \le \exp(\log(T) (\ell + w_i)) \right) \\
+ &=& p\left(           T^{\ell} < U               \le T^{\ell + w_i} \right) \\
+ &=& T^{\ell + w_i} - T^\ell
+\end{eqnarray*}
 $$
 
 XXX: looks backwards, p[a < X <= b] = cdf(b) - cdf(a)
 
-Which is equivalent to the maximization version
+Which is equivalent to the ordinary version of the algorithm:
 
 $$
-\begin{eqnarray}
+\begin{eqnarray*}
 && \!\!\!\!\!\!\!\! p\left( \text{start at $c$ and only $i$ goes in $R$} \right) \\
-&=& p[ \text{$i$ goes in $R$} ] \prod_{k=c}^{i-1} p[ \text{$k$ does not go in $R$} ] \\
-&=& p[ U_i^{1/w_i} > T ] \prod_{k=c}^{i-1} p[ U_k^{1/w_k} \le T ] \\
+&=& p\left( \text{$i$ goes in $R$} \right) \prod_{k=c}^{i-1} p\left( \text{$k$ does not go in $R$} \right) \\
+&=& p\left( U_i^{1/w_i} > T \right) \prod_{k=c}^{i-1} p\left( U_k^{1/w_k} \le T \right) \\
 &=& (1 - T^{w_i}) \prod_{k=c}^{i-1} T^{w_k} \\
 &=& (1 - T^{w_i}) \cdot T^{\sum_{j=c}^{i-1} w_j} \\
-&=& (1 - T^{w_i}) \cdot T^{L} \\
-&=& T^{L} - T^{w_i} T^{L} \\
-&=& T^L - T^{L + w_i}
-\end{eqnarray}
+&=& (1 - T^{w_i}) \cdot T^{\ell} \\
+&=& T^{\ell} - T^{w_i} T^{\ell} \\
+&=& T^\ell - T^{\ell + w_i}
+\end{eqnarray*}
 $$
 
-### Part 2: The weird key
+### Part 2: Where did $T = \textrm{Uniform}(T^{w_i}, 1)^{1 / w_i}$ come from?
 
-Why do we have the weirdo key
+At a high level, the reason this expression is sort of complicated is because
+$T$ is conditioned on the event $(i \in R)$.
 
-  T = uniform(T ** w[i], 1) ** (1.0 / w[i]),
+Now, let's work out that distribution:
 
-when we ordinarily have the following key for item i.
+For notational simplify, I'll to suppress the dependence on $i$, so $K = k_i =
+U_i^{1/w_i}$ and $w = w_i$.
 
-  k[i] = uniform(0, 1) ** (1.0 / w[i])
+Let's derive an inverse CDF generator conditioned on $(i \in R)$.
 
-The intuition is that we need to generate the key *conditioned on the fact that
-`i` is indeed entering R*.
-
-I'll work this out below.
-
-(For notational simplify, I'll to suppress the dependence on i, so k = k[i] and
-w = w[i].)
-
-Let's derive an inverse CDF generator conditioned on `i in R`.
-
-  P[ k <= X | i in R ]
-   = P[ k <= X | k > T ]
-   = P[ U^1/w <= X | U^1/w > T ]
-   = P[ U <= X^w | U > T^w ]
+$$
+\begin{eqnarray*}
+p\left( K \le x \mid i \in R \right)
+&=& p\left( K \le x \mid K > T \right) \\
+&=& p\left( U^{1/w} \le x \mid U^{1/w} > T \right) \\
+&=& p\left( U \le X^w \mid U > T^w \right)
+\end{eqnarray*}
+$$
 
 Apply the definition of conditional probability and shift the focus to the
 uniform variate U because we place in a nice cozy position between the
 inequalities.
 
-   = P[ T^w < U <= X^w ] / P[U > T^w]
+$$
+   = \frac{p\left( T^w < U \le X^w \right) }{ p\left( U > T^w \right) }
+$$
 
-Solve for the numerator and denominator given U ~ Uniform(0,1),
+Solve for the numerator and denominator given $U \sim \textrm{Uniform}(0,1)$,
 
-   = (X^w - T^w) / (1-T^w)
+$$
+   = \frac{X^w - T^w}{1-T^w}
+$$
 
-To apply the inverse CDF method, we solve for the target RV, X, in
-terms of U.
+To apply the inverse CDF method, we solve for the target RV, $X$, in
+terms of $U$.
 
-                         U = (X^w - T^w) / (1-T^w)
-               U * (1-T^w) = (X^w - T^w)
-         U * (1-T^w) + T^w = X^w
- (U * (1-T^w) + T^w)^(1/w) = X
+\begin{eqnarray*}
+                             U &=& \frac{X^w - T^w}{1-T^w} \\
+               U \cdot (1-T^w) &=& (X^w - T^w)             \\
+         U \cdot (1-T^w) + T^w &=& X^w                     \\
+ (U \cdot (1-T^w) + T^w)^{1/w} &=& X
+\end{eqnarray*}
 
-Let a = T^w,
-
-  X = (U * (1-a) + a)^(1/w) = U(a,1)^(1/w)
-
-which is exactly what we were looking for!
-
-  X = U(T^w, 1)^(1/w)    ∎
+In other words, $X = \textrm{Uniform}(T^w, 1)^{1/w}$.
