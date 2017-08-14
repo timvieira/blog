@@ -135,11 +135,12 @@ The gradient, when $q$ is in the exponential family, is intuitive:
 &= \mathbb{E}_p \left[ \phi_q \right] - \mathbb{E}_q \left[ \phi_q \right]
 \end{align*}
 
-Optimization problem is convex when $q_\theta$ is an exponential family ---
-i.e., $p$ can be arbitrary. You can think of maximum likelihood estimation as a
-method which minimizes KL divergence from samples of $p$. In this case, $p$ is
-the true data distribution! The first term in the gradient is based on a sample
-instead of an exact estimate (often called "observed feature counts").
+Optimization problem is convex when $q_\theta$ is an exponential
+family&mdash;i.e., $p$ can be arbitrary. You can think of maximum likelihood
+estimation as a method which minimizes KL divergence from samples of $p$. In
+this case, $p$ is the true data distribution! The first term in the gradient is
+based on a sample instead of an exact estimate (often called "observed feature
+counts").
 
 Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
 
