@@ -36,9 +36,7 @@ sure it's intentional).
 <div style="background-color: #f2f2f2; border: 2px solid #ggg; padding: 10px;">
 
 <img src="http://timvieira.github.io/blog/images/KL-inclusive-exclusive.png" />
-Figure by <a href="http://www.johnwinn.org/">John Winn</a>. Thanks to <a
-href="https://twitter.com/sjmielke">@sjmielke</a> for the suggestion to add this
-image.
+Figure by <a href="http://www.johnwinn.org/">John Winn</a>.
 </div>
 <br/>
 
@@ -116,16 +114,6 @@ $\theta$. So, let's focus on the second term (cross-entropy).
 &= \left(\frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d)\right) - \log Z_q
 \end{align*}
 
-Unfortunately the $Z_p$ factor is unavoidable. The usual "approximate inference
-story" is that $Z_p$ is hard to compute, while the approximating distributions
-normalization constant $Z_q$ is easy.
-
-Nonetheless, optimizing KL in this direction is still useful. Examples include,
-expectation propagation, variational decoding and maximum likelihood
-estimation. In the case of maximum likelihood estimation, $p$ is the empirical
-distribution, so technically you don't have to compute its normalizing constant,
-but you do need to sample from it (which can be just as hard).
-
 The gradient, when $q$ is in the exponential family, is intuitive:
 
 \begin{align*}
@@ -135,15 +123,28 @@ The gradient, when $q$ is in the exponential family, is intuitive:
 &= \mathbb{E}_p \left[ \phi_q \right] - \mathbb{E}_q \left[ \phi_q \right]
 \end{align*}
 
-Optimization problem is convex when $q_\theta$ is an exponential
-family&mdash;i.e., $p$ can be arbitrary. You can think of maximum likelihood
-estimation as a method which minimizes KL divergence from samples of $p$. In
-this case, $p$ is the true data distribution! The first term in the gradient is
-based on a sample instead of an exact estimate (often called "observed feature
-counts").
+Why do we say this is hard to compute? Well, for most interesting models, we
+can't compute $Z_p = \sum_d \bar{p}(d)$. This is because $p$ is presumed to be a
+complex model (e.g., the real world, an intricate factor graph, a complicated
+Bayesian posterior). If we can't compute $Z_p$, it's highly unlikely that we can
+compute another (nontrivial) integral under $\bar{p}$, e.g., $\sum_d \bar{p}(d)
+\log \bar{q}(d)$.
 
-Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
+Nonetheless, optimizing KL in this direction is still useful. Examples include:
+expectation propagation, variational decoding, and maximum likelihood
+estimation. In the case of maximum likelihood estimation, $p$ is the empirical
+distribution, so technically you don't have to compute its normalizing constant,
+but you do need samples from it, which can be just as hard to get as computing a
+normalization constant.
 
+Optimization problem is *convex* when $q_\theta$ is an exponential
+family&mdash;i.e., for any $p$ the *optimization* problem is "easy." You can
+think of maximum likelihood estimation (MLE) as a method which minimizes KL
+divergence based on samples of $p$. In this case, $p$ is the true data
+distribution! The first term in the gradient is based on a sample instead of an
+exact estimate (often called "observed feature counts"). The downside, of
+course, is that computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be
+tractable or, for MLE, require tons of samples.
 
 ## Remarks
 
@@ -168,3 +169,20 @@ Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
 - Both directions of KL are special cases of
   [$\alpha$-divergence](https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy). For a
   unified account of both directions consider looking into $\alpha$-divergence.
+
+
+### Acknowledgments
+
+I'd like to thank the following people:
+
+* [Ryan Cotterell](https://twitter.com/_shrdlu_) for an email exchange which
+  spawned this article.
+
+* [Jason Eisner](https://twitter.com/adveisner) for teaching me all this stuff.
+
+* [Florian Shkurti](https://twitter.com/florian_shkurti) for a useful email
+  discussion, which caugh a bug in my explanation of why inclusive KL is hard to
+  compute/optimize.
+
+* [Sebastian Mielke](https://twitter.com/sjmielke) for the suggesting the
+  "inclusive vs. exclusive" figure.
