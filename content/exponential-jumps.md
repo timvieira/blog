@@ -58,7 +58,7 @@ def expjump(stream):
 ## Why `expjumps` works
 
 The way we're going to understand why this algorithm works is by showing that it
-simulate the first algorithm.
+simulates the first algorithm.
 
 ### Part 1: The "exponential jump"
 

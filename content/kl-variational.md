@@ -23,6 +23,11 @@ $\textbf{KL}(q || p)$
 
   - no normalization wrt $p$ (i.e., computationally convenient)
 
+![illustration of inclusive vs. exclusive KL divergence](/blog/images/KL-inclusive-exclusive.png)
+
+(Figure by [John Winn](http://www.johnwinn.org/) (hence the spelling
+"minimising"). Thanks to [@sjmielke](https://twitter.com/sjmielke) for the
+suggestion to add the image.)
 
 **How I remember which is which**: mnemonic: "When the truth comes first, you
 get the whole truth" (h/t
@@ -102,11 +107,10 @@ $\theta$. So, let's focus on the second term (cross-entropy).
 \begin{align*}
 \sum_d p(d) \log q(d)
 &= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \left( \bar{q}(d)/Z_q \right) \\
-&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \left( \bar{q}(d)/Z_q \right) \\
 &= \frac{1}{Z_p} \sum_d \bar{p}(d) \left( \log \bar{q}(d) - \log Z_q \right) \\
-&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \frac{1}{Z_p} \sum_d \bar{p}(d) \log Z_q \\
-&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \log Z_q \frac{1}{Z_p} \sum_d \bar{p}(d) \\
-&= \frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d) - \log Z_q
+&= \left(\frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d)\right) - \left(\frac{1}{Z_p} \sum_d \bar{p}(d) \log Z_q\right) \\
+&= \left(\frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d)\right) - \left( \log Z_q \right) \left( \frac{1}{Z_p} \sum_d \bar{p}(d)\right) \\
+&= \left(\frac{1}{Z_p} \sum_d \bar{p}(d) \log \bar{q}(d)\right) - \log Z_q
 \end{align*}
 
 Unfortunately the $Z_p$ factor is unavoidable. The usual "approximate inference
@@ -128,7 +132,7 @@ The gradient, when $q$ is in the exponential family, is intuitive:
 &= \mathbb{E}_p \left[ \phi_q \right] - \mathbb{E}_q \left[ \phi_q \right]
 \end{align*}
 
-Optimization problem is convex when $q_\theta$ is an exponential families ---
+Optimization problem is convex when $q_\theta$ is an exponential family ---
 i.e., $p$ can be arbitrary. You can think of maximum likelihood estimation as a
 method which minimizes KL divergence from samples of $p$. In this case, $p$ is
 the true data distribution! The first term in the gradient is based on a sample
@@ -150,3 +154,7 @@ Downside: computing $\mathbb{E}_p \left[ \phi_q \right]$ might not be tractable.
   normalization. However, in the "easy" direction, using unnormalized $p$
   results in only an additive constant difference. So, it's still just as
   useful, if all you care about is optimization (fitting the model).
+
+- When $q$ is an exponential family, $\textbf{KL}(p || q_\theta)$ will be convex
+  in $\theta$, no matter how complicated $p$ is, whereas $\textbf{KL}(q_\theta
+  || p)$ is in general nonconvex (e.g., if $p$ is multimodal).
