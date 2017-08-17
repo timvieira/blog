@@ -2,27 +2,32 @@ title: Backprop is not just the chain rule
 date: 2017-08-15
 comments: true
 tags: automatic-differentiation
+status: draft
 
 Almost everyone I know says that "backprop is just the chain rule." Although
-that's basically true, there are some subtle and beautiful things about
+that's *basically true*, there are some subtle and beautiful things about
 automatic differentiation (including backprop) that will not be appreciated with
-this simplistic view.
+this almost *dismissive* view.
 
-I have ranted before that people do not understand some simple facts about
-autodiff:
+This leads to a poor understanding. As I have ranted before: people do not
+understand basic facts about autodiff.
 
 1. Evaluating $f(x)$ is provably as fast as evaluating $\nabla f(x)$
    ([see previous post](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)). Let
    that sink in. Computing the gradient&mdash;an essential incredient to
-   efficient optimization&mdash;is no slower to compute than the
-   function. Contrast that with the finite-difference gradient approximation,
+   efficient optimization&mdash;is no slower to compute than the function
+   itself. Contrast that with the finite-difference gradient approximation,
    which is quite accurate, but its runtime scales with the dimensionality of
    $x$ slower than evaluating $f$
    ([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/)).
 
 2. Code for $\nabla f(x)$ can be derived by a rote program transformation, even
    if the code has control flow structures like loops and intermediate variables
-   (as long as the control flow is independent of $x$).
+   (as long as the control flow is independent of $x$). You can even do this
+   program transformation by hand!
+
+
+## Autodiff $\ne$ what you learned in calculus
 
 Let's try to understand the difference between autodiff and the type of
 differentiation that you learned in calculus, which is called *symbolic*
@@ -62,13 +67,20 @@ def f(x):
     return d + e
 ```
 
+Symbolic differentiation would have to use the "flat" version of this function,
+so no intermediate variable $\Rightarrow$ slow.
+
 Automatic differentiation let's us differentiate a program with *intermediate*
-variables. The rules for transforming the code for a function into code for the
-gradient are actually SIMPLER (fewer things to memorize) and much more general
-than the ones from calculus. Quite
-[beautifully](http://conal.net/papers/beautiful-differentiation/), the program
-for the gradient *has exactly the same structure* as the function, which implies
-that we get the same runtime (up to some constants factors).
+variables.
+
+* The rules for transforming the code for a function into code for the gradient
+  are really minimal (fewer things to memorize!). Additionally, the rules are
+  more general than in symbolic case because they handle as superset of
+  programs.
+
+* Quite [beautifully](http://conal.net/papers/beautiful-differentiation/), the
+  program for the gradient *has exactly the same structure* as the function,
+  which implies that we get the same runtime (up to some constants factors).
 
 I won't give the details of how to execute the backpropagation transform to the
 program. You can get that from
@@ -76,8 +88,7 @@ program. You can get that from
 and many other good
 resources. [Here's some code](https://gist.github.com/timvieira/39e27756e1226c2dbd6c36e83b648ec2)
 that I wrote that accompanies to the ``f(x)`` example, which has a bunch of
-comments describing the manual apply "automatic" differentiation process on
-``f(x)``.
+comments describing the manual "automatic" differentiation process on ``f(x)``.
 
 <!--
 $$
@@ -153,10 +164,11 @@ calculus.
 
 ## Autodiff by the method of Lagrange multipliers
 
-Simply take the intermediate variables in our program to be equality constraints
-in an equivalent *constrained* optimization problem. It turns out that the de
-facto method for handling constraints, the method Lagrange multipliers, recovers
-*exactly* the adjoints in the backprop algorithm!
+Let's view the intermediate variables in our optimization problem as simple
+equality constraints in an equivalent *constrained* optimization problem. It
+turns out that the de facto method for handling constraints, the method Lagrange
+multipliers, recovers *exactly* the adjoints (intermediate derivatives) in the
+backprop algorithm!
 
 Here's our example from earlier written in this constraint form:
 
@@ -184,25 +196,28 @@ We can describe our programs in a general form
 
 * **output variable** $z_n$ represents the quantity we'd like to maximize.
 
+We can regard the relationship given by $\alpha$ as a dependency graph among
+variables. Thus, $\alpha(i)$ is the set of *incoming* edges to node $i$ and
+$\beta(j) = \{ i: j \in \alpha(i) \}$$ is the set of *outgoing* edges.
+
 For now, we'll assume that the dependency graph given by $\alpha$ is (1)
 acyclic: no $x_i$ can transitively depend on itself. (2) single-assignment: each
-$x_i$ for $i > d$ appears on the left-hand side of exactly one equation. In
-addition to $\alpha(i)$, we'll make use of an inverse mapping $\beta(j)=\{ i: j
-\in \alpha(i) \}$.
+$x_i$ for $i > d$ appears on the left-hand side of exactly one equation. We'll
+discuss relaxing these assumptions in the section "generalizations."
 
 As a mathematical program, our optimization problem looks like this:
 \begin{align*}
-  & \underset{x_1 \ldots x_d}{\text{argmax}}\ z_n \\
+  & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n \\
   & \text{s.t.}\quad z_i = f_i(z_{\alpha(i)}) \text{ for $d < i \le n$} \\
   & \text{and }\quad z_i = x_i \text{ for $1 \le i \le d$}
   \end{align*}
 
-Let second set of constraints are a little silly, but help keep our formulation
+The second set of constraints are a little silly, but help keep our formulation
 nice n' tidy.
 
-The standard way to deal with constraints is use the method Lagrange
-multipliers, which converts a *constrained* optimization problem into an
-*unconstrained* problem with a few more variables $\boldsymbol{\lambda}$ (one
+The standard way to solve a constrained optimization is to use the method
+Lagrange multipliers, which converts a *constrained* optimization problem into
+an *unconstrained* problem with a few more variables $\boldsymbol{\lambda}$ (one
 per $x_i$ variable), called Lagrange multipliers.
 
 **The Lagrangian**: To handle constaints, let's dig up a tool from our calculus
@@ -251,9 +266,9 @@ cyclic setting is. Perhaps I should having a running example of a cyclic program
 and an acyclic program.)
 -->
 
-**Intermediate multipliers** $(\boldsymbol{\lambda})$: Setting the gradient of
-  the $\mathcal{L}$ w.r.t. the intermediate variables equal to zeros tells us
-  what to do with the intermediate multipliers.
+**Lagrange multipliers** ($\boldsymbol{\lambda}$, excluding $\lambda_n$):
+  Setting the gradient of the $\mathcal{L}$ w.r.t. the intermediate variables
+  equal to zeros tells us what to do with the intermediate multipliers.
 
 \begin{eqnarray*}
 0 &=& \nabla_{\! z_j} \mathcal{L} \\
@@ -266,11 +281,16 @@ and an acyclic program.)
 \end{eqnarray*}
 
 Clearly, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} = 0$ for $j \notin
-\alpha(i)$, which is why the $\beta(j)$ notation came in handy.
-
-The local derivatives, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j}$ for $j
+\alpha(i)$, which is why the $\beta(j)$ notation came in handy. By assumption,
+the local derivatives, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j}$ for $j
 \in \alpha(i)$, are easy to calculate&mdash;we don't even need the chain rule to
-compute them because they are simple function applications (no composition).
+compute them because they are simple function applications without composition.
+
+This final above equation should look familiar: It's exactly the equation used
+in backpropagation! It's says that we sum $\lambda_i$ of nodes that immediately
+depend on $j$ where we scaled each $\lambda_i$ by the derivative of the function
+that directly relates $i$ and $j$. You should think of the scaling as a "unit
+conversion" from derivatives of type $i$ to derivatives of type $j$.
 
 
 **Output mutliplier** ($\lambda_n$): Here we follow the same pattern as for
@@ -285,13 +305,13 @@ $$
 $$
 
 **Input multipliers** $(\boldsymbol{\lambda}_{1:d})$: Our dummy constraints
-  gives us $\boldsymbol{\lambda_{1:d}}$, which are conveniently equal to the
-  gradient of the function we're optimizing (assuming the constraints are
-  satisfied and multipliers are solved).
+  gives us $\boldsymbol{\lambda}_{1:d}$, which are conveniently equal to the
+  gradient of the function we're optimizing, assuming the constraints are
+  satisfied and multipliers are optimized.
 
-**Input variables** (\boldsymbol{x}) Unforunately the there is no closed-form
+**Input variables** ($\boldsymbol{x}$) Unforunately the there is no closed-form
   solution to how to set $\boldsymbol{x}$. For this we resort to something like
-  gradient descent. Conveniently, the gradient of $\boldsymbol{x}$ is equal to
+  gradient ascent. Conveniently, the gradient of $\boldsymbol{x}$ is equal to
   $\boldsymbol{\lambda}_{1:d}$ so we can use that in our optimization!
 
 
@@ -341,18 +361,16 @@ $$
 ## Generalizations
 
 We can think of these equations for $\boldsymbol{\lambda}$ as a simple *linear*
-system of equations, which we are solving by back-substitution (when we use the
-backpropagation method). The reason why back-substitution is sufficient for the
+system of equations, which we are solving by back-substitution when we use the
+backpropagation method. The reason why back-substitution is sufficient for the
 linear system (i.e., we don't need a *full* linear system solver) is that the
-dependency graph induced by the $\alpha$ relation is acyclic.
+dependency graph induced by the $\alpha$ relation is acyclic. If we had needed a
+full linear system solver, the solution would take $\mathcal{O}(n^3)$ time
+instead of linear time, seriously blowing-up our nice runtime!
 
-If we needed a full linear system solver the solution would generally take
-$\mathcal{O}(n^3)$ time to find instead of linear time. That would seriously
-blow-up our runtime!
-
-But, may this connection to linear systems is interesting: It tells us that we
-*could* compute gradients with cyclic graphs: all we need is to run a linear
-system solver to stich together our gradients! That is exactly what the
+This connection to linear systems is interesting: It tells us that we *could*
+compute gradients with cyclic graphs. All we'd need is to run a linear system
+solver to stich together our gradients! That is exactly what the
 [implicit function theorem](https://en.wikipedia.org/wiki/Implicit_function_theorem)
 says!
 
@@ -361,43 +379,52 @@ it's interesting that we can still efficiently compute gradients in this
 setting. An example of what a general type of cyclic constraint looks like is
 
 $$
-g(\boldsymbol{z}) = \boldsymbol{0}
+\begin{align*}
+& \underset{\boldsymbol{x}}{\text{argmax}}\, z_n \\
+& \text{s.t.}\quad g(\boldsymbol{z}) = \boldsymbol{0} \\
+& \text{and}\quad \boldsymbol{z}_{1:d} = \boldsymbol{x}
+\end{align*}
 $$
 
 where $g$ can be an any smooth multivariate function of the intermediate
-variables!
+variables! Of course, allowing cyclic constraints come at the cost of a
+more-difficult analogue of "the forward pass" to satisfy the $\boldsymbol{z}$
+equations (if we want to keep it a block-coordinate step). The
+$\boldsymbol{\lambda}$ equations are now a linear system that requres a linear
+solver (e.g., Guassian elimination).
 
-XXX:
+<!--
    IFT would give us
+   0 = dL/dz = d/dz(f(z) - lambda*g(z))
+   0 = df/dz - \boldsymbol{\lambda} * dg(\boldsymbol{z})
+   df/dz * dg(\boldsymbol{z})^-1 = \boldsymbol{\lambda} = dz
+-->
 
-   $$
-   dL/dz = d/dz - \boldsymbol{\lambda} g(\boldsymbol{z})
-   $$
 
-   $$
-   d/dz Dg(\boldsymbol{z})^-1 = \boldsymbol{\lambda}
-   $$
+Use cases:
 
-Of course, it comes at the cost of more difficult analogue of the forward pass
-to satisfy the $\boldsymbol{z}$ equations. The $\boldsymbol{\lambda}$ equations
-are just a linear system solver, but it may require a full linear solver (e.g.,
-Guassian elimination).
+* Bi-level optimization: Solving an optimization problem with another on inside
+  it. For example,
+  [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
+  in machine learning. The implicit function theorem manages to get gradients of
+  hyperparameters without needing to store any of intermediate states of the
+  optimization algorithm used in the inner optimzation! This is a *huge* memory
+  saver since direct backprop on the inner gradient decent algorithm would
+  require caching all intermediate states. Yikes!
 
-A cool example of differentiation under constraints is
-[gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/),
-which manages to get gradients of hyperparameters without needed to store all of
-the intermediate states of the optimization algorithm which ran the inner
-optimzation! (This is a huge memory saver since ordinary backprop on the
-gradient decent algorithm would memoize all intermediate parameters and
-gradients!).
+* Cyclic constraints are useful in many graph algorithms. For example, computing
+  gradients of edge weights in a general finite-state machine or, similarly,
+  computing the value function in a Markov decision process.
+
 
 ## Other methods for optimization?
 
 The connection to Lagrangians brings tons of algorithms for constrained
-optimization into the mix! We can also imagine using more general algorithms for
-optimizing our function. We can see immediately that we could run optimization
-with adjoints set to values other than those that backprop would set them to (we
-can optimize them like we'd do in other algorithms for optimizing Langrangians).
+optimization into the mix! We can imagine using more general algorithms for
+optimizing our function and other ways of enforcing the constraints. We see
+immediately that we could run optimization with adjoints set to values other
+than those that backprop would set them to (i.e., we can optimize them like we'd
+do in other algorithms for optimizing general Langrangians).
 
 
 ## Further reading
@@ -405,11 +432,18 @@ can optimize them like we'd do in other algorithms for optimizing Langrangians).
 The theoretical view of backpropagation as an instance of the method of Lagrange
 multipliers was first presented in
 
-> Yann LeCun (1988)
+> Yann LeCun. (1988)
 > [A Theoretical Framework from Back-Propagation](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf).
 
 The backpropagation algorithm can be cleanly generalized from values to
 functionals!
 
-> Alexander Grubb and J. Andrew Bagnell (2010)
-> [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1)
+> Alexander Grubb and J. Andrew Bagnell. (2010)
+> [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1).
+
+
+A great blog post that uses the implicit function theorem to *derive* the method
+of Lagrange multipliers. He also touches on the connection to backpropgation.
+
+> Ben Recht. (2016)
+> [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/)/
