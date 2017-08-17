@@ -429,21 +429,22 @@ do in other algorithms for optimizing general Langrangians).
 
 ## Further reading
 
-The theoretical view of backpropagation as an instance of the method of Lagrange
-multipliers was first presented in
+* The theoretical view of backpropagation as an instance of the method of
+  Lagrange multipliers was first presented in
 
 > Yann LeCun. (1988)
 > [A Theoretical Framework from Back-Propagation](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf).
 
-The backpropagation algorithm can be cleanly generalized from values to
-functionals!
+* The backpropagation algorithm can be cleanly generalized from values to
+  functionals!
 
 > Alexander Grubb and J. Andrew Bagnell. (2010)
 > [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1).
 
 
-A great blog post that uses the implicit function theorem to *derive* the method
-of Lagrange multipliers. He also touches on the connection to backpropgation.
+* A great blog post that uses the implicit function theorem to *derive* the
+  method of Lagrange multipliers. He also touches on the connection to
+  backpropgation.
 
 > Ben Recht. (2016)
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/)/
