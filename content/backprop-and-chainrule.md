@@ -176,7 +176,7 @@ Generalizations</a>.
 The standard way to solve a constrained optimization is to use the method
 Lagrange multipliers, which converts a *constrained* optimization problem into
 an *unconstrained* problem with a few more variables $\boldsymbol{\lambda}$ (one
-per $x_i$ variable), called Lagrange multipliers.
+per $x_i$ constraint), called Lagrange multipliers.
 
 #### The Lagrangian
 
