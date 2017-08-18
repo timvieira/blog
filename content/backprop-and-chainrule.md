@@ -9,22 +9,24 @@ that's *basically true*, there are some subtle and beautiful things about
 automatic differentiation techniques (including backprop) that will not be
 appreciated with this *dismissive* attitude.
 
-This leads to a poor understanding. As I have ranted before: people do not
-understand basic facts about autodiff.
+This leads to a poor understanding. As
+[I have ranted before](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/):
+people do not understand basic facts about autodiff.
 
-1. Evaluating $f(x)$ is provably as fast as evaluating $\nabla f(x)$
-   ([see previous post](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)). Let
-   that sink in. Computing the gradient&mdash;an essential incredient to
-   efficient optimization&mdash;is no slower to compute than the function
-   itself. Contrast that with the finite-difference gradient approximation,
-   which is quite accurate, but its runtime is $\textrm{dim}(x)$ times slower
-   than evaluating $f$
-   ([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/))!
+* Evaluating $f(x)$ is provably as fast as evaluating $\nabla f(x)$.
 
-2. Code for $\nabla f(x)$ can be derived by a rote program transformation, even
-   if the code has control flow structures like loops and intermediate variables
-   (as long as the control flow is independent of $x$). You can even do this
-   "automatic" transformation by hand!
+<!-- Let that sink in. Computing the gradient&mdash;an essential incredient to
+efficient optimization&mdash;is no slower to compute than the function
+itself. Contrast that with the finite-difference gradient approximation, which
+is quite accurate, but its runtime is $\textrm{dim}(x)$ times slower than
+evaluating $f$
+([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/))!
+-->
+
+* Code for $\nabla f(x)$ can be derived by a rote program transformation, even
+  if the code has control flow structures like loops and intermediate variables
+  (as long as the control flow is independent of $x$). You can even do this
+  "automatic" transformation by hand!
 
 
 ### Autodiff $\ne$ what you learned in calculus
@@ -197,9 +199,9 @@ $$
 \nabla \mathcal{L}\left(\boldsymbol{x}, \boldsymbol{z}, \boldsymbol{\lambda}\right) = 0.
 $$
 
-Let's look a little closer at the gradient of the Lagrangian system. by breaking
-up the system into salient parts, corresponding to the different types of
-variables: multipliers, output, intermediate and input variables.
+Let's look a little closer at the Lagrangian conditions by breaking up the
+system of equations into salient parts, corresponding to which variable types
+are affected.
 
 **Intermediate variables** ($\boldsymbol{z}$): Optimizing the
 multipliers&mdash;i.e., setting the gradient of Lagrangian
@@ -242,10 +244,9 @@ Clearly, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} = 0$ for $j \notin
 \alpha(i)$, which is why the $\beta(j)$ notation came in handy. By assumption,
 the local derivatives, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j}$ for $j
 \in \alpha(i)$, are easy to calculate&mdash;we don't even need the chain rule to
-compute them because they are simple function applications without composition.
-
-Similar to the equations for $\boldsymbol{z}$, solving this linear system is
-another block-coordinate step.
+compute them because they are simple function applications without
+composition. Similar to the equations for $\boldsymbol{z}$, solving this linear
+system is another block-coordinate step.
 
 *Key observation*: The last equation for $\lambda_j$ should look very familiar:
 It is exactly the equation used in backpropagation! It says that we sum
@@ -364,8 +365,8 @@ variables.
   intermediates and multipliers.
 
 * I also described a neat generalization to support *cyclic* programs and I
-  hinted at ideas doing our overall optimization a little differently by
-  deviating from the de facto block-coordinate strategy.
+  hinted at ideas for doing optimization a little differently, deviating from
+  the de facto block-coordinate strategy.
 
 
 ## Further reading
