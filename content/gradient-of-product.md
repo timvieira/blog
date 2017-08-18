@@ -1,7 +1,7 @@
 title: Gradient of a product
 date: 2015-07-29
 comments: true
-tags: calculus, numerical
+tags: calculus, numerical, automatic-differentiation
 
 $$
 \newcommand{\gradx}[1]{\grad{x}{ #1 }}
