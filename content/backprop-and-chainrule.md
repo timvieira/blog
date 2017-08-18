@@ -6,8 +6,8 @@ status: draft
 
 Almost everyone I know says that "backprop is just the chain rule." Although
 that's *basically true*, there are some subtle and beautiful things about
-automatic differentiation (including backprop) that will not be appreciated with
-this almost *dismissive* view.
+automatic differentiation techniques (including backprop) that will not be
+appreciated with this *dismissive* attitude.
 
 This leads to a poor understanding. As I have ranted before: people do not
 understand basic facts about autodiff.
@@ -27,7 +27,7 @@ understand basic facts about autodiff.
    program transformation by hand!
 
 
-> Autodiff $\ne$ what you learned in calculus
+## Autodiff $\ne$ what you learned in calculus
 
 Let's try to understand the difference between autodiff and the type of
 differentiation that you learned in calculus, which is called *symbolic*
@@ -90,21 +90,6 @@ resources. [Here's some code](https://gist.github.com/timvieira/39e27756e1226c2d
 that I wrote that accompanies to the ``f(x)`` example, which has a bunch of
 comments describing the manual "automatic" differentiation process on ``f(x)``.
 
-<!--
-$$
-\begin{align*}
-&\textbf{def }f(x): \\
-&\quad a = \exp(x) \\
-&\quad b = a^2     \\
-&\quad c = a + b   \\
-&\quad d = \exp(c) \\
-&\quad e = \sin(c) \\
-&\quad f = d + e   \\
-&\quad \textbf{return } f
-\end{align*}
-$$
--->
-
 
 <!--
 Caveat: You might have seen some *limited* cases where an input variable was
@@ -114,22 +99,6 @@ or division, e.g., $\nabla\! \left[ f(x) \cdot g(x) \right] = f(x) \cdot g'(x)
 simpler and actually explains why there is a sum in the product rule. You can
 also rederive the quotient rule without a hitch. I'm all about having fewer
 things to memorize!
--->
-
-
-
-<!--
-$$
-\begin{align*}
-& \textbf{return } f & \Rightarrow & \frac{df}{df} \texttt{ += } 1 \\
-& f = d + e     & \Rightarrow & \frac{df}{dd} \texttt{ += } \frac{df}{df} \cdot \frac{df}{dd} ; \frac{df}{de} \texttt{ += } \frac{df}{df} \cdot \frac{df}{de} \\
-& e = \sin(c)   & \Rightarrow & \frac{df}{dc} \texttt{ += } \frac{df}{de} \cdot \frac{de}{dc} \\
-& d = \exp(c)   & \Rightarrow & \frac{df}{dc} \texttt{ += } \frac{df}{dd} \cdot \frac{dd}{dc} \\
-& c = a + b     & \Rightarrow & \frac{df}{da} \texttt{ += } \frac{df}{dc} \cdot \frac{dc}{da} ; \frac{df}{db} \texttt{ += } \frac{df}{dc} \cdot \frac{dc}{db} \\
-& b = a^2       & \Rightarrow & \frac{df}{da} \texttt{ += } \frac{df}{db} \cdot \frac{db}{da} \\
-& a = \exp(x)   & \Rightarrow & \frac{df}{dx} \texttt{ += } \frac{df}{da} \cdot \frac{da}{dx}
-\end{align*}
-$$
 -->
 
 <!--
@@ -143,24 +112,6 @@ version of a program can be exponentially larger than a version with reuse.
 <!-- Only sort of related: think of the exponential blow up in converting a
 Boolean expression from conjunctive normal form to and disjunction normal.  -->
 
-<!--
-So how the heck do we take derivatives of programs? Well, it's basically the
-same as with ordinary gradients, we apply the chain rule *locally* to each edge
-in the computation graph (instead of globally to the entire expression). There
-is a simple rule to stich together gradients:
-
-1. When you use a variable more than once in a program, its adjoints add.
-
-2. When you work backwards you multiply&mdash;like a unit conversion!
-  $\frac{\partial\, \text{output}}{\partial\, \text{edge.input}} \texttt{ += } \frac{\partial\, \text{output}}{\partial\, \text{edge.output}} \cdot \frac{\partial\, \text{edge.output}}{\partial\, \text{edge.input}}$
-
-Why is this correct? Correctness can be checked inductively in a similar manner
-to proving the correctness of a dynamic programming algorithm. I won't go
-through that, instead I'll describe an interesting connection that I stubled
-upon in a few places in the literature (CITATIONS?). So rather than a computer
-science type of explanation, this is a mathematical explanation based on basic
-calculus.
--->
 
 ## Autodiff by the method of Lagrange multipliers
 
@@ -185,34 +136,7 @@ f &= d + e
 \end{align*}
 $$
 
-
-We can describe our programs in a general form
-
-* **input variables** ($\boldsymbol{x}$): $x_1, \ldots, x_d$
-
-* **intermediate variables**: ($\boldsymbol{z}$): $z_i = f_i(z_{\alpha(i)})$ for
-  $1 \le i \le n$, where $\alpha(i)$ is a subset of indices $\{1, \ldots, n-1\}$
-  and $z_{\alpha(i)}$ is the subset of variables needed to evaluate
-  $f_i(\cdot)$.
-
-* **output variable** ($z_n$): We assume that our programs has a singled scalar
-  variable, $z_n$, which represents the quantity we'd like to maximize.
-
-<!-- (It is possible to generalize this story to a gradients of multi-variate
-outputs by "scalarizing" the objective, e.g., multiply the outputs by a
-vector. This Gives an efficient program for computing Jacobian vector products
-that can be used to extra Jacobians.)  -->
-
-We can regard the relationship given by $\alpha$ as a dependency graph among
-variables. Thus, $\alpha(i)$ is the set of *incoming* edges to node $i$ and
-$\beta(j) = \{ i: j \in \alpha(i) \}$ is the set of *outgoing* edges.
-
-For now, we'll assume that the dependency graph given by $\alpha$ is
-① acyclic: no $z_i$ can transitively depend on itself.
-② single-assignment: each $z_i$ appears on the left-hand side of *exactly one* equation.
-We'll discuss relaxing these assumptions in <a href="#lagrange-backprop-generalization">§ generalizations</a>.
-
-As a mathematical program, our optimization problem looks like this:
+#### The general formuation
 \begin{align*}
   & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n & \\
   & \text{s.t.}\quad z_i = x_i                          &\text{ for $1 \le i \le d$} \\
@@ -220,15 +144,42 @@ As a mathematical program, our optimization problem looks like this:
   \end{align*}
 
 The first set of constraint ($1, \ldots, d$) are a little silly. They are only
-there to keep our formulation tidy.
+there to keep our formulation tidy. The variables in the program fall into three
+categories:
+
+* **input variables** ($\boldsymbol{x}$): $x_1, \ldots, x_d$
+
+* **intermediate variables**: ($\boldsymbol{z}$): $z_i = f_i(z_{\alpha(i)})$ for
+  $1 \le i \le n$, where $\alpha(i)$ is a list of indices from $\{1, \ldots,
+  n-1\}$ and $z_{\alpha(i)}$ is the subvector of variables needed to evaluate
+  $f_i(\cdot)$. Minor detail: take $f_{1:d}$ to be the identity function.
+
+* **output variable** ($z_n$): We assume that our programs has a singled scalar
+  output variable, $z_n$, which represents the quantity we'd like to maximize.
+
+<!-- (It is possible to generalize this story to compute Jacobians of functions
+with multi-variate outputs by "scalarizing" the objective, e.g., multiply the
+outputs by a vector. This Gives an efficient program for computing Jacobian
+vector products that can be used to extra Jacobians.)  -->
+
+The relation $\alpha$ is a
+[dependency graph](https://en.wikipedia.org/wiki/Dependency_graph) among
+variables. Thus, $\alpha(i)$ is the list of *incoming* edges to node $i$ and
+$\beta(j) = \{ i: j \in \alpha(i) \}$ is the set of *outgoing* edges. For now,
+we'll assume that the dependency graph given by $\alpha$ is ① acyclic: no $z_i$
+can transitively depend on itself.  ② single-assignment: each $z_i$ appears on
+the left-hand side of *exactly one* equation.  We'll discuss relaxing these
+assumptions in <a href="#lagrange-backprop-generalization">§
+Generalizations</a>.
 
 The standard way to solve a constrained optimization is to use the method
 Lagrange multipliers, which converts a *constrained* optimization problem into
 an *unconstrained* problem with a few more variables $\boldsymbol{\lambda}$ (one
 per $x_i$ variable), called Lagrange multipliers.
 
-**The Lagrangian**: To handle constaints, let's dig up a tool from our calculus
-class,
+#### The Lagrangian
+
+To handle constaints, let's dig up a tool from our calculus class,
 [the method of Lagrange multipliers](https://en.wikipedia.org/wiki/Lagrange_multiplier),
 which converts a *constrained* optimization probelm into an *unconstrainted*
 one. The unconstrained version is called "the Lagrangian" of the constrained
@@ -296,7 +247,7 @@ compute them because they are simple function applications without composition.
 Similar to the equations for $\boldsymbol{z}$, solving this linear system is
 another block-coordinate step.
 
-*Key observation*: The last equation for $lambda_j$ should look very familiar:
+*Key observation*: The last equation for $\lambda_j$ should look very familiar:
 It is exactly the equation used in backpropagation! It says that we sum
 $\lambda_i$ of nodes that immediately depend on $j$ where we scaled each
 $\lambda_i$ by the derivative of the function that directly relates $i$ and
@@ -330,54 +281,11 @@ satisfied ($\boldsymbol{\lambda}$ equations).
 **Input variables** ($\boldsymbol{x}$): Unforunately, the there is no
   closed-form solution to how to set $\boldsymbol{x}$. For this we resort to
   something like gradient ascent. Conveniently, $\nabla_{\!\boldsymbol{x}}
-  f(\boldsymbol{x}) = \boldsymbol{\lambda}_{1:d}$, which we can use in our
-  optimization!
-
-<!--
-<div class="example">
-$$
-\begin{align*}
-\frac{\partial a}{\partial x} &= \exp(x) \\
-\frac{\partial b}{\partial a} &= 2 a     \\
-\frac{\partial c}{\partial a} &= 1   \\
-\frac{\partial c}{\partial b} &= 1   \\
-\frac{\partial d}{\partial c} &= \exp(c) \\
-\frac{\partial e}{\partial c} &= \cos(c) \\
-\frac{\partial f}{\partial d} &= 1 \\
-\frac{\partial f}{\partial e} &= 1 \\
-\frac{\partial f}{\partial f} &= 1
-\end{align*}
-$$
-</div>
--->
-
-<!--
-<div class="example">
-$$
-\begin{align*}
-% line 0
-\lambda_f &= \frac{\partial f}{\partial f} \\
-% line -1
-\lambda_d &= \frac{\partial f}{\partial d} \cdot\lambda_f \\
-\lambda_e &= \frac{\partial f}{\partial e} \cdot\lambda_f \\
-% line -2
-\lambda_c &+= \frac{\partial e}{\partial c} \cdot\lambda_e \\
-% line -3
-\lambda_c &+= \frac{\partial d}{\partial c} \cdot\lambda_d \\
-% line -4
-\lambda_a &+= \frac{\partial c}{\partial a} \cdot\lambda_c \\
-\lambda_b &= \frac{\partial c}{\partial b} \cdot\lambda_c \\
-% line -5
-\lambda_a &+= \frac{\partial b}{\partial a} \cdot\lambda_b \\
-% line -6
-\lambda_x &= \frac{\partial a}{\partial x} \cdot\lambda_a \\
-\end{align*}
-$$
-</div>
--->
+  f(\boldsymbol{x}) = \boldsymbol{\lambda}_{1:d}$, which we can use to optimize
+  $\boldsymbol{x}$!
 
 <div id="lagrange-backprop-generalization"></div>
-## Generalizations
+### Generalizations
 
 We can think of these equations for $\boldsymbol{\lambda}$ as a simple *linear*
 system of equations, which we are solving by back-substitution when we use the
@@ -412,13 +320,6 @@ equations (if we want to keep it a block-coordinate step). The
 $\boldsymbol{\lambda}$ equations are now a linear system that requres a linear
 solver (e.g., Guassian elimination).
 
-<!--
-   IFT would give us
-   0 = dL/dz = d/dz(f(z) - lambda*g(z))
-   0 = df/dz - \boldsymbol{\lambda} * dg(\boldsymbol{z})
-   df/dz * dg(\boldsymbol{z})^-1 = \boldsymbol{\lambda} = dz
--->
-
 
 Example use cases:
 
@@ -436,7 +337,7 @@ Example use cases:
   computing the value function in a Markov decision process.
 
 
-## Other methods for optimization?
+### Other methods for optimization?
 
 The connection to Lagrangians brings tons of algorithms for constrained
 optimization into the mix! We can imagine using more general algorithms for
@@ -488,4 +389,4 @@ variables.
   backpropgation.
 
 > Ben Recht. (2016)
-> [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/)
+> [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
