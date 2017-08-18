@@ -17,17 +17,17 @@ understand basic facts about autodiff.
    that sink in. Computing the gradient&mdash;an essential incredient to
    efficient optimization&mdash;is no slower to compute than the function
    itself. Contrast that with the finite-difference gradient approximation,
-   which is quite accurate, but its runtime scales with the dimensionality of
-   $x$ slower than evaluating $f$
-   ([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/)).
+   which is quite accurate, but its runtime is $\textrm{dim}(x)$ times slower
+   than evaluating $f$
+   ([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/))!
 
 2. Code for $\nabla f(x)$ can be derived by a rote program transformation, even
    if the code has control flow structures like loops and intermediate variables
    (as long as the control flow is independent of $x$). You can even do this
-   program transformation by hand!
+   "automatic" transformation by hand!
 
 
-## Autodiff $\ne$ what you learned in calculus
+### Autodiff $\ne$ what you learned in calculus
 
 Let's try to understand the difference between autodiff and the type of
 differentiation that you learned in calculus, which is called *symbolic*
@@ -296,7 +296,7 @@ full linear system solver, the solution would take $\mathcal{O}(n^3)$ time
 instead of linear time, seriously blowing-up our nice runtime!
 
 This connection to linear systems is interesting: It tells us that we *could*
-compute gradients with cyclic graphs. All we'd need is to run a linear system
+compute gradients in cyclic graphs. All we'd need is to run a linear system
 solver to stich together our gradients! That is exactly what the
 [implicit function theorem](https://en.wikipedia.org/wiki/Implicit_function_theorem)
 says!
