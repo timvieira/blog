@@ -27,7 +27,7 @@ understand basic facts about autodiff.
    program transformation by hand!
 
 
-## Autodiff $\ne$ what you learned in calculus
+> Autodiff $\ne$ what you learned in calculus
 
 Let's try to understand the difference between autodiff and the type of
 differentiation that you learned in calculus, which is called *symbolic*
@@ -188,32 +188,39 @@ $$
 
 We can describe our programs in a general form
 
-* **input variables** $x_1, \ldots, x_d$
+* **input variables** ($\boldsymbol{x}$): $x_1, \ldots, x_d$
 
-* **intermediate variables** $z_i = f_i(z_{\alpha(i)})$ for $d < i < n$, where
-  $\alpha(i)$ is a subset of indices $\{1, \ldots, n-1\}$ and $z_{\alpha(i)}$ is
-  the subset of variables needed to evaluate $f_i(\cdot)$.
+* **intermediate variables**: ($\boldsymbol{z}$): $z_i = f_i(z_{\alpha(i)})$ for
+  $1 \le i \le n$, where $\alpha(i)$ is a subset of indices $\{1, \ldots, n-1\}$
+  and $z_{\alpha(i)}$ is the subset of variables needed to evaluate
+  $f_i(\cdot)$.
 
-* **output variable** $z_n$ represents the quantity we'd like to maximize.
+* **output variable** ($z_n$): We assume that our programs has a singled scalar
+  variable, $z_n$, which represents the quantity we'd like to maximize.
+
+<!-- (It is possible to generalize this story to a gradients of multi-variate
+outputs by "scalarizing" the objective, e.g., multiply the outputs by a
+vector. This Gives an efficient program for computing Jacobian vector products
+that can be used to extra Jacobians.)  -->
 
 We can regard the relationship given by $\alpha$ as a dependency graph among
 variables. Thus, $\alpha(i)$ is the set of *incoming* edges to node $i$ and
-$\beta(j) = \{ i: j \in \alpha(i) \}$$ is the set of *outgoing* edges.
+$\beta(j) = \{ i: j \in \alpha(i) \}$ is the set of *outgoing* edges.
 
-For now, we'll assume that the dependency graph given by $\alpha$ is (1)
-acyclic: no $x_i$ can transitively depend on itself. (2) single-assignment: each
-$x_i$ for $i > d$ appears on the left-hand side of exactly one equation. We'll
-discuss relaxing these assumptions in the section "generalizations."
+For now, we'll assume that the dependency graph given by $\alpha$ is
+① acyclic: no $z_i$ can transitively depend on itself.
+② single-assignment: each $z_i$ appears on the left-hand side of *exactly one* equation.
+We'll discuss relaxing these assumptions in <a href="#lagrange-backprop-generalization">§ generalizations</a>.
 
 As a mathematical program, our optimization problem looks like this:
 \begin{align*}
-  & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n \\
-  & \text{s.t.}\quad z_i = f_i(z_{\alpha(i)}) \text{ for $d < i \le n$} \\
-  & \text{and }\quad z_i = x_i \text{ for $1 \le i \le d$}
+  & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n & \\
+  & \text{s.t.}\quad z_i = x_i                          &\text{ for $1 \le i \le d$} \\
+  & \phantom{\text{s.t.}}\quad z_i = f_i(z_{\alpha(i)}) &\text{ for $d < i \le n$} \\
   \end{align*}
 
-The second set of constraints are a little silly, but help keep our formulation
-nice n' tidy.
+The first set of constraint ($1, \ldots, d$) are a little silly. They are only
+there to keep our formulation tidy.
 
 The standard way to solve a constrained optimization is to use the method
 Lagrange multipliers, which converts a *constrained* optimization problem into
@@ -229,7 +236,7 @@ problem. Here is its form for our task,
 
 $$
 \mathcal{L}\left(\boldsymbol{x}, \boldsymbol{z}, \boldsymbol{\lambda}\right)
-= z_n - \sum_{i=d+1}^n \lambda_i \left( z_i - f_i(z_{\alpha(i)}) \right).
+= z_n - \sum_{i=d+1}^n \lambda_i\cdot \left( z_i - f_i(z_{\alpha(i)}) \right).
 $$
 
 Optimizing the Lagrangian amounts to solving the following nonlinear system of
@@ -286,11 +293,15 @@ the local derivatives, $\frac{\partial f_i(z_{\alpha(i)})}{\partial z_j}$ for $j
 \in \alpha(i)$, are easy to calculate&mdash;we don't even need the chain rule to
 compute them because they are simple function applications without composition.
 
-This final above equation should look familiar: It's exactly the equation used
-in backpropagation! It's says that we sum $\lambda_i$ of nodes that immediately
-depend on $j$ where we scaled each $\lambda_i$ by the derivative of the function
-that directly relates $i$ and $j$. You should think of the scaling as a "unit
-conversion" from derivatives of type $i$ to derivatives of type $j$.
+Similar to the equations for $\boldsymbol{z}$, solving this linear system is
+another block-coordinate step.
+
+*Key observation*: The last equation for $lambda_j$ should look very familiar:
+It is exactly the equation used in backpropagation! It says that we sum
+$\lambda_i$ of nodes that immediately depend on $j$ where we scaled each
+$\lambda_i$ by the derivative of the function that directly relates $i$ and
+$j$. You should think of the scaling as a "unit conversion" from derivatives of
+type $i$ to derivatives of type $j$.
 
 
 **Output mutliplier** ($\lambda_n$): Here we follow the same pattern as for
@@ -306,14 +317,21 @@ $$
 
 **Input multipliers** $(\boldsymbol{\lambda}_{1:d})$: Our dummy constraints
   gives us $\boldsymbol{\lambda}_{1:d}$, which are conveniently equal to the
-  gradient of the function we're optimizing, assuming the constraints are
-  satisfied and multipliers are optimized.
+  gradient of the function we're optimizing:
 
-**Input variables** ($\boldsymbol{x}$) Unforunately the there is no closed-form
-  solution to how to set $\boldsymbol{x}$. For this we resort to something like
-  gradient ascent. Conveniently, the gradient of $\boldsymbol{x}$ is equal to
-  $\boldsymbol{\lambda}_{1:d}$ so we can use that in our optimization!
+$$
+\nabla_{\!\boldsymbol{x}} f(\boldsymbol{x}) = \boldsymbol{\lambda}_{1:d}.
+$$
 
+Of course, this interpretation is only precise when ① the constraints are
+satisfied ($\boldsymbol{z}$ equations) and ② the linear system on multipliers is
+satisfied ($\boldsymbol{\lambda}$ equations).
+
+**Input variables** ($\boldsymbol{x}$): Unforunately, the there is no
+  closed-form solution to how to set $\boldsymbol{x}$. For this we resort to
+  something like gradient ascent. Conveniently, $\nabla_{\!\boldsymbol{x}}
+  f(\boldsymbol{x}) = \boldsymbol{\lambda}_{1:d}$, which we can use in our
+  optimization!
 
 <!--
 <div class="example">
@@ -358,6 +376,7 @@ $$
 </div>
 -->
 
+<div id="lagrange-backprop-generalization"></div>
 ## Generalizations
 
 We can think of these equations for $\boldsymbol{\lambda}$ as a simple *linear*
@@ -401,9 +420,9 @@ solver (e.g., Guassian elimination).
 -->
 
 
-Use cases:
+Example use cases:
 
-* Bi-level optimization: Solving an optimization problem with another on inside
+* Bi-level optimization: Solving an optimization problem with another one inside
   it. For example,
   [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
   in machine learning. The implicit function theorem manages to get gradients of
@@ -426,11 +445,57 @@ immediately that we could run optimization with adjoints set to values other
 than those that backprop would set them to (i.e., we can optimize them like we'd
 do in other algorithms for optimizing general Langrangians).
 
+## Summary
+
+<ul>
+
+<li> Backprop is does not directly fall out of the the rules for differentiation
+that you learned in calculus (e.g., the chain rule).
+
+<ul>
+<li>
+
+This is because it operates on a more general family of functions. Namely,
+<i>programs</i> which have <i>intermediate variables</i>, which is crucial for
+<i>implementing</i> the function efficiently.
+
+</li>
+</ul>
+</li>
+
+<li>
+
+I described how we could use something we did learn from calculus 101, the
+method of Lagrange multipliers, to derive the core feature of backprop: support
+for intermediate variables.
+
+<ul>
+<li>
+
+It turns out that backprop is a <i>particular instantiation</i> of the method of
+Lagrange multipliers, involving block-coordinate steps for solving for the
+intermediates and multipliers.
+
+</li>
+<li>
+
+I also described a neat generalization to support <u>cyclic</u> programs.
+
+</li>
+<li>
+
+I also hinted at ideas doing our overall optimization a little differently by
+deviating from the de facto block-coordinate strategy.
+
+</li>
+</ul>
+</ul>
 
 ## Further reading
 
-* The theoretical view of backpropagation as an instance of the method of
-  Lagrange multipliers was first presented in
+* After working out the connection between backprop and the method of Lagrange
+  multipliers, I discovered following paper, which beat me to it. I don't think
+  my version is too redundant.
 
 > Yann LeCun. (1988)
 > [A Theoretical Framework from Back-Propagation](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf).
@@ -447,4 +512,4 @@ do in other algorithms for optimizing general Langrangians).
   backpropgation.
 
 > Ben Recht. (2016)
-> [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/)/
+> [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/)
