@@ -447,49 +447,25 @@ do in other algorithms for optimizing general Langrangians).
 
 ## Summary
 
-<ul>
-
-<li> Backprop is does not directly fall out of the the rules for differentiation
+Backprop is does not directly fall out of the the rules for differentiation
 that you learned in calculus (e.g., the chain rule).
 
-<ul>
-<li>
-
-This is because it operates on a more general family of functions. Namely,
-<i>programs</i> which have <i>intermediate variables</i>, which is crucial for
-<i>implementing</i> the function efficiently.
-
-</li>
-</ul>
-</li>
-
-<li>
+* This is because it operates on a more general family of functions: *programs*
+  which have *intermediate variables*. Supporting intermediate variables is
+  crucial for implementing both functions and their gradients efficiently.
 
 I described how we could use something we did learn from calculus 101, the
-method of Lagrange multipliers, to derive the core feature of backprop: support
-for intermediate variables.
+method of Lagrange multipliers, to support optimization with intermediate
+variables.
 
-<ul>
-<li>
+* It turned out that backprop is a *particular instantiation* of the method of
+  Lagrange multipliers, involving block-coordinate steps for solving for the
+  intermediates and multipliers.
 
-It turns out that backprop is a <i>particular instantiation</i> of the method of
-Lagrange multipliers, involving block-coordinate steps for solving for the
-intermediates and multipliers.
+* I also described a neat generalization to support *cyclic* programs and I
+  hinted at ideas doing our overall optimization a little differently by
+  deviating from the de facto block-coordinate strategy.
 
-</li>
-<li>
-
-I also described a neat generalization to support <u>cyclic</u> programs.
-
-</li>
-<li>
-
-I also hinted at ideas doing our overall optimization a little differently by
-deviating from the de facto block-coordinate strategy.
-
-</li>
-</ul>
-</ul>
 
 ## Further reading
 
