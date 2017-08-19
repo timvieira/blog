@@ -177,10 +177,20 @@ Other common sources of bugs
   work, you can trick almost any test.
 -->
 
-**Further reading**: I've written about gradient approximations before, you
-might like these articles:
-[gradient-vector products](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/),
-[complex-step method](http://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). I
-[strongly recommend](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
-learning how automatic differentiation works, I learned it from
-[Justin Domke's course notes](https://people.cs.umass.edu/~domke/courses/sml2011/08autodiff_nnets.pdf).
+**Further reading**:
+
+* I've written about gradient approximations before, you might like these
+  articles:
+  [Gradient-vector products](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/),
+  [Complex-step method](http://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/).
+
+* The foundations of backprop:
+  [Backprop is not just the chain rule](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
+
+* [I strongly recommend](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
+  learning how automatic differentiation works, I learned it from
+  [Justin Domke's course notes](https://people.cs.umass.edu/~domke/courses/sml2011/08autodiff_nnets.pdf).
+
+* [Justin Domke post](https://justindomke.wordpress.com/2017/04/22/you-deserve-better-than-two-sided-finite-differences/):
+  Explains why we need bespoke finite-difference stencils (i.e., more than
+  two-sided differences) to prevent numerical demons from destroying our results!
