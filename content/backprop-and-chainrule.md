@@ -12,7 +12,7 @@ This leads to a poor understanding. As
 [I have ranted before](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/):
 people do not understand basic facts about autodiff.
 
-* Evaluating $f(x)$ is provably as fast as evaluating $\nabla f(x)$.
+* Evaluating $\nabla f(x)$ is provably as fast as evaluating $f(x)$.
 
 <!-- Let that sink in. Computing the gradient&mdash;an essential incredient to
 efficient optimization&mdash;is no slower to compute than the function
@@ -170,8 +170,7 @@ $\beta(j) = \{ i: j \in \alpha(i) \}$ is the set of *outgoing* edges. For now,
 we'll assume that the dependency graph given by $\alpha$ is ① acyclic: no $z_i$
 can transitively depend on itself.  ② single-assignment: each $z_i$ appears on
 the left-hand side of *exactly one* equation.  We'll discuss relaxing these
-assumptions in <a href="#lagrange-backprop-generalization">§
-Generalizations</a>.
+assumptions in <a href="#lagrange-backprop-generalization">§ Generalizations</a>.
 
 The standard way to solve a constrained optimization is to use the method
 Lagrange multipliers, which converts a *constrained* optimization problem into
@@ -188,7 +187,7 @@ problem. Here is its form for our task,
 
 $$
 \mathcal{L}\left(\boldsymbol{x}, \boldsymbol{z}, \boldsymbol{\lambda}\right)
-= z_n - \sum_{i=d+1}^n \lambda_i\cdot \left( z_i - f_i(z_{\alpha(i)}) \right).
+= z_n - \sum_{i=d+1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right).
 $$
 
 Optimizing the Lagrangian amounts to solving the following nonlinear system of
@@ -232,9 +231,9 @@ and an acyclic program.)
 \begin{eqnarray*}
 0 &=& \nabla_{\! z_j} \mathcal{L} \\
 &=& \nabla_{\! z_j}\! \left[ z_n - \sum_{i=d+1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
-&=& - \sum_{i=d+1}^n \lambda_i \cdot \nabla_{\! z_j}\! \left[ \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
+&=& - \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
 &=& - \left( \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ z_i \right] \right) + \left( \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ f_i(z_{\alpha(i)}) \right] \right) \\
-&=& - \lambda_j + \sum_{i \in \beta(j)} \lambda_i \cdot \frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} \\
+&=& - \lambda_j + \sum_{i \in \beta(j)} \lambda_i \frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} \\
 &\Updownarrow& \\
 \lambda_j &=& \sum_{i \in \beta(j)} \lambda_i \frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} \\
 \end{eqnarray*}
