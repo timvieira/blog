@@ -129,3 +129,9 @@ less-brittle assumptions about the inner optimization.
  - [Efficient multiple hyperparameter learning for log-linear models](http://ai.stanford.edu/~chuongdo/papers/learn_reg.pdf)
 
  - [Gradient-based Hyperparameter Optimization through Reversible Learning](http://arxiv.org/abs/1502.03492)
+
+ - [Hyperparameter optimization with approximate gradient](http://fa.bianp.net/blog/2016/hyperparameter-optimization-with-approximate-gradient/)
+   ([paper](https://arxiv.org/pdf/1602.02355.pdf)): This paper looks at the implicit
+   differentiation approach where you have an *approximate*
+   solution to the inner optimization problem. They are able to provide error bounds and
+   convergence guarantees under some reasonable conditions.
