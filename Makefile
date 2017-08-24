@@ -16,6 +16,7 @@ $(OUTPUTDIR)/%.html:
 
 clean:
 	find $(OUTPUTDIR) -mindepth 1 -delete
+	rm -f pelican.pid srv.pid _nb_header.html
 
 push: html
 	rsync -a output/. ~/projects/self/timvieira.github.com/blog/.
