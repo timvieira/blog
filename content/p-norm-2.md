@@ -18,7 +18,7 @@ def norm1(x, p):
     return (x**p).sum() ** (1./p)
 ```
 
-Now, suppose $|x_i|^p$ causes overflow (for some $i$). This will occur for sufficiently large $p$ or sufficiently large $x_i$---even if $x_i$ is representable (i.e., not NaN or $\infty$).
+Now, suppose $|x_i|^p$ causes overflow (for some $i$). This will occur for sufficiently large $p$ or sufficiently large $x_i$&mdash;even if $x_i$ is representable (i.e., not NaN or $\infty$).
 
 For example:
 
@@ -67,7 +67,7 @@ $$
 ## Back to numerical stability
 
 Suppose we pick $\alpha = \max_i |x_i|$. Now, the largest number we have to take
-the power of is one --- making it very difficult to overflow on the account of
+the power of is one&mdash;making it very difficult to overflow on the account of
 $\boldsymbol{x}$. This should remind you of the infamous log-sum-exp trick.
 
 
@@ -89,7 +89,7 @@ Now, our example from before works :-)
 
 * It appears as if `scipy.linalg.norm` is robust to overflow, while `numpy.linalg.norm` is not. Note that `scipy.linalg.norm` appears to be a bit slower.
 
-* The `logsumexp` trick is nearly identical, but operates in the log-domain, i.e., $\text{logsumexp}(\log(|x|) \cdot p) / p = \log || x ||_p$. You can implement both tricks with the same code, if you use different number classes for log-domain and real-domain---a trick you might have seen before.
+* The `logsumexp` trick is nearly identical, but operates in the log-domain, i.e., $\text{logsumexp}(\log(|x|) \cdot p) / p = \log || x ||_p$. You can implement both tricks with the same code, if you use different number classes for log-domain and real-domain&mdash;a trick you might have seen before.
 
 
 ```python

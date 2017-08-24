@@ -72,7 +72,7 @@ inefficiency and requires modifying the method to account for the fact that $m$
 is not fixed ahead of time. (3) Even in our simple setting, MC never reaches
 *zero* error; it only converges in an $\epsilon$-$\delta$ sense.
 
-<!---
+<!--
 Remarks
 
  - We saw a similar problem where we kept sampling the same individuals over and

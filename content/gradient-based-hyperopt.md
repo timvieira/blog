@@ -4,7 +4,7 @@ comments: true
 tags: calculus
 
 The most approaches to hyperparameter optimization can be viewed as a bi-level
-optimization---the "inner" optimization optimizes training loss (wrt $\theta$),
+optimization&mdash;the "inner" optimization optimizes training loss (wrt $\theta$),
 while the "outer" optimizes hyperparameters ($\lambda$).
 
 $$
@@ -37,7 +37,7 @@ $$
 Now how does $\theta$ change as the result of an infinitesimal change to
 $\lambda$?
 
-The constraint on the derivative implies a type of "equilibrium"---the inner
+The constraint on the derivative implies a type of "equilibrium"&mdash;the inner
 optimization process will continue to optimize regardless of how we change
 $\lambda$. Assuming we don't change $\lambda$ too much, then the inner
 optimization shouldn't change $\theta$ too much and it will change in a
@@ -107,7 +107,7 @@ Since we don't like (explicit) matrix inverses, we compute $- \left( \frac{
 = -\frac{ \partial^2 \mathcal{L}_{\text{train}}}{ \partial \theta\, \partial
 \lambda^\top}$. When the Hessian is positive definite, the linear system can be
 solved with conjugate gradient, which conveniently only requires matrix-vector
-products---i.e., you never have to materialize the Hessian. (Apparently,
+products&mdash;i.e., you never have to materialize the Hessian. (Apparently,
 [matrix-free linear algebra](https://en.wikipedia.org/wiki/Matrix-free_methods)
 is a thing.) In fact, you don't even have to implement the Hessian-vector and
 Jacobian-vector products because they are accurately and efficiently

@@ -37,7 +37,7 @@ As you can see in the equation above, the gradient takes the form of a
 "leave-one-out product" sometimes called a "cavity."
 
 A naive method for computing the gradient computes the leave-one-out products
-from scratch for each $i$ (outer loop)---resulting in a overall runtime of
+from scratch for each $i$ (outer loop)&mdash;resulting in a overall runtime of
 $O(n^2)$ to compute the gradient. Later, we'll see a dynamic program for
 computing this efficiently.
 
@@ -147,7 +147,7 @@ need more space. That's exactly what we did here: We started with a naive
 algorithm for computing the gradient with $\bigo(n^2)$ time and $\bigo(1)$ space
 (other than the space to store the $n$ functions) and ended up with a $\bigo(n)$
 time $\bigo(n)$ space algorithm with a little clever thinking. What I'm saying
-is autodiff---even if you don't use a magical package---tells us that an
+is autodiff&mdash;even if you don't use a magical package&mdash;tells us that an
 efficient algorithm for the gradient always exists. Furthermore, it tells you
 how to derive it manually, if you are so inclined. The key is to reuse
 intermediate quantities (hence the increase in space).
