@@ -1,4 +1,4 @@
-Title: Gumbel max trick
+Title: Gumbel-max trick
 date: 2014-07-31
 comments: true
 tags: sampling, Gumbel
@@ -23,7 +23,7 @@ def usual(x):
     return cdf.searchsorted(u * z)
 ```
 
-**The Gumbel max trick**:
+**The Gumbel-max trick**:
 
 $$
 y = \underset{ i \in \{1,\cdots,K\} }{\operatorname{argmax}} x_i + z_i
@@ -34,7 +34,7 @@ turns out that $y$ is distributed according to $\pi$. (See the short derivations
 in this
 [blog post](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/).)
 
-Implementing the Gumbel max trick is remarkable easy:
+Implementing the Gumbel-max trick is remarkable easy:
 
 ```python
 def gumbel_max_sample(x):
@@ -47,13 +47,13 @@ $-\log(-\log(\text{Uniform}(0,1))$
 
 **Comparison**:
 
-  1. Gumbel max requires $K$ samples from a uniform. Usual requires only $1$.
+  1. Gumbel-max requires $K$ samples from a uniform. Usual requires only $1$.
 
   2. Gumbel is one-pass because it does not require normalization (or a pass to
      compute the max for use in the exp-normalize trick). More on this in a
      later post!
 
-  3. The Gumbel max trick requires $2K$ calls to $\log$, whereas ordinary
+  3. The Gumbel-max trick requires $2K$ calls to $\log$, whereas ordinary
      requires $K$ calls to $\exp$. Since $\exp$ and $\log$ are expensive
      function, we'd like to avoid calling them. What gives? Well, Gumbel's calls
      to $\log$ do not depend on the data so they can be precomputed; this is

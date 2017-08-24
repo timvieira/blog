@@ -1,4 +1,4 @@
-Title: Gumbel max trick and weighted reservoir sampling
+Title: Gumbel-max trick and weighted reservoir sampling
 date: 2014-08-01
 comments: true
 tags: sampling, Gumbel, reservoir-sampling
@@ -15,7 +15,7 @@ perturb-and-MAP
 which is inspired by the
 [Gumbel-max-trick](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/)
 (see [previous post](/blog/post/2014/07/31/gumbel-max-trick/)). The apparent
-similarity between weighted reservior sampling and the Gumbel max trick lead us
+similarity between weighted reservior sampling and the Gumbel-max trick lead us
 to make some cute connections, which I'll describe in this post.
 
 **The problem**: We're given a stream of unnormalized probabilities, $x_1,
