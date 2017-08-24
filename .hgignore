@@ -6,5 +6,6 @@ output/*
 .hgsub
 .ipynb_checkpoints
 cache/
+theme/TuftePelican
 
 .git

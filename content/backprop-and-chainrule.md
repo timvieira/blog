@@ -187,7 +187,7 @@ problem. Here is its form for our task,
 
 $$
 \mathcal{L}\left(\boldsymbol{x}, \boldsymbol{z}, \boldsymbol{\lambda}\right)
-= z_n - \sum_{i=d+1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right).
+= z_n - \sum_{i=1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right).
 $$
 
 Optimizing the Lagrangian amounts to solving the following nonlinear system of
@@ -230,9 +230,9 @@ and an acyclic program.)
 
 \begin{eqnarray*}
 0 &=& \nabla_{\! z_j} \mathcal{L} \\
-&=& \nabla_{\! z_j}\! \left[ z_n - \sum_{i=d+1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
-&=& - \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
-&=& - \left( \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ z_i \right] \right) + \left( \sum_{i=d+1}^n \lambda_i \nabla_{\! z_j}\! \left[ f_i(z_{\alpha(i)}) \right] \right) \\
+&=& \nabla_{\! z_j}\! \left[ z_n - \sum_{i=1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
+&=& - \sum_{i=1}^n \lambda_i \nabla_{\! z_j}\! \left[ \left( z_i - f_i(z_{\alpha(i)}) \right) \right] \\
+&=& - \left( \sum_{i=1}^n \lambda_i \nabla_{\! z_j}\! \left[ z_i \right] \right) + \left( \sum_{i=1}^n \lambda_i \nabla_{\! z_j}\! \left[ f_i(z_{\alpha(i)}) \right] \right) \\
 &=& - \lambda_j + \sum_{i \in \beta(j)} \lambda_i \frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} \\
 &\Updownarrow& \\
 \lambda_j &=& \sum_{i \in \beta(j)} \lambda_i \frac{\partial f_i(z_{\alpha(i)})}{\partial z_j} \\
@@ -259,7 +259,7 @@ type $i$ to derivatives of type $j$.
 
 $$
 \begin{eqnarray*}
-0 &=& \nabla_{\! z_n}\! \left[ z_n - \sum_{i=d+1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right) \right] &=& 1 - \lambda_n \\
+0 &=& \nabla_{\! z_n}\! \left[ z_n - \sum_{i=1}^n \lambda_i \cdot \left( z_i - f_i(z_{\alpha(i)}) \right) \right] &=& 1 - \lambda_n \\
  &\Updownarrow& \\
  \lambda_n &=& 1
 \end{eqnarray*}
