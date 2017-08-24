@@ -1,4 +1,4 @@
-Title: Numerically-stable p-norms
+Title: Numerically stable p-norms
 date: 2014-11-10
 tags: numerical
 comments: true
