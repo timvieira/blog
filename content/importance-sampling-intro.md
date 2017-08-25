@@ -1,4 +1,4 @@
-title: Importance Sampling
+title: Importance sampling
 date: 2014-12-21
 comments: true
 tags: statistics, importance-sampling, sampling
