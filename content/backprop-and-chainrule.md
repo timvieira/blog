@@ -367,7 +367,7 @@ variables.
   the de facto block-coordinate strategy.
 
 <center>
-![The path to enlightenment](/blog/images/backprop-brain-meme.png)
+![Levels of enlightenment](/blog/images/backprop-brain-meme.png)
 </center>
 
 
