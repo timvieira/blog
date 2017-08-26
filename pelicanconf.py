@@ -9,6 +9,8 @@ AUTHOR = u'Tim Vieira'
 SITENAME = u'Graduate Descent'
 SITEURL = 'http://timvieira.github.io/blog'
 
+OUTPUT_PATH = 'output/blog/'
+
 TIMEZONE = 'US/Eastern'
 DEFAULT_LANG = u'en'
 DEFAULT_DATE_FORMAT = '%b %d, %Y'

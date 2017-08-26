@@ -366,6 +366,10 @@ variables.
   hinted at ideas for doing optimization a little differently, deviating from
   the de facto block-coordinate strategy.
 
+<center>
+![The path to enlightenment](/blog/images/backprop-brain-meme.png)
+</center>
+
 
 ## Further reading
 
@@ -381,7 +385,6 @@ variables.
 
 > Alexander Grubb and J. Andrew Bagnell. (2010)
 > [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1).
-
 
 * A great blog post that uses the implicit function theorem to *derive* the
   method of Lagrange multipliers. He also touches on the connection to
