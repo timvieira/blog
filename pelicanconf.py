@@ -44,7 +44,7 @@ SOCIAL = []
 DEFAULT_PAGINATION = 1
 
 # Uncomment following line if you want document-relative URLs when developing
-RELATIVE_URLS = False
+RELATIVE_URLS = True
 
 # When creating a short summary of an article, this will be the default length
 # in words of the text created. This only applies if your content does not

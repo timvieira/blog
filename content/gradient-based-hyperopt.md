@@ -1,7 +1,7 @@
 title: Gradient-based hyperparameter optimization and the implicit function theorem
 date: 2016-03-05
 comments: true
-tags: calculus
+tags: calculus hyperparameter-optimization
 
 The most approaches to hyperparameter optimization can be viewed as a bi-level
 optimization&mdash;the "inner" optimization optimizes training loss (wrt $\theta$),
