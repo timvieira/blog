@@ -392,3 +392,12 @@ variables.
 
 > Ben Recht. (2016)
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
+
+
+## Code
+
+I have coded up and tested the Lagrangian perspective on automatic
+differentiation that I presented in this article. The code is available in this
+[gist](https://gist.github.com/timvieira/8addcb81dd622b0108e0e7e06af74185).
+
+<script src="https://gist.github.com/timvieira/8addcb81dd622b0108e0e7e06af74185.js"></script>
