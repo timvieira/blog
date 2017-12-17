@@ -71,7 +71,7 @@ def f(x):
 Symbolic differentiation would have to use the "flat" version of this function,
 so no intermediate variable $\Rightarrow$ slow.
 
-Automatic differentiation let's us differentiate a program with *intermediate*
+Automatic differentiation lets us differentiate a program with *intermediate*
 variables.
 
 * The rules for transforming the code for a function into code for the gradient
