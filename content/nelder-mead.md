@@ -1,5 +1,5 @@
 Title: Black-box optimization
-date: 2018-02-20
+date: 2018-03-16
 comments: true
 tags: optimization calculus
 
