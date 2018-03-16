@@ -3,9 +3,12 @@ date: 2015-04-29
 comments: true
 tags: machine-learning, rant, crf
 
-A short rant: multiclass logistic regression and conditional random fields (CRF)
+A short rant: Multiclass logistic regression and conditional random fields (CRF)
 are the same thing. This comes to a surprise to many people because CRFs tend to
 be surrounded by additional "stuff."
+
+Understanding this very basic connection not only deepens our understanding, but
+also suggests a method for testing complex CRF code.
 
 Multiclass logistic regression is simple. The goal is to predict the correct
 label $y^*$ from handful of labels $\mathcal{Y}$ given the observation $x$ based
@@ -13,7 +16,7 @@ on features $\phi(x,y)$. Training this model typically requires computing the
 gradient:
 
 $$
-\phi(x,y^*) - \sum_{y \in \mathcal{Y}} p(y|x) \phi(x,y)
+\nabla \log p(y^* \mid x) = \phi(x,y^*) - \sum_{y \in \mathcal{Y}} p(y|x) \phi(x,y)
 $$
 
 where
@@ -27,13 +30,18 @@ $$
 At test-time, we often take the highest-scoring label under the model.
 
 $$
-\hat{y}(x) = \textbf{argmax}_{y \in \mathcal{Y}} \theta^\top \phi(x,y)
+\widehat{y}(x) = \underset{y \in \mathcal{Y}}{\textrm{argmax}}\ \theta^\top \phi(x,y)
 $$
 
-A conditional random field is exactly multiclass logistic regression. The only
-difference is that the sum and argmax are inefficient to compute naively (i.e.,
-by enumeration). This point is often lost when people first learn about
-CRFs. Some people never make this connection.
+A conditional random field is *exactly* multiclass logistic regression. The only
+difference is that the sums ($Z(x)$ and $\sum_{y \in \mathcal{Y}} p(y|x)
+\phi(x,y)$) and the argmax $\widehat{y}(x)$ are inefficient to compute naively
+(i.e., by brute-force enumeration). This point is often lost when people first
+learn about CRFs. Some people never make this connection.
+
+Brute-force enumeration is a very useful method for testing complex dynamic
+programming procedures for computing the sums and the argmax on relatively small
+examples. Don't just copy code for dynamic programming out of a paper! Test it!
 
 Here's some stuff you'll see once we start talking about CRFs:
 
@@ -50,11 +58,11 @@ label space, this term gets throw around. (BTW, this isn't "statistical
 inference," just algorithms to compute sum and max over $\mathcal{Y}$.)
 
 Graphical models establish a notation and structural properties which allow
-efficient inference -- things like cycles and treewidth.
+efficient inference&mdash;things like cycles and treewidth.
 
 Model templating is the only essential trick to move from logistic regression to
 a CRF. Templating "solves" the problem that not all training examples have the
-same "size" -- the set of outputs $\mathcal{Y}(x)$ now depends on $x$. A model
+same "size"&mdash;the set of outputs $\mathcal{Y}(x)$ now depends on $x$. A model
 template specifies how to compute the features for an entire output, by looking
 at interactions between subsets of variables.
 

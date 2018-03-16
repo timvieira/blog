@@ -38,20 +38,47 @@ plot $(\alpha_i,f_i)$.
 **Picking directions**: There are many alternatives for picking
 $\boldsymbol{d}$, my favorites are:
 
- 1. Gradient (if it exists), this direction is guaranteed to show a local
-    increase/decrease in the objective, unless it's zero.
+ 1. Coordinate vectors: Varying one (or two) dimensions.
 
- 2. Coordinate vectors. Varying one dimension per plot.
+ 2. Gradient (if it exists), this direction is guaranteed to show a local
+    increase/decrease in the objective, unless it's zero because we're at a
+    local optimum. Some variations on "descent" directions:
 
- 3. Random. I recommend directions drawn from a spherical
-    Gaussian.[^sphericalgaussian] The reason being that such a vector is
-    uniformly distributed across all unit-length directions (i.e., the angle of
-    the vector, not it's length). We will vary the length ourselves via
-    $\alpha$. It's probably best that our plots don't randomly vary in scale.
+    - Use the gradient direction of a *different* objective, e.g., plot
+      (nondifferentiable) accuracy on dev data along the (differentiable)
+      likelihood direction on training data.
 
-**Extension to 3d**: It's pretty easy to extend this generating 3d plots by
-using 2 vectors, $\boldsymbol{d_1}$ and $\boldsymbol{d_2}$, and varying two
-parameters $\alpha$ and $\beta$,
+    - Optimizer trajectory: Use PCA on the optimizer's trajectory to find the
+      directions which summarize the most variation.
+
+ 3. The difference of two interesting points, e.g., the start and end points of
+    your optimization, two different solutions.
+
+ 3. Random:
+
+    If all your parameters are on an equal scale, I recommend directions drawn
+    from a spherical Gaussian.[^sphericalgaussian] The reason being that such a
+    vector is uniformly distributed across all unit-length directions (i.e., the
+    angle of the vector, not it's length). We will vary the length ourselves via
+    $\alpha$.
+
+    However, often components of $\boldsymbol{x}$ have different scales, so
+    finding a "natural scale" is crucial if we are going to draw conclusions
+    that require a comparison of the perturbation sensitivities across several
+    dimensions&mdash;this is closely related to why we like second-order and
+    adaptive optimization algorithms
+    ([discussion](https://timvieira.github.io/blog/post/2016/05/27/dimensional-analysis-of-gradient-ascent/));
+    $\boldsymbol{d}$'s units must match the units of $\boldsymbol{x}$ in each
+    coordinate!
+
+ 4. Maximize "interestingness": You can also use a direction-optimization
+    procedure to maximize some measure of "interestingness" (e.g., the direction
+    in which training and dev loss differ the most; the "bumpiest" direction or
+    direction taking the biggest range of values).
+
+**Extension to 3d**: It's pretty easy to extend these ideas to generating
+three-dimensional plots by using two vectors, $\boldsymbol{d_1}$ and
+$\boldsymbol{d_2},$ and varying two parameters $\alpha$ and $\beta$,
 
 $$
 f(\boldsymbol{x} + \alpha \ \boldsymbol{d_1} + \beta \ \boldsymbol{d_2})
@@ -61,6 +88,11 @@ $$
 verify/explore properties of an objective function, compare approximations, test
 sensitivity to certain parameters/hyperparameters, visually debug optimization
 algorithms.
+
+**Further reading**:
+
+- [Visualizing the Loss Landscape of Neural Nets](https://arxiv.org/abs/1712.09913)
+
 
 
 Notes

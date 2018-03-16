@@ -158,8 +158,8 @@ unbiasedness</button> <div id="ps-unbiased" class="derivation"
 style="display:none;"> **Proof of unbiasedness**. The following proof is a
 little different from that in the priority sampling papers. I think it's more
 straightforward. More importantly, it shows how we can extend the method to
-sample from slightly different without replacement distributions
-(as long as we can compute $q_i = p(i \in S | \tau)$).
+sample from slightly different without-replacement distributions (as long as we
+can compute $q_i = p(i \in S | \tau)$).
 
 $$
 \begin{eqnarray}
