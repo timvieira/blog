@@ -1,7 +1,7 @@
 Title: Black-box optimization
 date: 2018-03-16
 comments: true
-tags: optimization calculus
+tags: optimization, calculus
 
 Black-box optimization algorithms are a fantastic tool that everyone should be
 aware of. I frequently use black-box optimization algorithms for prototyping and
@@ -10,12 +10,12 @@ e.g., because the function is not differentiable,
 because the function is truly opaque (no gradients),
 because the gradient would require too much memory to compute efficiently.
 
-From a young age, we are taught to love gradients and hence become obsessed with
-gradient descent. I believe this obsession has put us in a local optimum. I've
-been amazed at how few people know about non-gradient algorithms of
-optimization. This is slowly improving thanks to the prevalence of
-hyperparameter optimization, so most people have used random search and (at
-least) know of Bayesian optimization.
+From a young age, we are taught to love gradients and never learn about any
+optimization algorithms other than gradient descent. I believe this obsession
+has put us in a local optimum. I've been amazed at how few people know about
+non-gradient algorithms for optimization. Although, this is slowly improving
+thanks to the prevalence of hyperparameter optimization, so most people have
+used random search and at least know of Bayesian optimization.
 
 There are many ways to optimize a function! The gradient just happens to have a
 [beautiful](/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/) and
@@ -29,13 +29,13 @@ tangent to the surface of $f$ at the point $x$; the $(d+1)^{\text{th}}$
 coordinate comes from the value $f(x)$&mdash;think of it like a first-order
 Taylor approximation to $f$ at $x$.
 
-**The baseline:** Without access to gradient code, approximating* the gradient
-*takes $d+1$ function evaluations via the finite-difference approximation to the
-*gradient,[^twosidedfd] which I've discussed a
-*[few](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/)
-*[times](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/). This
-*shouldn't be surprising since that's the size of the object we're looking for
-*anyways![^faster-but-noisy]
+**The baseline:** Without access to gradient code, *approximating* the gradient
+takes $d+1$ function evaluations via the finite-difference approximation to the
+gradient,[^twosidedfd] which I've discussed a
+[few](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/)
+[times](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/). This
+shouldn't be surprising since that's the size of the object we're looking for
+anyways![^faster-but-noisy]
 
 **Can we do better?** Suppose we had $(d+1)$ arbitrary points
 $\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(d+1)}$ in $\mathbb{R}^n$ with

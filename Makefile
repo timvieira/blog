@@ -18,8 +18,10 @@ clean: $(OUTPUTDIR)
 	find $(OUTPUTDIR) -mindepth 1 -delete
 
 push: html
+	rm -rf ~/projects/self/timvieira.github.com/blog
+	mkdir ~/projects/self/timvieira.github.com/blog
 	rsync -a $(OUTPUTDIR)/. ~/projects/self/timvieira.github.com/blog/.
-	( cd ~/projects/self/timvieira.github.com/ && hg ci -m 'update blog' && hg bookmarks -r tip master && hg push )
+	( cd ~/projects/self/timvieira.github.com/ && hg addremove && hg ci -m 'update blog' && hg bookmarks -r tip master && hg push )
 
 $(OUTPUTDIR):
 	mkdir -p $(OUTPUTDIR)

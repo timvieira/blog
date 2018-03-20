@@ -47,18 +47,20 @@ $-\log(-\log(\text{Uniform}(0,1))$
 
 **Comparison**:
 
-  1. Gumbel-max requires $K$ samples from a uniform. Usual requires only $1$.
+  1. Number of calls to the random number generator: Gumbel-max requires $K$
+     samples from a uniform, whereas the usual algorithm only requires $1$.
 
-  2. Gumbel is one-pass because it does not require normalization (or a pass to
-     compute the max for use in the exp-normalize trick). More on this in a
-     later post!
+  2. Gumbel is a one-pass algorithm: It does not need to see all of the data
+     (e.g., to normalize) before it can start partially sampling. Thus,
+     Gumbel-max can be used for
+     [weighted sampling from a stream](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/).
 
-  3. The Gumbel-max trick requires $2K$ calls to $\log$, whereas ordinary
-     requires $K$ calls to $\exp$. Since $\exp$ and $\log$ are expensive
-     function, we'd like to avoid calling them. What gives? Well, Gumbel's calls
-     to $\log$ do not depend on the data so they can be precomputed; this is
-     handy for implementations which rely on vectorization for efficiency,
-     e.g. python+numpy.
+  3. Low-level efficiency: The Gumbel-max trick requires $2K$ calls to $\log$,
+     whereas ordinary requires $K$ calls to $\exp$. Since $\exp$ and $\log$ are
+     expensive function, we'd like to avoid calling them. What gives? Well,
+     Gumbel's calls to $\log$ do not depend on the data so they can be
+     precomputed; this is handy for implementations which rely on vectorization
+     for efficiency, e.g. python+numpy.
 
 **Further reading**: I have a few posts relating to the Gumbel-max trick. Have a
 look at [posts tagged with Gumbel](/blog/tag/gumbel.html).
