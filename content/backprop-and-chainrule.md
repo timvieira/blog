@@ -373,26 +373,41 @@ variables.
 
 ## Further reading
 
-* After working out the connection between backprop and the method of Lagrange
-  multipliers, I discovered following paper, which beat me to it. I don't think
-  my version is too redundant.
+After working out the connection between backprop and the method of Lagrange
+multipliers, I discovered following paper, which beat me to it. I don't think my
+version is too redundant.
 
 > Yann LeCun. (1988)
 > [A Theoretical Framework from Back-Propagation](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf).
 
-* The backpropagation algorithm can be cleanly generalized from values to
-  functionals!
-
-> Alexander Grubb and J. Andrew Bagnell. (2010)
-> [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1).
-
-* A great blog post that uses the implicit function theorem to *derive* the
-  method of Lagrange multipliers. He also touches on the connection to
-  backpropgation.
+Ben Recht has great blog post that uses the implicit function theorem to
+*derive* the method of Lagrange multipliers. He also touches on the connection
+to backpropgation.
 
 > Ben Recht. (2016)
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
 
+Tom Goldstein's group took the Lagrangian view of backprop and used it to design
+an ADMM approach for optimizing neural nets. The ADMM approach operates
+massively parallel and leverages lots of highly optimized solvers for
+subproblems. This work nicely demonstrates that understanding automatic
+differentiation&mdash;in the broader sense that I described in this
+post&mdash;facilitates the development of novel optimization algorithms. <!--
+ADMM is based on a cool reformulation trick, which take a *big* circuit and
+breaks it up into several *small* circuits (subproblems), which are *decoupled*
+from the big problem because each subproblem gets to freely tune its own *local*
+version of the variables. There is, of course, a global equality constraint on
+the decoupled variables so that we get a correct solution. The global equality
+constraints iteratively brings the subproblems into agreement.-->
+
+> Gavin Taylor, Ryan Burmeister, Zheng Xu, Bharat Singh, Ankit Patel, Tom Goldstein. (2018)
+> [Training Neural Networks Without Gradients: A Scalable ADMM Approach](https://arxiv.org/abs/1605.02026).
+
+The backpropagation algorithm can be cleanly generalized from values to
+functionals!
+
+> Alexander Grubb and J. Andrew Bagnell. (2010)
+> [Boosted Backpropagation Learning for Training Deep Modular Networks](https://t.co/5OW5xBT4Y1).
 
 ## Code
 
