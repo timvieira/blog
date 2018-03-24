@@ -39,7 +39,7 @@ Implementing the Gumbel-max trick is remarkable easy:
 ```python
 def gumbel_max_sample(x):
     z = gumbel(loc=0, scale=1, size=x.shape)
-    return (x + g).argmax(axis=1)
+    return (x + z).argmax(axis=1)
 ```
 
 If you don't have access to a Gumbel random variate generator, you can use
