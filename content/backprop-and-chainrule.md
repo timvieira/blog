@@ -14,7 +14,7 @@ people do not understand basic facts about autodiff.
 
 * Evaluating $\nabla f(x)$ is provably as fast as evaluating $f(x)$.
 
-<!-- Let that sink in. Computing the gradient&mdash;an essential incredient to
+<!-- Let that sink in. Computing the gradient&mdash;an essential ingredient to
 efficient optimization&mdash;is no slower to compute than the function
 itself. Contrast that with the finite-difference gradient approximation, which
 is quite accurate, but its runtime is $\textrm{dim}(x)$ times slower than
@@ -137,7 +137,7 @@ f &= d + e
 \end{align*}
 $$
 
-#### The general formuation
+#### The general formulation
 \begin{align*}
   & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n & \\
   & \text{s.t.}\quad z_i = x_i                          &\text{ for $1 \le i \le d$} \\
@@ -179,9 +179,9 @@ per $x_i$ constraint), called Lagrange multipliers.
 
 #### The Lagrangian
 
-To handle constaints, let's dig up a tool from our calculus class,
+To handle constraints, let's dig up a tool from our calculus class,
 [the method of Lagrange multipliers](https://en.wikipedia.org/wiki/Lagrange_multiplier),
-which converts a *constrained* optimization probelm into an *unconstrainted*
+which converts a *constrained* optimization problem into an *unconstrained*
 one. The unconstrained version is called "the Lagrangian" of the constrained
 problem. Here is its form for our task,
 
@@ -254,7 +254,7 @@ $j$. You should think of the scaling as a "unit conversion" from derivatives of
 type $i$ to derivatives of type $j$.
 
 
-**Output mutliplier** ($\lambda_n$): Here we follow the same pattern as for
+**Output multiplier** ($\lambda_n$): Here we follow the same pattern as for
   intermediate multipliers.
 
 $$
@@ -277,7 +277,7 @@ Of course, this interpretation is only precise when ① the constraints are
 satisfied ($\boldsymbol{z}$ equations) and ② the linear system on multipliers is
 satisfied ($\boldsymbol{\lambda}$ equations).
 
-**Input variables** ($\boldsymbol{x}$): Unforunately, the there is no
+**Input variables** ($\boldsymbol{x}$): Unfortunately, the there is no
   closed-form solution to how to set $\boldsymbol{x}$. For this we resort to
   something like gradient ascent. Conveniently, $\nabla_{\!\boldsymbol{x}}
   f(\boldsymbol{x}) = \boldsymbol{\lambda}_{1:d}$, which we can use to optimize
@@ -294,13 +294,13 @@ dependency graph induced by the $\alpha$ relation is acyclic. If we had needed a
 full linear system solver, the solution would take $\mathcal{O}(n^3)$ time
 instead of linear time, seriously blowing-up our nice runtime!
 
-This connection to linear systems is interesting: It tells us that we *could*
-compute gradients in cyclic graphs. All we'd need is to run a linear system
-solver to stich together our gradients! That is exactly what the
+This connection to linear systems is interesting: It tells us that we can
+compute *global* gradients in cyclic graphs. All we'd need is to run a linear
+system solver to stitch together *local* gradients! That is exactly what the
 [implicit function theorem](https://en.wikipedia.org/wiki/Implicit_function_theorem)
 says!
 
-Cyclic constraints add some expressive powerful to "constraint language" and
+Cyclic constraints add some expressive powerful to our "constraint language" and
 it's interesting that we can still efficiently compute gradients in this
 setting. An example of what a general type of cyclic constraint looks like is
 
@@ -313,11 +313,11 @@ $$
 $$
 
 where $g$ can be an any smooth multivariate function of the intermediate
-variables! Of course, allowing cyclic constraints come at the cost of a
+variables! Of course, allowing cyclic constraints comes at the cost of a
 more-difficult analogue of "the forward pass" to satisfy the $\boldsymbol{z}$
 equations (if we want to keep it a block-coordinate step). The
-$\boldsymbol{\lambda}$ equations are now a linear system that requres a linear
-solver (e.g., Guassian elimination).
+$\boldsymbol{\lambda}$ equations are now a linear system that requires a linear
+solver (e.g., Gaussian elimination).
 
 
 Example use cases:
@@ -327,7 +327,7 @@ Example use cases:
   [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
   in machine learning. The implicit function theorem manages to get gradients of
   hyperparameters without needing to store any of intermediate states of the
-  optimization algorithm used in the inner optimzation! This is a *huge* memory
+  optimization algorithm used in the inner optimization! This is a *huge* memory
   saver since direct backprop on the inner gradient decent algorithm would
   require caching all intermediate states. Yikes!
 
@@ -343,7 +343,7 @@ optimization into the mix! We can imagine using more general algorithms for
 optimizing our function and other ways of enforcing the constraints. We see
 immediately that we could run optimization with adjoints set to values other
 than those that backprop would set them to (i.e., we can optimize them like we'd
-do in other algorithms for optimizing general Langrangians).
+do in other algorithms for optimizing general Lagrangians).
 
 ## Summary
 
@@ -382,7 +382,7 @@ version is too redundant.
 
 Ben Recht has great blog post that uses the implicit function theorem to
 *derive* the method of Lagrange multipliers. He also touches on the connection
-to backpropgation.
+to backpropagation.
 
 > Ben Recht. (2016)
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
