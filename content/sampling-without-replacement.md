@@ -192,8 +192,8 @@ $$
    has been shown to have near-optimal variance
    [(Szegedy, 2005)](https://www.cs.rutgers.edu/~szegedy/PUBLICATIONS/full1.pdf).
    Specifically, priority sampling with $m$ samples is no worse than the best
-   possible $(m-1)$-sparse estimator in terms of variance. Of course, when
-   estimating $\mu$ some knowledge about $f$, we can obviously be used to beat
+   possible $(m-1)$-sparse estimator in terms of variance. Of course,
+   if we have some knowledge about $f$, we may be able to beat
    PS. <!-- We can relate subset sums to estimating $\mu$ by interpreting
    $\boldsymbol{x} = \alpha\!\cdot\! \boldsymbol{p}$ for some $\alpha$, scaling
    $f$ appropriately by $\alpha$, and encoding the subset via indicators in

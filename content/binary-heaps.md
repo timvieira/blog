@@ -106,7 +106,7 @@ can pack everything into an array, which means our implementation has great
 memory/cache locality and low storage overhead.
 
 Traversing the tree is pretty simple: Let $d$ be the number of internal nodes,
-nodes $1 \le i \le d$ are interal. For node $i$, left child $\rightarrow {2
+nodes $1 \le i \le d$ are internal. For node $i$, left child $\rightarrow {2
 \cdot i},$ right child $\rightarrow {2 \cdot i + 1},$ parent $\rightarrow
 \lfloor i / 2 \rfloor.$ (Note that these operations assume the array's indices
 start at $1$. We generally fake this by adding a dummy node at position $0$,

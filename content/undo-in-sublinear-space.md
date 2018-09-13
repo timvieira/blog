@@ -8,7 +8,7 @@ s_n$ according to $s_{t} = f(s_{t-1})$ where $s_0$ is given.
 
 We'd like to devise an algorithm, which can reconstruct each point in the
 sequence efficiently as we traverse it backwards. You can think of this as
-"hitting undo" from the end of the sequence or reversing a singly-liked list.
+"hitting undo" from the end of the sequence or reversing a singly-linked list.
 
 Obviously, we *could* just record the entire sequence, but if $n$ is large *or*
 the size of each state is large, this will be infeasible.
