@@ -8,7 +8,7 @@ s_n$ according to $s_{t} = f(s_{t-1})$ where $s_0$ is given.
 
 We'd like to devise an algorithm, which can reconstruct each point in the
 sequence efficiently as we traverse it backwards. You can think of this as
-"hitting undo" from the end of the sequence or reversing a singly-linked list.
+"hitting undo" from the end of the sequence or reversing a singly linked list.
 
 Obviously, we *could* just record the entire sequence, but if $n$ is large *or*
 the size of each state is large, this will be infeasible.
@@ -162,7 +162,7 @@ def recursive(f, s0, b, e):
 The algorithms describe in this post are generic algorithmic tricks, which has
 been used in a number of place, including
 
-* The classic computer science interview problem of reversing a singly-linked list
+* The classic computer science interview problem of reversing a singly linked list
   under a tight budget on *additional* memory.
 
 * Backpropagation for computing gradients in sequence models, including HMMs ([Zweig & Padmanabhan, 2000](https://www.microsoft.com/en-us/research/wp-content/uploads/2000/01/icslp00_logspace.pdf))
