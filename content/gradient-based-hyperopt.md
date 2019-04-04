@@ -22,7 +22,7 @@ Well, what does it mean to have an $\textbf{argmin}$ inside a function?
 Well, it means that there is a $\theta^*$ that gets passed to
 $\mathcal{L}_{\text{dev}}$. And, $\theta^*$ is a function of $\lambda$, denoted
 $\theta(\lambda)$. Furthermore, $\textbf{argmin}$ must set the derivative of the
-inner optimization is zero in order to be a local optimum of the inner
+inner optimization to zero in order to be a local optimum of the inner
 function. So we can rephrase the problem as
 
 $$
