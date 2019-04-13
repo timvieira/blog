@@ -114,24 +114,24 @@ only sample from are what make this a true stochastic optimization problem.
 
 Let's be a little more concrete by looking at a classic example from
 reinforcement learning: the Markov decision process (MDP). In this context, the
-random variable $x$ is an alternating sequence of states and actions, $x = (s_0,
-a_0, s_1, a_1, \ldots a_{T-1}, s_T)$ and the generative process consists of an
-unknown transition function $p(s_{t+1}|s_t,a_t)$ that is only accessible through
-sampling and a policy $p_{\theta}(a_t|s_t)$ which we in control of. So the
-probability of an entire sequence in an MDP is $p_{\theta}(x) = p(s_0)
-\prod_{t=0}^T p(s_{t+1}|s_t,a_t) \pi_\theta(a_t|s_t)$. The likelihood-ratio
-method can be used to derive several "policy gradient" methods, which compute
-unbiased gradient estimates with no knowledge of the transition distribution.
+random variable $x$ is an alternating sequence of states and actions, $x =
+\langle s_0, a_0, s_1, a_1, \ldots a_{T-1}, s_T \rangle$ and the generative
+process consists of an unknown transition function $p(s_{t+1}|s_t,a_t)$ that is
+only accessible through sampling and a policy $p_{\theta}(a_t|s_t)$ which we in
+control of. So the probability of an entire sequence in an MDP $p_{\theta}(x)$
+is $p(s_0) \prod_{t=0}^T p(s_{t+1}|s_t,a_t) \pi_\theta(a_t|s_t)$. The
+likelihood-ratio method can be used to derive several "policy gradient" methods,
+which compute unbiased gradient estimates with no knowledge of the transition
+distribution.
 
 > The beauty of the likelihood ratio is the cancellation of unknown terms.
 
 Aside: This fortunate cancellation occurs in many other contexts, e.g. the
 Metropolis-Hastings accept-reject criteria.
 
-To make this explicit, let's consider the importance weight, $w(\tau)$.
+To make this explicit, let's consider the importance weight, $p/q$.
 \begin{eqnarray}
-w(\tau)
-= \frac{p(\tau|\pi_\theta)}{q(\tau)}
+\frac{p_\theta(x)}{q(x)}
 = \frac{ {\color{red}{ p(s_0) }} \prod_{t=0}^T {\color{red}{ p(s_{t+1}|s_t,a_t) }} \pi_\theta(a_t|s_t) }
        { {\color{red}{ p(s_0) }} \prod_{t=0}^T {\color{red}{ p(s_{t+1}|s_t,a_t) }}  q(a_t|s_t) }
 = \frac{\prod_{t=0}^T \pi_\theta(a_t|s_t)}
@@ -141,18 +141,55 @@ w(\tau)
 <br/>
 Common terms cancel! This implies that we don't need to compute them.
 
-Also, note that the component $\nabla_{\!\theta} \log p_{\theta}(x)$ also
-simplifies because terms that do not depend on $\theta$ also disappear. Leaving
-you with just a sum of log-gradient terms that you *do* know because they are
-part of the model you're tuning.
+Those component cancel in $\nabla_{\!\theta} \log p_{\theta}(x)$ because terms
+that do not depend on $\theta$ also disappear. Leaving you with just a sum of
+log-gradient terms that you *do* know because they are part of the model you're
+tuning.
 
-You can improve your data efficiency and algorithm stability using off-line
-optimization (with your favorite deterministic optimization algorithm).  I have
-written a long article about offline optimization
-[here]((https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)).
+$$
+\begin{eqnarray*}
+\nabla \log p(x)
+&=& \nabla \log \left( p(s_0) \prod_{t=0}^T p(s_{t+1}|s_t,a_t) \pi_\theta(a_t|s_t) \right) \\
+&=& \nabla \left(\log p(s_0) + \sum_{t=0}^T \log p(s_{t+1}|s_t,a_t)
+  + \log \pi_\theta(a_t|s_t) \right) \\
+&=& \sum_{t=0}^T \nabla \log \pi_\theta(a_t|s_t)
+\end{eqnarray*}
+$$
 
+#### The baseline trick
+
+These estimators should always be used in conjunction with a baseline function
+or more generally a control variate. There are many options for deriving control
+variates, which will depend on the specific structure of $x$.  For example, in
+the MDP case, we can use any function that depends on $s_t$.
+
+However, even without special structure, we can an always should use (at a
+minimum) a constant baseline,
+$$
+\mathbb{E}_{x \sim q} \left[
+\frac{p_{\theta}(x)}{q(x)}
+r(x)
+\nabla_{\!\theta} \log p_\theta(x)
+\right]
+=
+\mathbb{E}_{x \sim q} \left[
+\frac{p_{\theta}(x)}{q(x)}
+(r(x) - {\color{red}{b}})
+\nabla_{\!\theta} \log p_\theta(x)
+\right]
+\text{for all } {\color{red}{b} \in \mathbb{R}}
+$$
+The minimum variance choice for b is
+$$
+b = \frac{\sum_k \mathrm{Cov}(r, \nabla_{\theta_k} \log p) }{\sum_k \mathrm{Var}(\nabla_{\theta_k} \log p) }
+$$
+which we can compute with sampling-based estimators of the quantities.
+
+Some folks use an estimate of $J$, which is better than nothing.
 
 #### Important points
+
+ * Always use a baseline.
 
  * This gradient estimate is "zero order" it is essentially probing the function
    in $x$ space, which might be higher dimensional than $\theta$. As a result,
@@ -173,6 +210,11 @@ written a long article about offline optimization
    likelihood-ratio method has an impractical signal-to-noise ratio, which makes
    it very hard use in optimization.  There are countless papers on tricks to
    reduce the variance of the estimator.
+
+ * You can improve your data efficiency and algorithm stability using off-line
+   optimization (with your favorite deterministic optimization algorithm).  I
+   have written a long article about offline optimization
+   [here]((https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)).
 
 
 ## Summary
