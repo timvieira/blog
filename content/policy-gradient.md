@@ -14,11 +14,11 @@ don't have complete knowledge of $p_\theta$.  For example, it is a mix of
 factors that are known and under our control via $\theta$ (policy factors) and
 factors that are not known (environment factors).
 
-The likelihood-ratio gradient estimator is an approach for solving such a
+Combined with stochastic gradient ascent, the likelihood-ratio gradient estimator is an approach for solving such a
 problem.  It appears in policy gradient methods for reinforcement learning
 (e.g.,
 [Sutton et al. 1999](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation.pdf)),
-black-box optimization, and causal reasoning. There are two main ideas in the
+black-box optimization (e.g., [Wierstra et al. 2011](https://arxiv.org/abs/1106.4487)), and [causal reasoning](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/). There are two main ideas in the
 trick: (1) the "score function" estimator and (2) the cancelation of
 complicating factors.
 
