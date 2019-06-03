@@ -28,6 +28,9 @@ THEME = '../theme/pelican-octopress-theme'
 ARTICLE_URL = 'post/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = 'post/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 
+ARCHIVES_SAVE_AS = 'index.html'
+INDEX_SAVE_AS = 'index2.html'
+
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
