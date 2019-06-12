@@ -117,4 +117,4 @@ Further reading: I have several posts on the topic of fast sampling algorithms
 
 ## Interactive Notebook
 
-<script src=""></script>
+<script src="https://gist.github.com/timvieira/44edfaf97cb2e191e4618f0d25401bf4.js"></script>
