@@ -109,10 +109,14 @@ Cons:
   since they have lower overhead because it doesn't call expensive functions
   like $\log$ and it uses a single random variate per sample.
 
-Further reading: I have several posts on the topic of fast sampling algorithms
+Further reading:
+
+- I have several posts on the topic of fast sampling algorithms
 ([1](http://timvieira.github.io/blog/post/2016/11/21/heaps-for-incremental-computation/),
 [2](http://timvieira.github.io/blog/post/2016/07/04/fast-sigmoid-sampling/),
 [3](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
+
+- Jake VanderPlas (2018) [The Waiting Time Paradox, or, Why Is My Bus Always Late?](http://jakevdp.github.io/blog/2018/09/13/waiting-time-paradox/).
 
 
 ## Interactive Notebook
