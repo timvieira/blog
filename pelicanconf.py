@@ -21,6 +21,7 @@ FEED_ATOM = 'atom.xml'
 
 PATH = 'content'
 
+#THEME = '../theme/brutalist'
 #THEME = '../theme/TuftePelican/'
 THEME = '../theme/pelican-octopress-theme'
 
@@ -76,7 +77,7 @@ NOTEBOOK_DIR = 'notebook'
 # Title menu options
 MENUITEMS = [
     ('About', 'http://timvieira.github.io/'),
-    ('Archive', '/blog/archives.html'),
+    ('Archive', '/blog/index.html'),
 ]
 
 NEWEST_FIRST_ARCHIVES = True
