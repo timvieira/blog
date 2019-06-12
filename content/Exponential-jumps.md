@@ -1,7 +1,6 @@
 title: Faster reservoir sampling by waiting
 date: 2019-06-11
 comments: true
-status: draft
 tags: sampling, reservoir-sampling, Gumbel
 
 We are interested in designing an efficient algorithm for sampling from a categorical distribution over $n$ items with weights $w_i > 0$.  Define target sampling distribution $p$ as
