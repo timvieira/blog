@@ -4,7 +4,7 @@ comments: true
 tags: rl, calculus
 status: draft
 
-Value functions are an essential concept in reinforcement learning and optimal
+Value functions are key concept in reinforcement learning and optimal
 control.
 
 In this post, I show how value functions arise mathematically in the policy
