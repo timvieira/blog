@@ -6,7 +6,7 @@ tags: sampling, Gumbel, reservoir-sampling
 A while back, [Hanna](http://people.cs.umass.edu/~wallach/) and I stumbled upon
 the following blog post:
 [Algorithms Every Data Scientist Should Know: Reservoir Sampling](http://blog.cloudera.com/blog/2013/04/hadoop-stratified-randosampling-algorithm),
-which got us excited about reservior sampling.
+which got us excited about reservoir sampling.
 
 Around the same time, I attended a talk by
 [Tamir Hazan](http://cs.haifa.ac.il/~tamir/) about some of his work on
@@ -14,20 +14,14 @@ perturb-and-MAP
 [(Hazan & Jaakkola, 2012)](http://cs.haifa.ac.il/~tamir/papers/mean-width-icml12.pdf),
 which is inspired by the
 [Gumbel-max-trick](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/)
-(see [previous post](/blog/post/2014/07/31/gumbel-max-trick/)). The apparent
-similarity between weighted reservior sampling and the Gumbel-max trick lead us
-to make some cute connections, which I'll describe in this post.
+(see [previous post](/blog/post/2014/07/31/gumbel-max-trick/)). The apparent similarity between weighted reservoir sampling and the Gumbel-max trick lead us to make some cute connections, which I'll describe in this post.
 
-**The problem**: We're given a stream of unnormalized probabilities, $x_1,
-x_2, \cdots$. At any point in time $t$ we'd like to have a sampled index $i$
-available, where the probability of $i$ is given by $\pi_t(i) = \frac{x_i}{
+**The problem**: We're given a stream of unnormalized probabilities, $x_1, x_2, \cdots$. At any point in time $t$ we'd like to have a sampled index $i$ available, where the probability of $i$ is given by $\pi_t(i) = \frac{x_i}{
 \sum_{j=1}^t x_j}$.
 
-Assume, without loss of generality, that $x_i > 0$ for all $i$. (If any element
-has a zero weight we can safely ignore it since it should never be sampled.)
+Assume, without loss of generality, that $x_i > 0$ for all $i$. (If any element has a zero weight we can safely ignore it since it should never be sampled.)
 
-**Streaming Gumbel-max sampler**: I came up with the following algorithm, which
-is a simple "modification" of the Gumbel-max-trick for handling streaming data:
+**Streaming Gumbel-max sampler**: I came up with the following algorithm, which is a simple "modification" of the Gumbel-max-trick for handling streaming data:
 
 $a = -\infty; b = \text{null}  \ \ \text{# maximum value and index}$
 for $i=1,2,\cdots;$ do:
@@ -47,10 +41,10 @@ After convincing myself this algorithm was correct, I sat down to try to
 understand the algorithm in the blog post, which is due to Efraimidis and
 Spirakis (2005) ([paywall](http://dl.acm.org/citation.cfm?id=1138834),
 [free summary](http://utopia.duth.gr/~pefraimi/research/data/2007EncOfAlg.pdf)). They
-looked similar in many ways but used different sorting keys / perturbations.
+looked similar in many ways but used different sorting keys/perturbations.
 
 **Efraimidis and Spirakis (2005)**: Here is the ES algorithm for weighted
-reservior sampling
+reservoir sampling
 
 $a = -\infty; b = \text{null}$
 for $i=1,2,\cdots;$ do:
@@ -96,14 +90,28 @@ are the same!
 
 **Extensions**: After reading a little further along in the ES paper, we see
 that the same algorithm can be used to perform *sampling without replacement* by
-sorting and taking the elements with the highest keys. This same modification is
-applicable to the Gumbel-max-trick because the keys have exactly the same
-ordering as ES. In practice we don't sort the key, but instead use a bounded
-priority queue.
+sorting and taking the elements with the highest keys. This same modification applies to the Gumbel-max-trick because the keys have precisely the same ordering as ES. In practice, we don't sort the key, but instead, use a bounded priority queue.
 
 **Closing**: To the best of my knowledge, the connection between the
-Gumbel-max-trick and ES is undocumented. Furthermore, the Gumbel-max-trick is
-not known as a streaming algorithm, much less known to perform sampling without
-replacement! If you know of a reference let me know. Perhaps, we'll finish
-turning these connections into a
-[short tech report](https://github.com/timvieira/gumbel).
+Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is not known as a streaming algorithm, much less known to perform sampling without replacement! If you know of a reference, let me know.
+
+
+**How to cite this article**: If you found this article useful, please cite it as
+
+<pre style="background-color: white; color: black; border: #333;">
+@misc{vieira2014gumbel,
+    title = {Gumbel-max trick and weighted reservoir sampling},
+    author = {Tim Vieira},
+    url = {http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/},
+    year {2014}
+}
+</pre>
+
+## Further reading
+
+Here are a few interesting, recent papers that build on the ideas in this article.
+
+- Wouter Kool, Herke van Hoof, and Max Welling 2019.
+[Stochastic Beams and Where to Find Them: The Gumbel-Top-k Trick for Sampling Sequences Without Replacement](https://arxiv.org/abs/1903.06059)
+
+- Sang Michael Xie and Stefano Ermon. 2019. [Reparameterizable Subset Sampling via Continuous Relaxations](https://arxiv.org/abs/1901.10517)

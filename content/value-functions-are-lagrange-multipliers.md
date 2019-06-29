@@ -4,9 +4,16 @@ comments: true
 tags: rl, calculus
 status: draft
 
-[Value functions](https://en.wikipedia.org/wiki/Bellman_equation) are key
-concept in reinforcement learning, planning under uncertaintly, and optimal
-control.
+[Value functions](https://en.wikipedia.org/wiki/Bellman_equation), or some
+variant thereof, are key concept in sequential decision-making tasks (e.g.,
+reinforcement learning, planning under uncertaintly, and optimal control).  They
+generally regarded as (somewhat intuitive) definitions that seem to help solve
+the decision-making problem.  In this post, I will give an account of value
+functions as Lagrange multiplier estimates for a specific formulation of the
+policy-search problem in reinforcement learning - I believe this story
+generalize to the other cases, but I haven't worked it out formally.  This
+connection is pretty cool and is closely related to my previous post on
+[backpropagation and Lagrangians](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
 
 <!--
 They are a mathematical operationalization of the idea that
@@ -16,38 +23,28 @@ They are a mathematical operationalization of the idea that
 > ― [Søren Kierkegaard](https://www.goodreads.com/quotes/6812-life-can-only-be-understood-backwards-but-it-must-be)
 -->
 
-However, something so fundamental must have many explanations.  In this post, I
-give an account of value functions as Lagrange muliplier estimates for a
-specific formulation of the policy search problem in reinforcement learning.
-The connection is pretty cool and is closely related to my previous post on
-[backpropagation and Lagrangians](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
-
-I will also point out that the concept of a value function is not limited to RL:
-value functions arise in the dynamic programming solutions to many other
-problems.
-
 **The setup**: Let $M = \langle S, A, p_0(s), p(s' \mid s, a), r(s,a), \gamma \rangle$
-be a Markov decision process over states $S$ and actions $A$.  Let $p_0(s)$ be a
+be a Markov decision process over states $S$ and actions $A$ with $0 < \gamma < 1$.  Let $p_0(s)$ be a
 distribution over initial states and $p(s' \mid s, a)$ be a transition kernel
 that describes how the next state $s'$ evolve from current state $s$ given an action $a$
 from a policy $\pi(a \mid s)$.  Lastly, let $r(s,a)$ denote the immediate reward of taking action $a$ in state $s$. The utility of a policy $\pi$ is typically measure as the long-term,
 $\gamma$-discounted reward
 $$
-U(\pi) \overset{\text{def}}{=} \mathbb{E}\left[  \sum_{t=1}^\infty r(s,a) \right]
+U(\pi) \overset{\text{def}}{=} \mathbb{E}\left[  \sum_{t=0}^\infty \gamma^t \!\cdot\! r(s,a) \right]
 $$
 
 where the randomness in the expecation is take over trajectories, $\langle
-\langle s_t, a_t, r_t \rangle \rangle_{t=1}^\infty$.  Don't worry too much about
-the infinite summation, we will replace it with something much more computation
-friendly.
+\langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.  Don't worry too much about
+the infinite summation, we will now replace it with something much more
+computation friendly.
 
 **The policy search problem:** Here we write the policy search problem as a
 constrained optimization problem.  We exploit an important rewrite of $U(\pi)$
-as the expectation an expectation over an occupancy measure over state rather
+as the expectation an expectation over an occupancy measure over states rather
 than an expectation over infinitely long trajectories.
 
 $$
-\underset{\pi}{\textrm{maximize }} \frac{1}{1-\gamma}\sum_{s,a} r(s,a) \cdot \delta(s) \cdot \pi(a|s)
+\underset{\pi, \delta}{\textrm{maximize }} U = \frac{1}{1-\gamma}\sum_{s,a} r(s,a) \cdot \delta(s) \cdot \pi(a|s)
 $$
 
 *subject to*
@@ -90,40 +87,43 @@ binary variables, and thus can be used to solve NP-hard problems.)
 We can write out the Lagrangian for this optimization problem
 
 $$
-\mathcal{L}(\mu, \pi, \lambda, \sigma) =
-\sum_{s,a} r(s,a) \mu(s) \pi(a|s)
-+ \sum_{s'} \lambda(s') (\mu(s') - \sum_{s,a} \mu(s) \pi(a|s) p(s'|s,a))
-+ \sum_s \sigma(s) (1 - \sum_a \pi(a | s))
+\begin{eqnarray*}
+\mathcal{L}(\delta, \pi, \lambda, \sigma, \zeta, \eta)
+&=& \sum_{s,a} r(s,a) \delta(s) \pi(a|s)\\
+&& + \sum_{s'} \lambda(s') \delta(s')  - \sum_{s,a} \lambda(s') \delta(s) \pi(a|s) p(s'|s,a)\\
+&& + \sum_s \sigma(s)  - \sum_a \sigma(s) \pi(a | s)\\
+&& + \sum_{s,a} \zeta(s,a) \pi(a | s) \\
+&& + \sum_{s} \eta(s) \delta(a | s)
+\end{eqnarray*}
 $$
 
-TODO: what about the positive-$\pi$ inequality? (Well, we know for LP's we don't
-need to worry about it. But we probably do for the basic Lagrangian.)
 
-TODO: What does it mean to be an *estimate* -- it could mean a few things. I'm
-going to take it to mean any consistent setting of V, given a fixed setting to
-the policy. I.e., it satisfies the first Bellman equation but not the second.
+TODO: What does it mean to be a Lagrange multiplier *estimate*
 
-(First and foremost, people (including myself) we often misuse the term
-"Lagrange multiplier" when we often mean "Lagrange multiper *estimates*". A
-Lagrange multiper estimate is only a Lagrange multiplier at convergence. CHECK.)
-
-
-Solving for $\lambda$ such that $\frac{\partial \mathcal{L}}{\partial \mu} = 0$
-we get
+Now, let's solve for $\nabla \mathcal{L} = 0$ under each chunk of parameters.
 
 $$
-\begin{eqnarray}
+\begin{eqnarray*}
 \frac{\partial \mathcal{L}}{\partial \delta(s^*)}
-&=&
-\sum_a r(s^*,a) \pi(a \mid s^*)
-+ \nabla_{\delta(s^*)}\left[ \sum_{s'} \lambda(s') (\mu(s')
-- \sum_{s,a} \delta(s) \pi(a \mid s) p(s' \mid s,a)) \right] \\
 &=&
 \sum_a r(s^*,a) \pi(a \mid s^*)
 + \sum_{s'} \lambda(s') (1(s' = s^*)
 - \sum_{a} \delta(s^*) \pi(a \mid s^*) p(s' \mid s^*, a))\\
-\end{eqnarray}
+\end{eqnarray*}
 $$
+
+
+$$
+\begin{eqnarray*}
+\frac{\partial \mathcal{L}}{\partial \pi(a^* \mid s^*)}
+&=&
+r(s^*,a^*) \delta(s^*)
+- \sum_{s'} \lambda(s') \delta(s^*) p(s'|s^*,a^*)
+ - \sum_a \sigma(s^*)
+ + \zeta(s^*,a^*)
+\end{eqnarray*}
+$$
+
 
 ## Linear programming re-formulation
 
@@ -141,7 +141,7 @@ $$
 
 *subject to*
 
- - $\mu is a valid occupancy measure over state-actions pairs
+ - $\mu$ is a valid occupancy measure over state-actions pairs
 
 $$
 \sum_{a'} \mu(s',a') = (1-\gamma) \cdot p_0(s') + \gamma \cdot \sum_{s,a} \mu(s,a) \cdot p(s'|s,a)\quad\text{for all }s' \in S
@@ -154,7 +154,7 @@ It turns out that explicit sum-to-one constraint (i.e., $\sum_{s,a} \mu(s,a) =
 1$) is not necessary because solutions to the linear constraints will are
 already normalized.
 
-**TODO** Formulate the Lagrangian.  Take is derivatives.
+**TODO** Formulate the Lagrangian.  Take its derivatives.
 
 **TODO** Take the LP dual, note that it is exactly the optimal value function
   problem.
@@ -165,7 +165,10 @@ already normalized.
   $\pi$ is.
 
 
-## Graphical models
+## Connections in graphical models
+
+The concept of a value function is not limited to RL: value functions arise in
+the dynamic programming solutions to many other problems.
 
 Building on
 [Vieira (2017)](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/),
