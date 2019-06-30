@@ -1,7 +1,7 @@
 title: Complex-step derivative
 date: 2014-08-07
 comments: true
-tags: calculus
+tags: calculus, numerical
 
 Estimate derivatives by simply passing in a complex number to your function!
 

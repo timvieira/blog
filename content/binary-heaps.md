@@ -1,7 +1,7 @@
 title: Heaps for incremental computation
 date: 2016-11-21
 comments: true
-tags: sampling, datastructures
+tags: sampling, datastructures, incremental-computation
 
 
 In this post, I'll describe a neat trick for maintaining a summary quantity

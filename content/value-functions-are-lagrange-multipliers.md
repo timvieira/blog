@@ -1,7 +1,7 @@
 title: Value functions as Lagrange multiplier estimates
 date: 2018-03-16
 comments: true
-tags: rl, calculus
+tags: rl, calculus, Lagrange-multipliers
 status: draft
 
 [Value functions](https://en.wikipedia.org/wiki/Bellman_equation), or some

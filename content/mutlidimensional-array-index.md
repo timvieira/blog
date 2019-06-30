@@ -1,7 +1,7 @@
 title: Multidimensional array index
 date: 2016-01-17
 comments: true
-tags: misc
+tags: datastructures
 
 
 This is a simple note on how to compute a bijective mapping between the indices

@@ -1,7 +1,7 @@
 Title: Gumbel-max trick and weighted reservoir sampling
 date: 2014-08-01
 comments: true
-tags: sampling, Gumbel, reservoir-sampling
+tags: sampling, Gumbel, reservoir-sampling, sampling-without-replacement
 
 A while back, [Hanna](http://people.cs.umass.edu/~wallach/) and I stumbled upon
 the following blog post:
@@ -103,15 +103,20 @@ Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is no
     title = {Gumbel-max trick and weighted reservoir sampling},
     author = {Tim Vieira},
     url = {http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/},
-    year {2014}
+    year = {2014}
 }
 </pre>
 
 ## Further reading
 
-Here are a few interesting, recent papers that build on the ideas in this article.
+I have a few other articles that are related to
+[sampling without replacement](http://timvieira.github.io/blog/tag/sampling-without-replacement.html),
+[reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html),
+and [Gumbel tricks](http://timvieira.github.io/blog/tag/gumbel.html).
 
-- Wouter Kool, Herke van Hoof, and Max Welling 2019.
+Here are a few interesting papers that build on the ideas in this article.
+
+- Wouter Kool, Herke van Hoof, and Max Welling. 2019.
 [Stochastic Beams and Where to Find Them: The Gumbel-Top-k Trick for Sampling Sequences Without Replacement](https://arxiv.org/abs/1903.06059)
 
 - Sang Michael Xie and Stefano Ermon. 2019. [Reparameterizable Subset Sampling via Continuous Relaxations](https://arxiv.org/abs/1901.10517)
