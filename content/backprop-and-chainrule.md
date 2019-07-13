@@ -388,8 +388,8 @@ to backpropagation.
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
 
 Tom Goldstein's group took the Lagrangian view of backprop and used it to design
-an ADMM approach for optimizing neural nets. The ADMM approach operates
-massively parallel and leverages lots of highly optimized solvers for
+an ADMM approach for optimizing neural nets. The ADMM approach 
+can run massively in parallel and can leverage highly optimized solvers for
 subproblems. This work nicely demonstrates that understanding automatic
 differentiation&mdash;in the broader sense that I described in this
 post&mdash;facilitates the development of novel optimization algorithms. <!--

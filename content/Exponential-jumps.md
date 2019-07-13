@@ -17,7 +17,7 @@ def weighted_reservoir_sampling(stream):
     return np.argmin([Exponential.sample(w) for w in stream])
 ```
 
-Some differences from E&S'06: Our $K$ and $T$ are $\log$ of the $K$ and $T$ variables in E&S'06.  Additionally, we take $\min$ instead of $\max$.  These differences allow us to talk about exponential variates rather than the less-elegant and rather-mysterious (IMO) random key $u_i^{1/w_i}$.
+Some cosmetic differences from E&S'06: We use exponential random variates and $\min$ instead of $\max$. E&S'06 use a less-elegant and rather-mysterious (IMO) random key $u_i^{1/w_i}$.
 
 **Why does it work?** The weighted-reservoir sampling algorithm exploits the following well-known properties of exponential random variates:
 When $X_i \sim \mathrm{Exponential}(w_i)$, $R = {\mathrm{argmin}}_i X_i$, and $T = \min_i X_i$ then

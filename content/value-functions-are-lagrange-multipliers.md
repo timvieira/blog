@@ -62,7 +62,9 @@ $$
    think of $\delta$ as $\pi$'s stationary distribution if we regard
    $(1-\gamma)$ as the probability of restarting the Markov chain (i.e.,
    sampling the next state from a mixture of $p_0(s')$ with probability
-   $(1-\gamma)$ and from $p(s' \mid s,a)$ with probability $\gamma$).)
+   $(1-\gamma)$ and from $p(s' \mid s,a)$ with probability $\gamma$).  This is
+   an equivalent view for expectations, but not higher-order momements, e.g.,
+   it's not equivalent in distribution.)
 
 $$
 \delta(s') = (1-\gamma) \cdot p_0(s') + \gamma \cdot \sum_{s,a} \delta(s) \cdot \pi(a|s) \cdot p(s'|s,a)\quad\text{for all }s' \in S
@@ -163,6 +165,9 @@ already normalized.
   post, we can take any fixed policy and estimate the Lagrange mulipliers by
   setting the gradient of the Lagrangian wrt $V$ equal to zero given what every
   $\pi$ is.
+
+**TODO** The successor representation is the dual of this connection -- They are
+Lagrange multiplier estimates of the in the primal problem.
 
 
 ## Connections in graphical models

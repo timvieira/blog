@@ -27,7 +27,9 @@ shortcut for finding *the direction of steepest descent* in Euclidean space.
 $(d+1)$-dimensional hyperplane. The gradient gives a unique hyperplane that is
 tangent to the surface of $f$ at the point $x$; the $(d+1)^{\text{th}}$
 coordinate comes from the value $f(x)$&mdash;think of it like a first-order
-Taylor approximation to $f$ at $x$.
+Taylor approximation to $f$ at $x$. (For an in-depth discussion on notions of
+*steepest* descent, check out
+[this post](https://timvieira.github.io/blog/post/2019/04/19/steepest-ascent/).)
 
 **The baseline:** Without access to gradient code, *approximating* the gradient
 takes $d+1$ function evaluations via the finite-difference approximation to the
