@@ -1,5 +1,5 @@
 title: Value functions as Lagrange multiplier estimates
-date: 2018-03-16
+date: 2019-07-17
 comments: true
 tags: rl, calculus, Lagrange-multipliers
 status: draft
@@ -13,6 +13,33 @@ functions as Lagrange multiplier estimates for a specific formulation of the
 policy-search problem in reinforcement learning.  This connection is pretty cool
 and is closely related to my previous post on
 [backpropagation and Lagrangians](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
+
+<div style="border: thin solid black; padding: 10px; background-color: #ffffcc;
+margin-bottom: 1.5em;"> The ideal version of this work would be a completed
+commutation diagram of the primal and dual views of the MDP optimization problem
+much like the diagrams in consumer theory.[^LM04]
+
+I am confident that every quantity will have many connections (each one
+analogous to their "cousin" in economics).  This diagram will be an elegant,
+unifying view of lots of concepts in MDPs.
+
+Making the implicit functions explicit will make a lot of shortcuts simplier as
+well as providing calculus views of policy gradients (for example) than the
+usual expectations views.
+
+I am confident that all connections are "interesting" in one way or another.
+I am also confident that if we discover a new one, then that's even more interesting.
+
+These connections should even cover policy gradients and successor
+representations!
+Any properties of the mappings will be of interest as well.
+For example, the nonconvexity of the VF polytope as the shadow of the optimal
+value function polytope.  It is also interesting that the mapping is not
+generally convex.
+
+What are the interesting plots for MDPs?  (analogues of income-consumption
+curves) The VF-polytope "line theorem" is like a econ theorem.
+</div>
 
 <!--
 They are a mathematical operationalization of the idea that
@@ -28,7 +55,7 @@ distribution over initial states and $p(s' \mid s, a)$ be a transition kernel
 that describes how the next state $s'$ evolve from current state $s$ given an action $a$
 from a policy $\pi(a \mid s)$.  Lastly, let $r(s,a)$ denote the immediate reward of taking action $a$ in state $s$.
 
-The utility of a policy $\pi$ is typically measure as the long-term, $\gamma$-discounted reward
+The utility of a policy $\pi$ is typically measured as the long-term, $\gamma$-discounted reward
 $$
 U(\pi) \overset{\text{def}}{=} \mathbb{E}\left[  \sum_{t=0}^\infty \gamma^t \!\cdot\! r(s,a) \right]
 $$
@@ -40,7 +67,12 @@ $$
 
 where the randomness in the expecation is taken over trajectories,
 $\langle \langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.
-Don't worry too much about the infinite summation, we will replace it with something computation friendly. In particular, we rewrite of $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$ (a.k.a. occupancy measure) rather than an expectation over infinitely long trajectories.[^unnecessary-constraints]
+The next step is rewrite $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$, also know as the occupancy measure, rather than an expectation over infinitely long trajectories.[^unnecessary-constraints]
+
+$$
+(1-P_{\pi})^{-1} = \lim_{T \rightarrow \infty} \sum_{t=1}^T P_{\pi}^{t}
+$$
+XXX: this explanation is incomplete. Need to define $P_{\pi}$.
 
 $$
 \begin{cases}
@@ -48,18 +80,31 @@ $$
 \text{subject to } &
 \sum_{a'} \delta(s') \pi(a' \mid s') = \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in S
 \label{eq:balance} \\
-& \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}
+& \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
 $$
 
 Written as above, this optimization problem is a quadratic program with
 quadractic equality constraints.[^qp] Lucky for us, this optimization
-problem&mdash;as a function of $\mu(s,a) \overset{\text{def}}{=} \delta(s)\pi(a \mid
-s)$&mdash;is a linear program!  Thus, it can be solved efficiently with a number of
-methods.  We can recover our original variables as $\delta(s) \mapsto \sum_a \mu(s,a)$
-and $\pi(a \mid s) \mapsto \frac{\mu(s,a)}{\delta(s)}$.[^ties] The linear programming
-formulation is attributed to Manne (1960); however, the best resource on the
-topic is Wang et al. (2008)[^W08].
+problem&mdash;as a function of $\mu(s,a) \overset{\text{def}}{=} \delta(s)\pi(a
+\mid s)$&mdash;is a linear program!  Performing the substitution gives the
+following optimization problem,
+
+$$
+\begin{cases}
+\underset{\mu}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \mu(s, a) \\
+\text{subject to} &
+\sum_{a'} \mu(s',a') = \sum_{s,a} \mu(s,a) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S} \\
+& \mu(s, a) \ge 0 \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
+\end{cases}
+$$
+
+The linear programming version formulation suggests allows us to use a number of
+efficient (polytime) algorithms.  Once solved, we can recover our original
+variables as $\delta(s) \mapsto \sum_a \mu(s,a)$ and $\pi(a \mid s) \mapsto
+\frac{\mu(s,a)}{\delta(s)}$.[^ties] The linear programming formulation is
+attributed to Manne (1960); however, the best resource on the topic is Wang et
+al. (2008).[^W08]
 
 [^unnecessary-constraints]: We also want $\delta(s) \pi(a \mid s)$ to be a valid
   joint state-action distribution and for $\pi$ to be a valid conditional
@@ -74,11 +119,16 @@ topic is Wang et al. (2008)[^W08].
   It turns out that we don't need to explicitly add these constraints because
   they are implied by the existing balance constraints and assumptions that $P$
   is a stochastic matrix.
-  TODO: need to prove that this is true in the general. Lemma 1 of Wang et al
-  covers the discounted case.  Does the proof extend to avg reward case and to
-  the QP formulation?  I suspect it is not the case because F-divergences folks
-  didn't drop the constraint.  This is an opporunity to figure how/whether avg
-  reward is different.
+
+  TODO: need to prove that this is true in the general.
+
+  Lemma 1 says the solution to the balance equation are always normalized.
+
+  The average-reward case, on the other hand, needs an explicit sum-to-one
+  constraint.  This explains why the average-reward settings value functions are
+  different from the discounted case.  Note that the average-reward formulation
+  on a $\gamma$-resetting transition model is not equivalent.  (TODO: double
+  check)
 
 [^ties]: If ever $\delta(s)=0$, the choice for $\pi(a \mid s)$ is any valid
   distribution over $a$.
@@ -89,14 +139,6 @@ topic is Wang et al. (2008)[^W08].
   other words, it is an encoding of binary variables, and thus can be used to
   solve NP-hard integer programming problems.
 
-$$
-\begin{cases}
-\underset{\mu}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \mu(s, a) \\
-\text{subject to} &
-\sum_{a'} \mu(s',a') = \sum_{s,a} \mu(s,a) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S} \\
-& \mu(s, a) \ge 0 \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
-\end{cases}
-$$
 
 **TODO** The S-procedure might fit in here.  The open question is whether or not
   the Lagrange dual of the QP formulation has a no duality gap, which is the
@@ -112,29 +154,13 @@ derivatives) and interconnected (e.g., as implicit functions of one another).
 In the case of consumer theory, almost every connection is associated with a
 theorem named after a Nobel Laureate.
 
-I will sketch a number of connection the the MDP setting here.
+In this section, we sketch a number of connections in the MDP setting here.
 
-TODO: The ideal version of this section would be a completed "commutation
-diagram."  I am confident that every quantity will have many connections (each
-one analogous to their "cousin" in economics).  This diagram will be an elegant,
-unifying view of lots of concepts in MDPs.  I am confident that all connections
-are "interesting" in one way or another.  I am also confident that if we
-discover a new one, then that's even more interesting.  These connection should
-even cover policy gradients and successor representations!  Any properties of
-the mappings will be of interest as well.  For example, the nonconvexity of the
-VF polytope as the shadow of the optimal value function polytope.  It is also
-interesting that the mapping is not generally convex.  What are the interesting
-plots for MDPs?  (analogues of income-consumption curves) The VF-polytope "line
-theorem" is like a econ theorem.
-
-citation:
-  Consumer Theory
-  Jonathan Levin and Paul Milgrom
-  October 2004
-
-  also useful:
-  https://policonomics.com/marshallian-hicksian-demand-curves/
-
+**TODO** how do implicit functions work in te the primal-dual case?  I think the
+answer is that any partial optimization create constraints (as usual),
+regardless of whether or not those constraints are in the primal or the dual,
+they are coupled by the Lagrangian. The generally the primal-dual coupling is
+"modulated" by Lagrange multiplier estimates.
 
 #### Occupancy measure: $\delta$ as an implicit function of $\pi$:
 
@@ -145,11 +171,24 @@ $$
 \delta_\pi
 $$
 
-
 [^occupancy-note]:
-  For the average reward case, we use $P(s' \mid s, a) = p(s' \mid s, a)$.  We run into issues with feasibility if the transition function is not unichain (ergodic for all policies).
+  For the average reward case, we use $P(s' \mid s, a) = p(s' \mid s, a)$.
+  We may run into issues with feasibility if the transition function is not unichain (ergodic for all policies).
   For discounted case use $P(s' \mid s, a) = (1-\gamma) \cdot p_0(s') + \gamma \cdot p(s' \mid s,a)$.
   In the discounted cases, we can think of $\delta$ as $\pi$'s stationary distribution if we regard $(1-\gamma)$ as the probability of restarting the Markov chain (i.e., sampling the next state from a mixture of $p_0(s')$ with probability $(1-\gamma)$ and from $p(s' \mid s,a)$ with probability $\gamma$).  This is an equivalent in expected reward, but not higher-order moments of reward, i.e., it's not equivalent in distribution.
+
+
+#### Successor representation?
+
+```python
+def successor_representation(self):
+    "Dayan's successor representation."
+    return linalg.solve(np.eye(self.S) - self.gamma * self.P,
+                        np.eye(self.S))
+```
+
+**TODO** featurized version of SR.
+
 
 
 #### Value function: $V$ as an implicit function of $\pi$:
@@ -220,20 +259,10 @@ Now, let's solve for $\nabla \mathcal{L} = 0$ under each chunk of parameters.
 
   (Is the Rbar because of the sum-to-one constraint?)
 
+**TODO** the diagram in this consumer theory tutorial is great.
+  https://policonomics.com/marshallian-hicksian-demand-curves/
 
-Optimization-based view of MDP [^KBP13] [^BP17] [^W08]
-
-[^KBP13]:
-  Kober, Bagnell, & Peters. 2013
-  [Reinforcement learning in robotics: A survey](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.910.7004&rep=rep1&type=pdf)
-
-[^BP17]:
-  Belousov & Peters. 2017.
-  [f-Divergence constrained policy improvement](https://arxiv.org/abs/1801.00056)
-
-[^W08]:
-  Wang, Lizotte, Bowling, & Schuurmans. 2008.
-  [Dual Representations for Dynamic Programming](https://webdocs.cs.ualberta.ca/~dale/papers/dualdp.pdf)
+**TODO** Optimization-based view of MDP [^KBP13] [^BP17] [^W08]
 
 
 ## Connections in graphical models
@@ -264,6 +293,26 @@ gives us a recipe for efficiently computing these quantities backward/outside
 quantities.
 
 This connection extends to marginal inference in Bayesian networks more
-generally [Darwiche (2003)](https://dl.acm.org/citation.cfm?id=765570).
+generally Darwiche (2003).[^D03]
 
-> Adnan Darwiche. [A differential approach to inference in Bayesian networks](https://dl.acm.org/citation.cfm?id=765570). Journal of the Association for Computing Machinery, 50(3):280–305, 2003.
+
+[^KBP13]:
+  Kober, Bagnell, & Peters. 2013
+  [Reinforcement learning in robotics: A survey](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.910.7004&rep=rep1&type=pdf)
+
+[^BP17]:
+  Belousov & Peters. 2017.
+  [f-Divergence constrained policy improvement](https://arxiv.org/abs/1801.00056)
+
+[^W08]:
+  Wang, Lizotte, Bowling, & Schuurmans. 2008.
+  [Dual Representations for Dynamic Programming](https://webdocs.cs.ualberta.ca/~dale/papers/dualdp.pdf)
+
+[^LM04]:
+  Jonathan Levin and Paul Milgrom. 2004.
+  [Consumer Theory](https://web.stanford.edu/~jdlevin/Econ%20202/Consumer%20Theory.pdf)
+
+[^D03]:
+  Adnan Darwiche.
+  [A differential approach to inference in Bayesian networks](https://dl.acm.org/citation.cfm?id=765570).
+  Journal of the Association for Computing Machinery, 50(3):280–305, 2003.
