@@ -15,7 +15,9 @@ and is closely related to my previous post on
 [backpropagation and Lagrangians](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
 
 <div style="border: thin solid black; padding: 10px; background-color: #ffffcc;
-margin-bottom: 1.5em;"> The ideal version of this work would be a completed
+margin-bottom: 1.5em;">
+
+The ideal version of this work would be a completed
 commutation diagram of the primal and dual views of the MDP optimization problem
 much like the diagrams in consumer theory.[^LM04]
 
@@ -60,11 +62,6 @@ $$
 U(\pi) \overset{\text{def}}{=} \mathbb{E}\left[  \sum_{t=0}^\infty \gamma^t \!\cdot\! r(s,a) \right]
 $$
 
-Or, alternatively, the average-reward formulation
-$$
-U(\pi) \overset{\text{def}}{=} \lim_{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[  \sum_{t=0}^T r(s,a) \right]
-$$
-
 where the randomness in the expecation is taken over trajectories,
 $\langle \langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.
 The next step is rewrite $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$, also know as the occupancy measure, rather than an expectation over infinitely long trajectories.[^unnecessary-constraints]
@@ -74,15 +71,17 @@ $$
 $$
 XXX: this explanation is incomplete. Need to define $P_{\pi}$.
 
+
 $$
 \begin{cases}
-\underset{\pi, \delta}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
+\underset{\pi, \delta}{\textrm{maximize }} & \frac{1}{1-\gamma} \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
 \text{subject to } &
-\sum_{a'} \delta(s') \pi(a' \mid s') = \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in S
+\sum_{a'} \delta(s') \pi(a' \mid s') = (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S}
 \label{eq:balance} \\
 & \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
 $$
+
 
 Written as above, this optimization problem is a quadratic program with
 quadractic equality constraints.[^qp] Lucky for us, this optimization
@@ -140,9 +139,89 @@ al. (2008).[^W08]
   solve NP-hard integer programming problems.
 
 
-**TODO** The S-procedure might fit in here.  The open question is whether or not
-  the Lagrange dual of the QP formulation has a no duality gap, which is the
-  main consequence of the S-procedure in control theory.
+### The Lagrangian
+
+<!--
+$$
+\begin{eqnarray*}
+\mathcal{L}(\delta, \pi, \lambda, \sigma, \zeta, \eta)
+&=& \sum_{s,a} r(s,a) \delta(s) \pi(a|s)\\
+&& + \sum_{s'} \lambda(s') \delta(s')  - \sum_{s,a} \lambda(s') \delta(s) \pi(a|s) p(s'|s,a)\\
+&& + \sum_s \sigma(s)  - \sum_a \sigma(s) \pi(a | s)\\
+&& + \sum_{s,a} \zeta(s,a) \pi(a | s) \\
+&& + \sum_{s} \eta(s) \delta(a | s)
+\end{eqnarray*}
+$$
+--->
+
+
+$$
+\begin{align*}
+\mathcal{L}(\delta, \pi, \lambda) \overset{\text{def}}{=}
+& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
+& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
+& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s)
+\end{align*}
+$$
+
+
+If we differentiate wrt $\delta(s) \pi(a \mid s)$
+
+$$
+\newcommand{\ggg}[0]{\frac{\partial \mathcal{L}}{\partial \delta(s^*) \pi(a^* \mid s^*)}}
+\begin{align*}
+\nabla \mathcal{L}
+=\,
+ \nabla\Biggr[
+& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
+& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
+& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \Biggr] \\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+=\,
+& r(s^*, a^*) \\
+& + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)
+- \lambda(s^*) \\
+& + \eta(s^*, a^*)
+\end{align*}
+$$
+
+
+In solving for $\ggg = 0$, we notice that $\eta(s,a)$ is a just a slack
+variable!  Thus, we can treat this equation as an inequality constraint,
+$$
+\lambda(s^*)
+\ge r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)\quad\text{for all }s^*, a^*.
+$$
+
+This is precisely the set of constraints in the optimal value function problem.
+
+
+The dual problem is min $\lambda$
+
+
+**TODO** saddle-point problems and optimization instability, best-response and
+  positive response; regularization.
+
+
+### The Lagrangian dual problem
+
+The Lagrange dual problem simplifies to
+
+$$
+\begin{cases}
+\underset{\lambda}{\textrm{minimize }} & \sum_{s} p_0(s) \cdot \lambda(s) \\
+\text{subject to } &
+\lambda(s) \ge r(s, a)
++ \gamma \sum_{s'} P(s'|s,a) \lambda(s') \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
+\end{cases}
+$$
+
+
+**TODO** The S-procedure might fit in here.  The Lagrange dual of the QP
+  formulation has a no duality gap, which is the main consequence of the
+  S-procedure in control theory.  The reason why this is true is because once we
+  take the Lagrange dual the problem can be simplified into another LP.  This is
+  pretty trivial in our case because the original problem is sort of an LP too.
 
 
 ### Implicit functions
@@ -203,26 +282,7 @@ $$
 
 
 
-## Lagrangian
-
-
-**TODO** REVISE THIS: Here is the Lagrangian for our optimization problem
-
-$$
-\begin{eqnarray*}
-\mathcal{L}(\delta, \pi, \lambda, \sigma, \zeta, \eta)
-&=& \sum_{s,a} r(s,a) \delta(s) \pi(a|s)\\
-&& + \sum_{s'} \lambda(s') \delta(s')  - \sum_{s,a} \lambda(s') \delta(s) \pi(a|s) p(s'|s,a)\\
-&& + \sum_s \sigma(s)  - \sum_a \sigma(s) \pi(a | s)\\
-&& + \sum_{s,a} \zeta(s,a) \pi(a | s) \\
-&& + \sum_{s} \eta(s) \delta(a | s)
-\end{eqnarray*}
-$$
-
-
-Now, let's solve for $\nabla \mathcal{L} = 0$ under each chunk of parameters.
-
-
+## TODO
 
 **TODO** Formulate the Lagrangian.  Take its derivatives.  Talk about all the
   implicit functions and connections.
@@ -233,6 +293,8 @@ Now, let's solve for $\nabla \mathcal{L} = 0$ under each chunk of parameters.
 **TODO** featurized equilibrium distribution
 
 **TODO** S-procedure and nonconvexity.
+
+**TODO** [Mates of costate](http://www.argmin.net/2016/05/18/mates-of-costate/)
 
 **TODO** if we write an equivalent set of constraints, what happen to the dual
   variables (e.g., do we get Q or A under different variations)?  Or are these
@@ -264,8 +326,50 @@ Now, let's solve for $\nabla \mathcal{L} = 0$ under each chunk of parameters.
 
 **TODO** Optimization-based view of MDP [^KBP13] [^BP17] [^W08]
 
+**TODO** the "line theorem" in VF-polytope extends to all factored probability
+   model (PGMs) and case-factor diagrams (CFDs) more generally.  The laws of
+   probability are such that all probabilistic statements are multi-linear
+   polynomials (MPs): the basic operations are chain-rule decompositions
+   (times), marginalization (sum), and Bayes rule (div); additionally, it is
+   never ok to multiply p(A, ... | ...) * p(A, ... | ...).  I am not sure how
+   Bayes rule works yet, but it is definitely the case that restricting to the
+   semiring (times-sum) part results in MPs.  I think that CFDs don't allow
+   division.  They do allow case statements unlike PGMs.
 
-## Connections in graphical models
+## Extensions
+
+### Average reward
+
+<div style="border: thin solid black; padding: 10px; background-color: #ffffcc;
+margin-bottom: 1.5em;">
+
+The average-reward formulation
+$$
+U(\pi) \overset{\text{def}}{=} \lim_{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[  \sum_{t=0}^T r(s,a) \right]
+$$
+
+The follow mathematical program formalizes the average reward optimization
+problem.  The main difference is the balance equation is slightly different and
+we now require an explicit sum-to-one constraint that we didn't need in the
+discounted case.  Also the $1/(1-\gamma)$ is gone from the objective function.
+
+$$
+\begin{cases}
+\underset{\pi, \delta}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
+\text{subject to } &
+\sum_{a'} \delta(s') \pi(a' \mid s') = \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S} \\
+& \sum_{s,a} \delta(s) \pi(a \mid s) = 1 \\
+& \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
+\end{cases}
+$$
+
+Note that all of the implicit functions for the average reward case are slightly
+different.  The reason why is the extra sum-to-one constraint!
+
+</div>
+
+
+## Dynamic programming inference in graphical models
 
 The concept of a value function is not limited to RL: value functions arise in
 the dynamic programming solutions to many other problems.
@@ -296,7 +400,7 @@ This connection extends to marginal inference in Bayesian networks more
 generally Darwiche (2003).[^D03]
 
 
-[^KBP13]:
+[^P13]:
   Kober, Bagnell, & Peters. 2013
   [Reinforcement learning in robotics: A survey](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.910.7004&rep=rep1&type=pdf)
 
