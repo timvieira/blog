@@ -52,7 +52,7 @@ They are a mathematical operationalization of the idea that
 -->
 
 Let $M = \langle \mathcal{S}, \mathcal{A}, p_0(s), p(s' \mid s, a), r(s,a), \gamma \rangle$
-be a Markov decision process over states $S$ and actions $A$ with $0 < \gamma < 1$.  Let $p_0(s)$ be a
+be a Markov decision process over states $S$ and actions $A$ with $0 \le \gamma < 1$.  Let $p_0(s)$ be a
 distribution over initial states and $p(s' \mid s, a)$ be a transition kernel
 that describes how the next state $s'$ evolve from current state $s$ given an action $a$
 from a policy $\pi(a \mid s)$.  Lastly, let $r(s,a)$ denote the immediate reward of taking action $a$ in state $s$.
@@ -67,20 +67,26 @@ $\langle \langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.
 The next step is rewrite $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$, also know as the occupancy measure, rather than an expectation over infinitely long trajectories.[^unnecessary-constraints]
 
 $$
-(1-P_{\pi})^{-1} = \lim_{T \rightarrow \infty} \sum_{t=1}^T P_{\pi}^{t}
+(1-P_{\pi})^{-1} p_0 (1-\gamma) = \lim_{T \rightarrow \infty} \sum_{t=1}^T P_{\pi}^{t} p_0 (1-\gamma)
 $$
-XXX: this explanation is incomplete. Need to define $P_{\pi}$.
+
+XXX: this explanation is incomplete. Need to define $P_{\pi}$.  Need to be
+careful about the definition.  It's easy to miss a transpose.
 
 
 $$
 \begin{cases}
-\underset{\pi, \delta}{\textrm{maximize }} & \frac{1}{1-\gamma} \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
+\underset{\pi, \delta}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
 \text{subject to } &
 \sum_{a'} \delta(s') \pi(a' \mid s') = (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a)\quad\text{for all }s' \in \mathcal{S}
 \label{eq:balance} \\
 & \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
 $$
+
+TODO: we could take $\mu(s,a) = \delta(s') \pi(a' \mid s')$ to be an extra
+family of constraints in the problem.  Basically, just an intermediate quantity
+in the circuit.
 
 
 Written as above, this optimization problem is a quadratic program with
@@ -119,15 +125,11 @@ al. (2008).[^W08]
   they are implied by the existing balance constraints and assumptions that $P$
   is a stochastic matrix.
 
-  TODO: need to prove that this is true in the general.
-
   Lemma 1 says the solution to the balance equation are always normalized.
 
   The average-reward case, on the other hand, needs an explicit sum-to-one
   constraint.  This explains why the average-reward settings value functions are
-  different from the discounted case.  Note that the average-reward formulation
-  on a $\gamma$-resetting transition model is not equivalent.  (TODO: double
-  check)
+  different from the discounted case.
 
 [^ties]: If ever $\delta(s)=0$, the choice for $\pi(a \mid s)$ is any valid
   distribution over $a$.
@@ -157,39 +159,39 @@ $$
 
 $$
 \begin{align*}
-\mathcal{L}(\delta, \pi, \lambda) \overset{\text{def}}{=}
+\mathcal{L}(\delta, \pi, \lambda, \eta) \overset{\text{def}}{=}
 & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
 & + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
 & + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s)
 \end{align*}
 $$
 
+with the constraint that $\vec{\eta} \ge 0$.
 
+Now, we will working out the gradient of $\mathcal{L}$ with respect each
+parameter type.  We will also collect the first-order optimality conditions for
+setting the gradient with respect to each parameter type to zero.
 
-<!---
+$$
+\begin{align*}
+\nabla \mathcal{L} =
 \nabla\Biggr[
 & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
 & + \sum_{s'} \lambda(s') (1-\gamma) p_0(s') \\
-& + \sum_{s'} \lambda(s') \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) \\
-& - \sum_{s'} \sum_{a'} \lambda(s') \delta(s') \pi(a' \mid s') \\
-& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \\
-& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s)
-\Biggr]
--->
+& + \gamma \sum_{s,a,s'} \lambda(s') \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) \\
+& - \sum_{s', a'} \lambda(s') \delta(s') \pi(a' \mid s') \\
+& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \Biggr]
+\end{align*}
+$$
 
+### Conditions from $\mu$
 
-If we differentiate $\mathcal{L}$ wrt $\delta(s) \pi(a \mid s)$,
+Lagrangian conditions for differentiation with respect to $\mu(s^*, a^*) =
+\delta(s^*) \pi(a^* \mid s^*)$.
 
 $$
-\newcommand{\ggg}[0]{\frac{\partial \mathcal{L}}{\partial \delta(s^*) \pi(a^* \mid s^*)}}
 \begin{align*}
-\nabla \mathcal{L}
-=\,
- \nabla\Biggr[
-& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
-& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
-& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \Biggr] \\
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nabla_{\delta(s^*) \pi(a^* \mid s^*)} \mathcal{L}
 =\,
 & r(s^*, a^*) \\
 & + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a^*)
@@ -198,26 +200,43 @@ $$
 \end{align*}
 $$
 
-
-In solving for $\ggg = 0$, we notice that $\eta(s,a)$ is a just a slack
-variable!  Thus, we can treat this equation as an inequality constraint,
+Equating with $0$ and solving for $\lambda(s^*)$
 
 $$
 \begin{eqnarray*}
 \nabla_{\delta(s^*) \pi(a^* \mid s^*)} \mathcal{L} &=& 0  \\
 &\Leftrightarrow& \\
-\lambda(s^*)
-&\ge& r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a^*)\quad\text{for all }s^*, a^*.
+\lambda(s^*) - \eta(s^*, a^*)
+&=& r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a^*)\quad\text{for all }s^*, a^*.
 \end{eqnarray*}
 $$
 
-This is precisely the set of constraints in the optimal value function problem.
+
+*Slack interpretation*: Notice that $\eta(s,a)$ is a just a slack variable in
+these equations.  Thus, we can treat interpret these equations as inequality
+constraints,
+$$
+\begin{eqnarray*}
+\lambda(s^*) &\ge& r(s^*, a^*) + \gamma \sum_{s'}
+\lambda(s') \cdot P(s' \mid s^*, a^*)\quad\text{for all }s^*, a^*.
+\end{eqnarray*}
+$$
+
+These are precisely the constraints in the optimal value-function problem.[^nonlinear-VF]
+
+[^nonlinear-VF]:
+  The optimal value function is more familiar in it's non-linear equational form,
+  $$
+  \lambda(s^*)
+  = \max_a r(s^*, a) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a)\quad\text{for all }s^*
+  $$
 
 
-The dual problem is min $\lambda$
+### Conditions from $\lambda$
 
-
-As usual, setting the derivative with respect to the a Lagrange multiplier&mdash;in our case $\lambda$&mdash;to zero results in a condition which says that the original equallity constraint should be satisfied, that is
+As usual, setting the derivative with respect to the a Lagrange
+multiplier&mdash;in our case $\lambda$&mdash;to zero results in a condition
+which says that the original equallity constraint should be satisfied, that is
 
 $$
 \begin{eqnarray*}
@@ -228,14 +247,10 @@ $$
 \end{eqnarray*}
 $$
 
-**TODO** saddle-point problems and optimization instability, best-response and
-  positive response; regularization.
 
-**TODO** What happens if we differentiate wrt $\delta$ or $\pi$ separately?
-  That might be how we get policy-specific value functions.
+### What happens if we differentiate w.r.t. $\delta$ or $\pi$ separately?
 
-
-The derivative wrt $\pi( a^* \mid s^*)$
+#### Conditions from $\pi( a^* \mid s^*)$
 $$
 \begin{align*}
 \nabla_{\pi( a^* \mid s^*)} \mathcal{L}
@@ -253,7 +268,7 @@ r(s,a) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*,a^*) - \lambda(s^*)  +
 \end{align*}
 $$
 
-We can solver for $\lambda$ such that the gradient is zero for all $s^*$, which
+We can solve for $\lambda$ such that the gradient is zero for all $s^*$, which
 gives us (assuming that $\delta \ne 0$),
 
 $$
@@ -264,7 +279,7 @@ $$
 This is the same as earlier version. \eta is a slack variable again.
 
 
-The derivative wrt $\delta(s^*)$
+#### Conditions from $\delta(s^*)$
 $$
 \begin{align*}
 \nabla_{\delta( s^*)} \mathcal{L}
@@ -279,13 +294,24 @@ $$
 This gives us the value of a fixed policy as an implicit function of setting
 this derivative equal to zero.
 
-XXX What is the story about $\eta$?  I suspect it something like $\eta$ doesn't
-matter if $\pi$ is already positive.
+### Summary
+
+We also see that the slack variable $\eta(s^*, a^*)$ is the disadvantage
+function.
+
+In other words,
+
+$\lambda(s) = V(s)$ is a dual variable for primal constraint $(s)$,
+
+$\eta(s,a) = -A(s,a)$ is the slack variable in the dual constraint $(s,a)$
+
+$\lambda(s) + \eta(s,a) = Q(s,a)$
 
 
 ### The Lagrangian dual problem
 
-The Lagrange dual problem simplifies to
+The Lagrange dual problem simplifies to under the interpretation of $\eta$ as a
+slack variable.
 
 $$
 \begin{cases}
@@ -296,12 +322,6 @@ $$
 \end{cases}
 $$
 
-
-**TODO** The S-procedure might fit in here.  The Lagrange dual of the QP
-  formulation has a no duality gap, which is the main consequence of the
-  S-procedure in control theory.  The reason why this is true is because once we
-  take the Lagrange dual the problem can be simplified into another LP.  This is
-  pretty trivial in our case because the original problem is sort of an LP too.
 
 
 ### Implicit functions
@@ -335,7 +355,7 @@ function
 
 Written in a vector form,
 $$
-\delta_\pi = (1-\gamma P \pi)^{-1} p_0
+\delta_\pi = (1-\gamma P_\pi)^{-1} p_0
 $$
 
 The benefit of collapsing-out the parameters in the fashion is that we eliminate
@@ -347,7 +367,8 @@ optimization problem if we perform the usual linear-equality elimation trick?
 Clearly, we reduce the number of parameters from SA to S.  The trick uses the
 null space of the linear system (which is a linear mapping from $\mu \in
 \mathbb{R}^{S \times A}$ to $\mu': \mathbb{R}^{S}$).  This reparameterization
-might be interesting.
+might be interesting. XXX: maybe things breakdown because of the revised
+positivity constraints.
 
 
 [^collapse-linear]: We can always removed linear equality constraints, even if
@@ -360,6 +381,45 @@ might be interesting.
   For discounted case use $P(s' \mid s, a) = (1-\gamma) \cdot p_0(s') + \gamma \cdot p(s' \mid s,a)$.
   In the discounted cases, we can think of $\delta$ as $\pi$'s stationary distribution if we regard $(1-\gamma)$ as the probability of restarting the Markov chain (i.e., sampling the next state from a mixture of $p_0(s')$ with probability $(1-\gamma)$ and from $p(s' \mid s,a)$ with probability $\gamma$).  This is an equivalent in expected reward, but not higher-order moments of reward, i.e., it's not equivalent in distribution.
 
+
+### A "feed-forward" view of the policy-search problem
+
+$$
+\textbf{input: } \pi \\
+d = (1 - \gamma P_\pi)^{-\top} (1-\gamma) p_0 \\
+\mu = d \pi \\
+\textbf{return } U = r \mu
+$$
+
+An alternative circuit
+$$
+\textbf{input: } \pi \\
+v = (1-\gamma P_\pi)^{-1} r \\
+\textbf{return } U = p_0^\top v / (1-\gamma)
+$$
+
+
+The gradient is
+$$
+d \pi (r + \gamma P_\pi v)
+$$
+
+We can get that by implicit differentiation under the d-stationarity constraint.
+
+max r * d * pi
+s.t. stationary(d, pi)
+
+
+max  reward(d0, pi+eps) =
+     reward(d0, pi) + eps * dU/dpi
+s.t.
+     d0 = stationary(pi+eps)
+     d = stationary(d, pi) + eps * dd/dpi = 0
+
+
+    # dx/dA given A x = b
+    dA = -inv(A).T @ np.mat(g).T @ np.mat(x)
+    fdcheck(lambda: solve(A, b)[k], A, dA)
 
 
 #### Value function: $V$ as an implicit function of $\pi$
@@ -397,8 +457,15 @@ def successor_representation(self):
 
 ## TODO
 
+**TODO** duality explains the why the policy gradient can be written in terms of
+  the dual variables V/Q
+
 **TODO** Formulate the Lagrangian.  Take its derivatives.  Talk about all the
   implicit functions and connections.
+
+**TODO** saddle-point problems and optimization instability, best-response and
+  positive response; regularization.  Go thru notes on the saddle-point
+  formulation.
 
 **TODO** Take the LP dual, note that it is exactly the optimal value function
   problem.
@@ -407,7 +474,11 @@ def successor_representation(self):
 
 **TODO** featurized equilibrium distribution
 
-**TODO** S-procedure and nonconvexity.
+**TODO** The S-procedure might fit in here.  The Lagrange dual of the QP
+  formulation has a no duality gap, which is the main consequence of the
+  S-procedure in control theory.  The reason why this is true is because once we
+  take the Lagrange dual the problem can be simplified into another LP.  This is
+  pretty trivial in our case because the original problem is sort of an LP too.
 
 **TODO** [Mates of costate](http://www.argmin.net/2016/05/18/mates-of-costate/)
 
