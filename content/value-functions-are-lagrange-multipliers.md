@@ -204,7 +204,7 @@ This is precisely the set of constraints in the optimal value function problem.
 The dual problem is min $\lambda$
 
 
-As usual, setting the derivative with respect to the a Lagrange multiplier&mdash;in our case $\lambda&mdash;to zero results in a condition which says that the original equallity constraint should be satisfied, that is
+As usual, setting the derivative with respect to the a Lagrange multiplier&mdash;in our case $\lambda$&mdash;to zero results in a condition which says that the original equallity constraint should be satisfied, that is
 
 $$
 \begin{eqnarray*}
