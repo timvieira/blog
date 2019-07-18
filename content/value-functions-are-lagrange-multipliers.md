@@ -74,9 +74,9 @@ XXX: this explanation is incomplete. Need to define $P_{\pi}$.
 
 $$
 \begin{cases}
-\underset{\pi, \delta}{\textrm{maximize }} & \frac{1}{1-\gamma} \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
+\underset{\pi, \delta}{\textrm{maximize }} & \frac{1}{1-\gamma} \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
 \text{subject to } &
-\sum_{a'} \delta(s') \pi(a' \mid s') = (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S}
+\sum_{a'} \delta(s') \pi(a' \mid s') = (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a)\quad\text{for all }s' \in \mathcal{S}
 \label{eq:balance} \\
 & \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
@@ -93,7 +93,7 @@ $$
 \begin{cases}
 \underset{\mu}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \mu(s, a) \\
 \text{subject to} &
-\sum_{a'} \mu(s',a') = \sum_{s,a} \mu(s,a) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S} \\
+\sum_{a'} \mu(s',a') = \sum_{s,a} \mu(s,a) \cdot P(s' \mid s,a)\quad\text{for all }s' \in \mathcal{S} \\
 & \mu(s, a) \ge 0 \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
 $$
@@ -111,8 +111,8 @@ al. (2008).[^W08]
   $$
   \begin{cases}
   &\sum_{s,a} \delta(s) \pi(a \mid s) = 1
-  &\textstyle\sum_a \pi(a | s) = 1 \quad\text{for all } s \in \mathcal{S} \\
-  &\pi(a | s) \ge 0 \quad\text{for all } s \in \mathcal{S}, a \in \mathcal{A}
+  &\textstyle\sum_a \pi(a \mid s) = 1 \quad\text{for all } s \in \mathcal{S} \\
+  &\pi(a \mid s) \ge 0 \quad\text{for all } s \in \mathcal{S}, a \in \mathcal{A}
   \end{cases}
   $$
   It turns out that we don't need to explicitly add these constraints because
@@ -145,11 +145,11 @@ al. (2008).[^W08]
 $$
 \begin{eqnarray*}
 \mathcal{L}(\delta, \pi, \lambda, \sigma, \zeta, \eta)
-&=& \sum_{s,a} r(s,a) \delta(s) \pi(a|s)\\
-&& + \sum_{s'} \lambda(s') \delta(s')  - \sum_{s,a} \lambda(s') \delta(s) \pi(a|s) p(s'|s,a)\\
-&& + \sum_s \sigma(s)  - \sum_a \sigma(s) \pi(a | s)\\
-&& + \sum_{s,a} \zeta(s,a) \pi(a | s) \\
-&& + \sum_{s} \eta(s) \delta(a | s)
+&=& \sum_{s,a} r(s,a) \delta(s) \pi(a \mid s)\\
+&& + \sum_{s'} \lambda(s') \delta(s')  - \sum_{s,a} \lambda(s') \delta(s) \pi(a \mid s) p(s' \mid s,a)\\
+&& + \sum_s \sigma(s)  - \sum_a \sigma(s) \pi(a \mid s)\\
+&& + \sum_{s,a} \zeta(s,a) \pi(a \mid s) \\
+&& + \sum_{s} \eta(s) \delta(a \mid s)
 \end{eqnarray*}
 $$
 --->
@@ -158,14 +158,27 @@ $$
 $$
 \begin{align*}
 \mathcal{L}(\delta, \pi, \lambda) \overset{\text{def}}{=}
-& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
-& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
+& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
+& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
 & + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s)
 \end{align*}
 $$
 
 
-If we differentiate wrt $\delta(s) \pi(a \mid s)$
+
+<!---
+\nabla\Biggr[
+& \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
+& + \sum_{s'} \lambda(s') (1-\gamma) p_0(s') \\
+& + \sum_{s'} \lambda(s') \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) \\
+& - \sum_{s'} \sum_{a'} \lambda(s') \delta(s') \pi(a' \mid s') \\
+& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \\
+& + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s)
+\Biggr]
+-->
+
+
+If we differentiate $\mathcal{L}$ wrt $\delta(s) \pi(a \mid s)$,
 
 $$
 \newcommand{\ggg}[0]{\frac{\partial \mathcal{L}}{\partial \delta(s^*) \pi(a^* \mid s^*)}}
@@ -174,12 +187,12 @@ $$
 =\,
  \nabla\Biggr[
 & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
-& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
+& + \sum_{s'} \lambda(s') \cdot \left( (1-\gamma) p_0(s') + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a) - \sum_{a'} \delta(s') \pi(a' \mid s')\right) \\
 & + \sum_{s, a} \eta(s,a) \cdot \delta(s) \pi(a \mid s) \Biggr] \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 =\,
 & r(s^*, a^*) \\
-& + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)
+& + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a^*)
 - \lambda(s^*) \\
 & + \eta(s^*, a^*)
 \end{align*}
@@ -194,7 +207,7 @@ $$
 \nabla_{\delta(s^*) \pi(a^* \mid s^*)} \mathcal{L} &=& 0  \\
 &\Leftrightarrow& \\
 \lambda(s^*)
-&\ge& r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)\quad\text{for all }s^*, a^*.
+&\ge& r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*, a^*)\quad\text{for all }s^*, a^*.
 \end{eqnarray*}
 $$
 
@@ -211,12 +224,63 @@ $$
 \nabla_{\lambda(s^*)} \mathcal{L} &=& 0  \\
 &\Leftrightarrow& \\
 \sum_{a'} \delta(s^*) \pi(a' \mid s^*)
-&=& (1-\gamma) p_0(s^*) + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s^*|s,a)
+&=& (1-\gamma) p_0(s^*) + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s^* \mid s,a)
 \end{eqnarray*}
 $$
 
 **TODO** saddle-point problems and optimization instability, best-response and
   positive response; regularization.
+
+**TODO** What happens if we differentiate wrt $\delta$ or $\pi$ separately?
+  That might be how we get policy-specific value functions.
+
+
+The derivative wrt $\pi( a^* \mid s^*)$
+$$
+\begin{align*}
+\nabla_{\pi( a^* \mid s^*)} \mathcal{L}
+=\,
+& r(s^*, a^*) \cdot \delta(s^*) \\
+& +
+\sum_{s'} \lambda(s') \delta(s^*) \cdot P(s' \mid s^*,a^*)
+-
+\lambda(s^*) \delta(s^*) \\
+& + \eta(s^*, a^*) \cdot \delta(s^*) \\
+=\,
+& \delta(s^*) \left(
+r(s,a) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*,a^*) - \lambda(s^*)  + \eta(s^*, a^*)
+\right)
+\end{align*}
+$$
+
+We can solver for $\lambda$ such that the gradient is zero for all $s^*$, which
+gives us (assuming that $\delta \ne 0$),
+
+$$
+\lambda(s^*) =
+r(s^*,a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*,a^*) + \eta(s^*, a^*)
+$$
+
+This is the same as earlier version. \eta is a slack variable again.
+
+
+The derivative wrt $\delta(s^*)$
+$$
+\begin{align*}
+\nabla_{\delta( s^*)} \mathcal{L}
+=\,
+& \sum_{a} r(s^*, a) \cdot \pi(a \mid s^*) \\
+& + \gamma \sum_{s'} \sum_{a} \lambda(s') \pi(a \mid s^*) \cdot P(s' \mid s^*, a) \\
+& - \lambda(s^*) \\
+& + \sum_{a} \eta(s^*,a) \cdot \pi(a \mid s^*)
+\end{align*}
+$$
+
+This gives us the value of a fixed policy as an implicit function of setting
+this derivative equal to zero.
+
+XXX What is the story about $\eta$?  I suspect it something like $\eta$ doesn't
+matter if $\pi$ is already positive.
 
 
 ### The Lagrangian dual problem
@@ -228,7 +292,7 @@ $$
 \underset{\lambda}{\textrm{minimize }} & \sum_{s} p_0(s) \cdot \lambda(s) \\
 \text{subject to } &
 \lambda(s) \ge r(s, a)
-+ \gamma \sum_{s'} P(s'|s,a) \lambda(s') \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
++ \gamma \sum_{s'} P(s' \mid s,a) \lambda(s') \quad\text{for all }s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
 $$
 
@@ -251,8 +315,8 @@ theorem named after a Nobel Laureate.
 
 In this section, we sketch a number of connections in the MDP setting here.
 
-**TODO** how do implicit functions work in te the primal-dual case?  I think the
-answer is that any partial optimization create constraints (as usual),
+**TODO** how do implicit functions work in the the primal-dual case?  I think
+the answer is that any partial optimization create constraints (as usual),
 regardless of whether or not those constraints are in the primal or the dual,
 they are coupled by the Lagrangian. The generally the primal-dual coupling is
 "modulated" by Lagrange multiplier estimates.
@@ -262,15 +326,59 @@ they are coupled by the Lagrangian. The generally the primal-dual coupling is
 If we fix $\pi$ and solve for a primal feasible $\delta$, then we can interpret
 $\delta$ as $\pi$'s occupancy measure.[^occupancy-note]
 
+In the Lagrangian view, we have use $\nabla_{\lambda} \mathcal{L} = 0$
+simultaneously for all states (a type of block-wise update / "partial
+optimization").
+
+This version of $\delta$ is indexed by $\pi$ because it is now an implicit
+function
+
+Written in a vector form,
 $$
-\delta_\pi
+\delta_\pi = (1-\gamma P \pi)^{-1} p_0
 $$
+
+The benefit of collapsing-out the parameters in the fashion is that we eliminate
+the constraint and reduced the number of parameters.[^collapse-linear]
+
+**TODO**: Half-baked thought: As a function of $\mu$, we have an underdetermined
+linear system (S constraints with SA unknowns).  What happens to the
+optimization problem if we perform the usual linear-equality elimation trick?
+Clearly, we reduce the number of parameters from SA to S.  The trick uses the
+null space of the linear system (which is a linear mapping from $\mu \in
+\mathbb{R}^{S \times A}$ to $\mu': \mathbb{R}^{S}$).  This reparameterization
+might be interesting.
+
+
+[^collapse-linear]: We can always removed linear equality constraints, even if
+   the linear system is under-determined.  An over-determined system is, of
+   course, infeasible.  XXX: reference to linear-equality elimination trick.
 
 [^occupancy-note]:
   For the average reward case, we use $P(s' \mid s, a) = p(s' \mid s, a)$.
   We may run into issues with feasibility if the transition function is not unichain (ergodic for all policies).
   For discounted case use $P(s' \mid s, a) = (1-\gamma) \cdot p_0(s') + \gamma \cdot p(s' \mid s,a)$.
   In the discounted cases, we can think of $\delta$ as $\pi$'s stationary distribution if we regard $(1-\gamma)$ as the probability of restarting the Markov chain (i.e., sampling the next state from a mixture of $p_0(s')$ with probability $(1-\gamma)$ and from $p(s' \mid s,a)$ with probability $\gamma$).  This is an equivalent in expected reward, but not higher-order moments of reward, i.e., it's not equivalent in distribution.
+
+
+
+#### Value function: $V$ as an implicit function of $\pi$
+
+For a fixed policy, (WHAT ABOUT $\delta$?)
+if we set $\nabla_{???} \mathcal{L} = 0$,
+the Lagrange mulipliers associated with constraint $(\ref{eq:balance})$ become
+another implicit function $V_\pi$ of the policy
+
+We can estimate the Lagrange multipler (by L2 projection into the dual space?)
+for that policy.  It will be infeasible wrt to the optimization problem
+(TODO:XREF), however.  The problem is a simple fully determined linear system
+
+$$
+V_\pi = (1-\gamma P \pi)^{-1} r
+$$
+
+Varying $\pi$ under this mapping in nonconvex in the space of $V_\pi$
+(cite:VF-polytope paper)
 
 
 #### Successor representation?
@@ -284,18 +392,7 @@ def successor_representation(self):
 
 **TODO** featurized version of SR.
 
-
-
-#### Value function: $V$ as an implicit function of $\pi$:
-
-For a fixed policy, if we set $\nabla_{???} \mathcal{L} = 0$,
-the Lagrange mulipliers associated with constraint $(\ref{eq:balance})$ become
-another implicit function $V_\pi$ of the policy
-
-$$
-V_\pi
-$$
-
+**TODO** Describe Wang et al's policy-improvement friendly SA x SA matrix.
 
 
 ## TODO
@@ -305,6 +402,8 @@ $$
 
 **TODO** Take the LP dual, note that it is exactly the optimal value function
   problem.
+
+**TODO** Proximal RL https://arxiv.org/pdf/1405.6757.pdf
 
 **TODO** featurized equilibrium distribution
 
@@ -333,7 +432,7 @@ $$
 **TODO** The averge-reward formulation of V/Q functions are a little
   different.  Figure out why.
 
-  Q(s,a) = R(s,a) - Rbar + \sum_{s'} T(s'|s,a) V(s')
+  Q(s,a) = R(s,a) - Rbar + \sum_{s'} T(s'| s,a) V(s')
 
   (Is the Rbar because of the sum-to-one constraint?)
 
@@ -371,9 +470,9 @@ discounted case.  Also the $1/(1-\gamma)$ is gone from the objective function.
 
 $$
 \begin{cases}
-\underset{\pi, \delta}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a|s) \\
+\underset{\pi, \delta}{\textrm{maximize }} & \sum_{s,a} r(s,a) \cdot \delta(s) \pi(a \mid s) \\
 \text{subject to } &
-\sum_{a'} \delta(s') \pi(a' \mid s') = \sum_{s,a} \delta(s) \pi(a|s) \cdot P(s'|s,a)\quad\text{for all }s' \in \mathcal{S} \\
+\sum_{a'} \delta(s') \pi(a' \mid s') = \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s' \mid s,a)\quad\text{for all }s' \in \mathcal{S} \\
 & \sum_{s,a} \delta(s) \pi(a \mid s) = 1 \\
 & \delta(s) \pi(a \mid s) \ge 0 \quad\text{for } s \in \mathcal{S}, a \in \mathcal{A}
 \end{cases}
