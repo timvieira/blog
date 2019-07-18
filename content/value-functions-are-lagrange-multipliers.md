@@ -188,9 +188,14 @@ $$
 
 In solving for $\ggg = 0$, we notice that $\eta(s,a)$ is a just a slack
 variable!  Thus, we can treat this equation as an inequality constraint,
+
 $$
+\begin{eqnarray*}
+\nabla_{\delta(s^*) \pi(a^* \mid s^*)} \mathcal{L} &=& 0  \\
+&\Leftrightarrow& \\
 \lambda(s^*)
-\ge r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)\quad\text{for all }s^*, a^*.
+&\ge& r(s^*, a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s'|s^*, a^*)\quad\text{for all }s^*, a^*.
+\end{eqnarray*}
 $$
 
 This is precisely the set of constraints in the optimal value function problem.
@@ -198,6 +203,17 @@ This is precisely the set of constraints in the optimal value function problem.
 
 The dual problem is min $\lambda$
 
+
+As usual, setting the derivative with respect to the a Lagrange multiplier&mdash;in our case $\lambda&mdash;to zero results in a condition which says that the original equallity constraint should be satisfied, that is
+
+$$
+\begin{eqnarray*}
+\nabla_{\lambda(s^*)} \mathcal{L} &=& 0  \\
+&\Leftrightarrow& \\
+\sum_{a'} \delta(s^*) \pi(a' \mid s^*)
+&=& (1-\gamma) p_0(s^*) + \gamma \sum_{s,a} \delta(s) \pi(a \mid s) \cdot P(s^*|s,a)
+\end{eqnarray*}
+$$
 
 **TODO** saddle-point problems and optimization instability, best-response and
   positive response; regularization.
