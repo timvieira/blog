@@ -62,9 +62,11 @@ $$
 U(\pi) \overset{\text{def}}{=} \mathbb{E}\left[  \sum_{t=0}^\infty \gamma^t \!\cdot\! r(s,a) \right]
 $$
 
-where the randomness in the expecation is taken over trajectories,
-$\langle \langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.
-The next step is rewrite $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$, also know as the occupancy measure, rather than an expectation over infinitely long trajectories.[^unnecessary-constraints]
+where the randomness in the expecation is taken over trajectories, $\langle
+\langle s_t, a_t, r_t \rangle \rangle_{t=0}^\infty$.  The next step is to
+rewrite $U(\pi)$ as an expectation over state-visitation fequencies $\delta(s)$,
+also know as the occupancy measure, rather than an expectation over infinitely
+long trajectories.[^unnecessary-constraints]
 
 $$
 (1-P_{\pi})^{-1} p_0 (1-\gamma) = \lim_{T \rightarrow \infty} \sum_{t=1}^T P_{\pi}^{t} p_0 (1-\gamma)
@@ -308,10 +310,14 @@ $\eta(s,a) = -A(s,a)$ is the slack variable in the dual constraint $(s,a)$
 $\lambda(s) + \eta(s,a) = Q(s,a)$
 
 
+No duality gap: Show Slater's conditions hold when no function approximation is
+used.  What do we want to say about the function approximation case?
+
+
 ### The Lagrangian dual problem
 
-The Lagrange dual problem simplifies to under the interpretation of $\eta$ as a
-slack variable.
+The Lagrange dual problem simplifies (under the interpretation of $\eta$ as a
+slack variable) to
 
 $$
 \begin{cases}
@@ -467,12 +473,13 @@ def successor_representation(self):
   positive response; regularization.  Go thru notes on the saddle-point
   formulation.
 
+**TODO** We can get a different Lagrangian by starting from the value function
+  optimization problem -- that is the approach take in Dai et al.
+
 **TODO** Take the LP dual, note that it is exactly the optimal value function
   problem.
 
-**TODO** Proximal RL https://arxiv.org/pdf/1405.6757.pdf
-
-**TODO** featurized equilibrium distribution
+**TODO** [Proximal RL](https://arxiv.org/pdf/1405.6757.pdf)
 
 **TODO** The S-procedure might fit in here.  The Lagrange dual of the QP
   formulation has a no duality gap, which is the main consequence of the
