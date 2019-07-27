@@ -14,6 +14,22 @@ policy-search problem in reinforcement learning.  This connection is pretty cool
 and is closely related to my previous post on
 [backpropagation and Lagrangians](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
 
+**TODO** this post suggests that a "policy evaluation" is not necessary: there
+  are plenty of other strategies to optimize a policy.  Within the RL literature
+  there is a prevalence of two-timescale methods that allow the policy updates
+  and policy evaluations to be co-optimized under a careful choice to
+  two-timescale step-size sequences for each problem.
+
+  My other post suggested that backpropagation is also not necessary.  In both
+  cases, they simply "good strategies" because they can compute some
+  intermediate quantities in closed form (in particular, gradients of the primal
+  problem, by setting certain Lagrangian gradients to zero).  In the RL case,
+  this efficiency argument is less strong because these quantities are estimated
+  by sampling and have some error that can compound.  THis it is less clear that
+  we should bother with the intermediate step.  Recent algorithms based on the
+  primal-dual view are starting to take off (for example, SBEED, boosted actor
+  with dual critic, appropos).
+
 <div style="border: thin solid black; padding: 10px; background-color: #ffffcc;
 margin-bottom: 1.5em;">
 
@@ -186,6 +202,13 @@ $$
 \end{align*}
 $$
 
+All of the derivatives of the Lagrangian are very easy to take because the
+Lagrangian is multi-linear in each the individual variables (it is bi-linear in
+$\delta \cdot \pi$ and $\lambda$, but tri-linear if $\pi$ and $\delta$ and
+$\lambda$ can move independently).  The study of bi-linear forms is pretty
+common in game theory.
+
+
 ### Conditions from $\mu$
 
 Lagrangian conditions for differentiation with respect to $\mu(s^*, a^*) =
@@ -278,7 +301,7 @@ $$
 r(s^*,a^*) + \gamma \sum_{s'} \lambda(s') \cdot P(s' \mid s^*,a^*) + \eta(s^*, a^*)
 $$
 
-This is the same as earlier version. \eta is a slack variable again.
+Same as earlier version. $\eta$ is a slack variable.
 
 
 #### Conditions from $\delta(s^*)$
