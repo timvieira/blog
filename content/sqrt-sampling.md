@@ -109,7 +109,7 @@ is the probability we didn't sample for $(t-1)$ steps times the probability we
 sample it at time $t.$ We multiply this probability by the time $t$ to get the
 *expected* time.
 
-Note that this equation assumes that we known $j$ is the special recipe *with
+Note that this equation assumes that we know $j$ is the special recipe *with
 certainty* when we sample it. We'll revisit this assumption later when we
 consider potential errors in executing the recipe.
 
