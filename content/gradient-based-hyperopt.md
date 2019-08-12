@@ -43,7 +43,7 @@ $\lambda$. Assuming we don't change $\lambda$ too much, then the inner
 optimization shouldn't change $\theta$ too much and it will change in a
 predictable way.
 
-To do this, we'll appeal to the implicit function theorem. Let's looking the
+To do this, we'll appeal to the implicit function theorem. Let's look at the
 general case to simplify notation. Suppose $x$ and $y$ are related through a
 function $g$ as follows,
 
