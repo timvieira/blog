@@ -49,14 +49,13 @@ $$\small
 \quad\quad\small+ \cos(\exp(x) + \exp(x)^2) (\exp(x) + 2 \exp(x) \exp(x)).
 $$
 
-However, this expression leaves something to be desired because it has lot of
+However, this expression leaves something to be desired because it has a lot of
 repeated evaluations of the same function. This is clearly bad, if we want to
 turn it into source code.
 -->
 
-If we were writing *a program* (e.g., in Python) to compute $f$, we'd definitely
-take advantage of the fact that it has a lot of repeated evaluations for
-efficiency.
+If we were writing *a program* (e.g., in Python) to compute $f$, we'd take
+advantage of the fact that it has a lot of repeated evaluations for efficiency.
 
 ```python
 def f(x):
@@ -76,7 +75,7 @@ variables.
 
 * The rules for transforming the code for a function into code for the gradient
   are really minimal (fewer things to memorize!). Additionally, the rules are
-  more general than in symbolic case because they handle as superset of
+  more general than in symbolic case because they handle as a superset of
   programs.
 
 * Quite [beautifully](http://conal.net/papers/beautiful-differentiation/), the
@@ -159,7 +158,7 @@ categories:
   output variable, $z_n$, which represents the quantity we'd like to maximize.
 
 <!-- (It is possible to generalize this story to compute Jacobians of functions
-with multi-variate outputs by "scalarizing" the objective, e.g., multiply the
+with multivariate outputs by "scalarizing" the objective, e.g., multiply the
 outputs by a vector. This Gives an efficient program for computing Jacobian
 vector products that can be used to extra Jacobians.)  -->
 
@@ -300,7 +299,7 @@ system solver to stitch together *local* gradients! That is exactly what the
 [implicit function theorem](https://en.wikipedia.org/wiki/Implicit_function_theorem)
 says!
 
-Cyclic constraints add some expressive powerful to our "constraint language" and
+Cyclic constraints add some expressive powerful to our "constraint language," and
 it's interesting that we can still efficiently compute gradients in this
 setting. An example of what a general type of cyclic constraint looks like is
 
@@ -312,12 +311,12 @@ $$
 \end{align*}
 $$
 
-where $g$ can be an any smooth multivariate function of the intermediate
-variables! Of course, allowing cyclic constraints comes at the cost of a
-more-difficult analogue of "the forward pass" to satisfy the $\boldsymbol{z}$
-equations (if we want to keep it a block-coordinate step). The
-$\boldsymbol{\lambda}$ equations are now a linear system that requires a linear
-solver (e.g., Gaussian elimination).
+where $g$ can be any smooth multivariate function of the intermediate variables!
+Of course, allowing cyclic constraints comes at the cost of a more-difficult
+analogue of "the forward pass" to satisfy the $\boldsymbol{z}$ equations (if we
+want to keep it a block-coordinate step). The $\boldsymbol{\lambda}$ equations
+are now a linear system that requires a linear solver (e.g., Gaussian
+elimination).
 
 
 Example use cases:
@@ -326,9 +325,9 @@ Example use cases:
   it. For example,
   [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
   in machine learning. The implicit function theorem manages to get gradients of
-  hyperparameters without needing to store any of intermediate states of the
+  hyperparameters without needing to store any of the intermediate states of the
   optimization algorithm used in the inner optimization! This is a *huge* memory
-  saver since direct backprop on the inner gradient decent algorithm would
+  saver since direct backprop on the inner gradient descent algorithm would
   require caching all intermediate states. Yikes!
 
 * Cyclic constraints are useful in many graph algorithms. For example, computing
@@ -347,8 +346,8 @@ do in other algorithms for optimizing general Lagrangians).
 
 ## Summary
 
-Backprop is does not directly fall out of the the rules for differentiation
-that you learned in calculus (e.g., the chain rule).
+Backprop does not directly fall out of the rules for differentiation that you
+learned in calculus (e.g., the chain rule).
 
 * This is because it operates on a more general family of functions: *programs*
   which have *intermediate variables*. Supporting intermediate variables is
@@ -380,7 +379,7 @@ version is too redundant.
 > Yann LeCun. (1988)
 > [A Theoretical Framework from Back-Propagation](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf).
 
-Ben Recht has great blog post that uses the implicit function theorem to
+Ben Recht has a great blog post that uses the implicit function theorem to
 *derive* the method of Lagrange multipliers. He also touches on the connection
 to backpropagation.
 
@@ -388,17 +387,17 @@ to backpropagation.
 > [Mechanics of Lagrangians](http://www.argmin.net/2016/05/31/mechanics-of-lagrangians/).
 
 Tom Goldstein's group took the Lagrangian view of backprop and used it to design
-an ADMM approach for optimizing neural nets. The ADMM approach 
+an ADMM approach for optimizing neural nets. The ADMM approach
 can run massively in parallel and can leverage highly optimized solvers for
 subproblems. This work nicely demonstrates that understanding automatic
 differentiation&mdash;in the broader sense that I described in this
 post&mdash;facilitates the development of novel optimization algorithms. <!--
-ADMM is based on a cool reformulation trick, which take a *big* circuit and
+ADMM is based on a cool reformulation trick, which takes a *big* circuit and
 breaks it up into several *small* circuits (subproblems), which are *decoupled*
 from the big problem because each subproblem gets to freely tune its own *local*
 version of the variables. There is, of course, a global equality constraint on
 the decoupled variables so that we get a correct solution. The global equality
-constraints iteratively brings the subproblems into agreement.-->
+constraints iteratively bring the subproblems into agreement.-->
 
 > Gavin Taylor, Ryan Burmeister, Zheng Xu, Bharat Singh, Ankit Patel, Tom Goldstein. (2018)
 > [Training Neural Networks Without Gradients: A Scalable ADMM Approach](https://arxiv.org/abs/1605.02026).
