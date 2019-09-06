@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- #
-from __future__ import unicode_literals
-
 AUTHOR = u'Tim Vieira'
 SITENAME = u'Graduate Descent'
 SITEURL = 'http://timvieira.github.io/blog'
