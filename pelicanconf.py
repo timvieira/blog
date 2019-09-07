@@ -19,6 +19,7 @@ PATH = 'content'
 
 #THEME = '../theme/brutalist'
 #THEME = '../theme/TuftePelican/'
+#THEME = '../theme/fabianp-tufte-pelican/'
 THEME = '../theme/pelican-octopress-theme'
 
 # Set the article URL

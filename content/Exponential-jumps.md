@@ -9,7 +9,7 @@ p = \mathrm{Categorical}\left( \frac{1}{W} \cdot \vec{w} \right)
 \quad\text{where}\quad W = \frac{1}{\sum_j w_j}
 $$
 
-The following is a very simple and relatively famous algorithm due to [Efraimidis and Spirakis (2006)](https://www.sciencedirect.com/science/article/pii/S002001900500298X).  It has several useful properties (e.g., it is a one-pass "streaming" algorithm, separates data from noise, can be easily extended for streaming sampling without replacement).  It is also very closely related to the Gumbel-max trick (discussed in [Vieira, 2014](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
+The following is a very simple and relatively famous algorithm due to [Efraimidis and Spirakis (2006)](https://www.sciencedirect.com/science/article/pii/S002001900500298X).  It has several useful properties (e.g., it is a one-pass "streaming" algorithm, separates data from noise, can be easily extended for streaming sampling without replacement).  It is also very closely related to the Gumbel-max trick ([Vieira,  2014](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
 
 
 ```python
@@ -85,8 +85,8 @@ $$
 \mathrm{Pr}\left( \text{jump to } k \mid i, T \right)
 &=& \mathrm{Pr}\left( W_{i,k-1} < J \le W_{i,k} \right) \\
 &=& \mathrm{Pr}\left( W_{i,k-1} < -\frac{\log(U)}{T} \le W_{i,k} \right) \\
-&=& \mathrm{Pr}\left( \exp(-T \cdot W_{i,k-1}) > U \ge \exp(-T \cdot W_{i,k}) \right) \label{foo}\\
-&=& \exp(T \cdot W_{i,k-1}) - \exp(T \cdot W_{i,k} )
+&=& \mathrm{Pr}\left( \exp(-T W_{i,k-1}) > U \ge \exp(-T W_{i,k}) \right) \label{foo}\\
+&=& \exp(T W_{i,k-1}) - \exp(T W_{i,k} )
 \end{eqnarray}
 $$
 

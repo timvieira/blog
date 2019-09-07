@@ -15,7 +15,7 @@ $(OUTPUTDIR)/%.html:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
 
 clean: $(OUTPUTDIR)
-	find $(OUTPUTDIR) -mindepth 1 -delete
+	rm -rf $(BASEDIR)/output
 
 push: html
 	rm -rf ~/projects/self/timvieira.github.com/blog
