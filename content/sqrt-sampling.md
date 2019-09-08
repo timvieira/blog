@@ -276,3 +276,5 @@ gensim, which confirmed the suspicion that $1/2$ may be better than $3/4.$
     |  0.75 |    0.395 |
     |  1.00 |    0.345 |
 -->
+
+**Final remarks**: I have uploaded a [Jupyter notebook](https://github.com/timvieira/blog/blob/master/content/notebook/Sqrt-biased-sampling.ipynb) with test cases that illustrate the ideas in this article.
