@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- #
 
 AUTHOR = u'Tim Vieira'
-SITENAME = u'Graduate Descent'
+SITENAME = 'Graduate Descent'
 SITEURL = 'http://timvieira.github.io/blog'
 
 OUTPUT_PATH = 'output/blog/'
@@ -45,7 +45,7 @@ SOCIAL = []
 DEFAULT_PAGINATION = 1
 
 # Uncomment following line if you want document-relative URLs when developing
-RELATIVE_URLS = True
+RELATIVE_URLS = False
 
 # When creating a short summary of an article, this will be the default length
 # in words of the text created. This only applies if your content does not

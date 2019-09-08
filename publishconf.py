@@ -20,6 +20,8 @@ DELETE_OUTPUT_DIRECTORY = True
 
 # Following items are often useful when publishing
 
+
+DISQUS_SITEURL = 'http://timvieira.github.io/blog'
 DISQUS_SITENAME = 'graduatedescent'
 
 #GOOGLE_ANALYTICS = 'google-analytics-id'

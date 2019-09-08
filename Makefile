@@ -18,6 +18,7 @@ clean: $(OUTPUTDIR)
 	rm -rf $(BASEDIR)/output
 
 push: html
+	./develop_server.sh stop
 	rm -rf ~/projects/self/timvieira.github.com/blog
 	mkdir ~/projects/self/timvieira.github.com/blog
 	rsync -a $(OUTPUTDIR)/. ~/projects/self/timvieira.github.com/blog/.
