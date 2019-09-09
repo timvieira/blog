@@ -66,7 +66,7 @@ def walk(stream):
     return R
 ```
 
-**The key idea** of the exponential jumps algorithm is to sample *waiting times* between new minimum events.  In particular, if the algorithm is at step $i$ the probability that sees its next minimum at steps $j \in \{ i+1, \ldots \}$ can be reasoned about without needing to *actually* sample the various $X_j$ variables.
+**The key idea** of the exponential jumps algorithm is to sample *waiting times* between new minimum events.  In particular, if the algorithm is at step $i$ the probability that it sees its next minimum at steps $j \in \{ i+1, \ldots \}$ can be reasoned about without needing to *actually* sample the various $X_j$ variables.
 
 Rather than going into a full-blown tutorial on waiting times of exponential variates, I will get to the point and show that the `jump` algorithm simulates the `walk` algorithm.  The key to doing this is showing that the probability of jumping from $i$ to $k$ is the same as "walking" from $i$ to $k$.  Let $W_{i,k} = \sum_{j=i}^k w_j$.
 
