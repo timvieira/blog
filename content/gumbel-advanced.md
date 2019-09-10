@@ -56,9 +56,9 @@ for $i=1,2,\cdots;$ do:
 :  $\ \ \ \ a = k_i$
 :  $\ \ \ \ b = i$
 
-Again, if interrupt this algorithm at any point, we have our sample $b$. Note
-that you can simplify $e_i$ so that you don't have to compute pow (which is nice
-because pow is pretty slow). It's equivalent to use $e'_i = \log(e_i) =
+Again, if we interrupt this algorithm at any point, we have our sample $b$. Note
+that you can simplify $e_i$ so that you don't have to compute `pow` (which is nice
+because `pow` is pretty slow). It's equivalent to use $e'_i = \log(e_i) =
 \log(u_i)/x_i$ because $\log$ is monotonic. (Note that $-e'_i \sim
 \textrm{Exponential}(x_i)$.)
 
@@ -70,9 +70,8 @@ that minimizing is actually summing. However, we want the argmin, which is
 distributed according to $\pi_t$.
 -->
 
-**Relationship**: Let's try to relate these algorithms. At a high level, both
-algorithms compute a randomized key and take an argmax. What's the relationship
-between the keys?
+**Relationship**: At a high level, we can see that both algorithms compute a
+randomized key and take an argmax. What's the relationship between the keys?
 
 First, note that a $\text{Gumbel}(0,1)$ variate can be generated via
 $-\log(-\log(\text{Uniform}(0,1)))$. This is a straightforward application of
