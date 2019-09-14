@@ -275,4 +275,4 @@ def hsample(S):
 ```
 
 **Code**: Complete code and test cases for heap sampling are available in this
-[gist](https://gist.github.com/timvieira/da31b56436045a3122f5adf5aafec515).
+[gist](https://gist.github.com/timvieira/da31b56436045a3122f5adf5aafec515).  A fast Cython [implementation](https://github.com/timvieira/arsenal/blob/master/arsenal/maths/sumheap.pyx) is available in my Python [arsenal](https://github.com/timvieira/arsenal/).
