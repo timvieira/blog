@@ -3,7 +3,7 @@
 
 AUTHOR = u'Tim Vieira'
 SITENAME = 'Graduate Descent'
-SITEURL = 'http://timvieira.github.io/blog'
+SITEURL = 'https://timvieira.github.io/blog'
 
 OUTPUT_PATH = 'output/blog/'
 
@@ -73,7 +73,7 @@ NOTEBOOK_DIR = 'notebook'
 
 # Title menu options
 MENUITEMS = [
-    ('About', 'http://timvieira.github.io/'),
+    ('About', 'https://timvieira.github.io/'),
     ('Archive', '/blog/index.html'),
 ]
 
