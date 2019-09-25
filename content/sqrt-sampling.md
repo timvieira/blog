@@ -196,8 +196,8 @@ $\boldsymbol{p}.$ Additional cooking experiments are not so advantageous.
 
 **Allowing for noise in the cooking process**: Suppose that for each recipe we
   had a prior belief about how hard that recipe is for us to cook. Denote that
-  belief $s_i$, these belief are between zero (never get it right) and one
-  (perfect every time) and do not sum to one over the cookbook.
+  belief $s_i$, these beliefs are between zero (never get it right) and one
+  (perfect every time) and do not necessarily sum to one over the cookbook.
 
 Following a similar derivation to before, the time to cook the special recipe
 $j$ and cook it correctly is,
