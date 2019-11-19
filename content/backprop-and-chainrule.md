@@ -365,10 +365,12 @@ variables.
   hinted at ideas for doing optimization a little differently, deviating from
   the de facto block-coordinate strategy.
 
+
+<!--
 <center>
 ![Levels of enlightenment](/blog/images/backprop-brain-meme.png)
 </center>
-
+-->
 
 ## Further reading
 

@@ -105,8 +105,8 @@ $$
 
 
 The equation says that expected time it takes to sample $j$ for *the first time*
-is the probability we didn't sample for $(t-1)$ steps times the probability we
-sample it at time $t.$ We multiply this probability by the time $t$ to get the
+is the probability we didn't sample $j$ for $(t-1)$ steps times the probability we
+sample $j$ at time $t.$  We multiply this probability by the time $t$ to get the
 *expected* time.
 
 Note that this equation assumes that we know $j$ is the special recipe *with
@@ -139,7 +139,7 @@ $$
 $$
 
 The optimization problem says minimize the expected time to find the special
-recipe. The constraints enforce that $\boldsymbol{q}$ be a valid probability
+recipe. The constraints enforce that $\boldsymbol{q}$ is a valid probability
 distribution.
 
 The optimal strategy, which we get via Lagrange multipliers, turns out to be,
