@@ -1,7 +1,8 @@
 title: Hot take: Expectation maximization
 date: 2019-11-20
 comments: true
-tags: better-explained, machine-learning, statistics,
+status: draft
+tags: machine-learning, statistics, hot-take
 
 $$
 \newcommand{\ind}[1]{\boldsymbol{1}\left[ #1 \right]}
