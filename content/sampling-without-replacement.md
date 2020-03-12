@@ -89,7 +89,7 @@ without replacement, e.g., any point process over the universe will do as long
 as we can control the size.
 
 **An alternative formulation:** We can also formulate our estimation problem as
-seeking a sparse, unbiased approximation to a vector $\boldsymbol{x}$. We want
+seeking a sparse, unbiased approximation to a vector $\boldsymbol{x} \in \mathbb{R}_{>0}^n$. We want
 our approximation, $\boldsymbol{s}$ to satisfy $\mathbb{E}[\boldsymbol{s}] =
 \boldsymbol{x}$ and while $|| \boldsymbol{s} ||_0 \le m$. This will suffice for
 estimating $\mu$ (above) when $\boldsymbol{x}=\boldsymbol{p}$, the vector of
