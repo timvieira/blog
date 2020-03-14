@@ -114,7 +114,7 @@ we assume no prior knowledge about $f$. Here is pseudocode for priority sampling
 $$
 \begin{align*}
 &\textbf{procedure } \textrm{PrioritySample} \\
-&\textbf{inputs: } \text{vector } \boldsymbol{x} \in \mathbb{R}^n, \text{budget } m \in \{1, \ldots, n\}\\
+&\textbf{inputs: } \text{vector } \boldsymbol{x} \in \mathbb{R}_{>0}^n, \text{budget } m \in \{1, \ldots, n\}\\
 &\textbf{output: } \text{sparse and unbiased representation of $\boldsymbol{x}$} \\
 &\quad u_i, \ldots, u_n \overset{\tiny\text{i.i.d.}} \sim \textrm{Uniform}(0,1] \\
 &\quad  k_i \leftarrow u_i/x_i \text{ for each $i$} \quad\color{grey}{\text{# random sort key }} \\
