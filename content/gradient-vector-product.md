@@ -17,7 +17,7 @@ $$
 
 where $\varepsilon > 0$ and $\boldsymbol{e_i}$ is a vector of zeros except at
 $i$ where it is $1$. This approximation is exact in the limit, and accurate to
-$o(\varepsilon^2)$ additive error.
+$o(\varepsilon)$ additive error.
 
 This is a specific instance of a more general approximation! The dot product of
 the gradient and any (conformable) vector $\boldsymbol{d}$ can be approximated
