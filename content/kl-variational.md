@@ -175,8 +175,8 @@ tractable or, for MLE, require tons of samples.
 
 I'd like to thank the following people:
 
-* [Ryan Cotterell](https://twitter.com/_shrdlu_) for an email exchange which
-  spawned this article.
+* [Ryan Cotterell](https://twitter.com/ryandcotterell) for an email exchange
+  which spawned this article.
 
 * [Jason Eisner](https://twitter.com/adveisner) for teaching me all this stuff.
 
@@ -184,5 +184,5 @@ I'd like to thank the following people:
   discussion, which caugh a bug in my explanation of why inclusive KL is hard to
   compute/optimize.
 
-* [Sebastian Mielke](https://twitter.com/sjmielke) for the suggesting the
+* [Sabrina Mielke](https://twitter.com/sjmielke) for the suggesting the
   "inclusive vs. exclusive" figure.
