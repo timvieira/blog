@@ -6,7 +6,7 @@ tags: sampling, reservoir-sampling, Gumbel, sampling-without-replacement
 We are interested in designing an efficient algorithm for sampling from a categorical distribution over $n$ items with weights $w_i > 0$.  Define target sampling distribution $p$ as
 $$
 p = \mathrm{Categorical}\left( \frac{1}{W} \cdot \vec{w} \right)
-\quad\text{where}\quad W = \frac{1}{\sum_j w_j}
+\quad\text{where}\quad W = \sum_j w_j
 $$
 
 The following is a very simple and relatively famous algorithm due to [Efraimidis and Spirakis (2006)](https://www.sciencedirect.com/science/article/pii/S002001900500298X).  It has several useful properties (e.g., it is a one-pass "streaming" algorithm, separates data from noise, can be easily extended for streaming sampling without replacement).  It is also very closely related to the Gumbel-max trick ([Vieira,  2014](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
