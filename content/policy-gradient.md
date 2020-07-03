@@ -214,7 +214,7 @@ Some folks use an estimate of $J$, which is better than nothing.
  * You can improve your data efficiency and algorithm stability using off-line
    optimization (with your favorite deterministic optimization algorithm).  I
    have written a long article about offline optimization
-   [here]((https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)).
+   [here](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/).
 
 
 ## Summary
