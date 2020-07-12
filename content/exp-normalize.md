@@ -36,7 +36,7 @@ RuntimeWarning: invalid value encountered in true_divide
 Out[4]: array([ 0.,  0., nan])
 ```
 
-The exp-normalize trick avoid this common problem.
+The exp-normalize trick avoids this common problem.
 ```python
 def exp_normalize(x):
     b = x.max()
