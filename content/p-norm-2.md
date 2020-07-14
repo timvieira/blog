@@ -15,7 +15,7 @@ from numpy import array
     
 def norm1(x, p):
     "First-pass implementation of p-norm."
-    return (x**p).sum() ** (1./p)
+    return (np.abs(x)**p).sum() ** (1./p)
 ```
 
 Now, suppose $|x_i|^p$ causes overflow (for some $i$). This will occur for sufficiently large $p$ or sufficiently large $x_i$&mdash;even if $x_i$ is representable (i.e., not NaN or $\infty$).
