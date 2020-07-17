@@ -52,7 +52,7 @@ There are a few reasons we might want use importance sampling:
   4. **Off-policy evaluation and learning**: We might want to collect some
      "exploratory data" from $q$ and evaluate different "policies", $p$ (e.g.,
      to pick the best one). Here's a link to a future post on
-     [off-policy evaluation and counterfactual reasoning](http://timvieira.github.io/blog/post/2016/12/13/counterfactual-reasoning-and-learning-from-logged-data/)
+     [off-policy evaluation and counterfactual reasoning](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)
      and some cool papers:
      [counterfactual reasoning](http://arxiv.org/abs/1209.2355),
      [reinforcement learning](http://arxiv.org/abs/cs/0204043),
@@ -86,5 +86,5 @@ often the case that a biased estimator is preferred, e.g.,
 drawback is that both densities must be normalized, which is often intractable.
 
 **What's next?** I plan to cover "variance reduction" and
-[off-policy evaluation](http://timvieira.github.io/blog/post/2016/12/13/counterfactual-reasoning-and-learning-from-logged-data/)
+[off-policy evaluation](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)
 in more detail in future posts.
