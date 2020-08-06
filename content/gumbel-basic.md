@@ -32,7 +32,7 @@ $$
 where $z_1 \cdots z_K$ are i.i.d. $\text{Gumbel}(0,1)$ random variates. It
 turns out that $y$ is distributed according to $\pi$. (See the short derivations
 in this
-[blog post](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/).)
+[blog post](https://lips.cs.princeton.edu/the-gumbel-max-trick-for-discrete-distributions/).)
 
 Implementing the Gumbel-max trick is remarkable easy:
 
