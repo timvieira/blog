@@ -52,8 +52,8 @@ for $i=1,2,\cdots;$ do:
 :  $u_i \sim \text{Uniform}(0,1)$
 :  $e_i = u_i^{(\frac{1}{x_i})}$
 :  \# Keep around the largest $e_i$
-:  if $k_i > a$:
-:  $\ \ \ \ a = k_i$
+:  if $e_i > a$:
+:  $\ \ \ \ a = e_i$
 :  $\ \ \ \ b = i$
 
 Again, if we interrupt this algorithm at any point, we have our sample $b$. Note

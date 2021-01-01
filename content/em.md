@@ -14,14 +14,12 @@ explained.
 
  * Explanations are littered with distracting model-specific details and messy
    variational inference notation that make it hard to see the signal in the
-   noise.[^why-the-noise]
-
-   [^why-the-noise]: Why such a messy presentation?  My guess is that it is
+   noise.[ref]Why such a messy presentation?  My guess is that it is
      because the theoretical foundations for EM are based on an iterative
      lower-bound maximization algorithm.  The theory is bleeding into the
      presentation.  This view is useful because they tie EM to a theoretical
      optimization foundation that is used to prove convergence properties, but
-     at the end of the day they are just some dude's hot take.
+     at the end of the day they are just some dude's hot take.[/ref]
 
  * Today, I will give my hot take.  I will create a bridge between EM and MLE,
    which I believe makes it easier to see the signal in the noise.
@@ -49,10 +47,8 @@ Consider the following examples:
 
 2. Incomplete, interval observation: be $g(X_i) = \ind{a_i \le X_i < b_i}$ for some
    constants $a_i < b_i$.  We recover the complete case as $a_i$ approachs $b_i$
-   for all $i$.[^interval]
-
-   [^interval]: Interval observations are used in estimation for censored
-     observations.
+   for all $i$.[ref]Interval observations are used in estimation for censored
+     observations.[/ref]
 
 3. Incomplete, subset observations: we could observe non-empty subsets,
    $\mathcal{X}_i$, of $X$'s domain, $\ind{X_i \in \mathcal{X}_i}$.
@@ -64,10 +60,7 @@ There are tons of weird incomplete observations types (i.e., families of $g$
 functions).  Every choice will result is some set of details that you will have
 to work out in order to accomodate.  For example, to accommodate intervals we
 can use the cumulative distribution function, $F(\cdot; \theta)$, $p(a_i \le X <
-b_i) = F(b_i; \theta) \cdot (1 - F(a_i; \theta))$.[^a-equals-b]
-
-[^a-equals-b]: To support $a_i = b_i$, you swap in the pdf via a piecewise
-  function when $a_i = b_i$ happens to be observed.
+b_i) = F(b_i; \theta) \cdot (1 - F(a_i; \theta))$.[ref]To support $a_i = b_i$, you swap in the pdf via a piecewise function when $a_i = b_i$ happens to be observed.[/ref]
 
 
 The obvious thing to optimize is the **incomplete log-likelihood**
@@ -90,7 +83,9 @@ EM is based on a chicken and egg type of story:
 
 That's basically what EM is going to do:
 
-initialize: guess model parameters, \theta.[^ME-alg]
+initialize: guess model parameters, \theta.[ref]Alternatively, one can
+  initialize with a guess of the data completions and reorder the two steps
+  below "M-E" rather than "E-M."[/ref]
 
 repeat until some convergence criterion is met
 
@@ -99,8 +94,6 @@ repeat until some convergence criterion is met
 
   * M step: re-fit the model to that fake data,
 
-[^ME-alg]: Alternatively, one can initialize with a guess of the data
-  completions and reorder the two steps below "M-E" rather than "E-M."
 
 
 Consider a slightly dumbed down version of EM, called Monte Carlo EM (MCEM).

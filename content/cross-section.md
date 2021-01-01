@@ -57,7 +57,12 @@ $\boldsymbol{d}$, my favorites are:
  3. Random:
 
     If all your parameters are on an equal scale, I recommend directions drawn
-    from a spherical Gaussian.[^sphericalgaussian] The reason being that such a
+    from a spherical Gaussian.[ref]More formally, vectors drawn from a spherical Gaussian are
+points uniformly distributed on the surface of a $d$-dimensional unit sphere,
+$\mathbb{S}^d$. Sampling a vector from a spherical Gaussian is straightforward:
+sample $\boldsymbol{d'} \sim \mathcal{N}(\boldsymbol{0},\boldsymbol{I})$,
+$\boldsymbol{d} = \boldsymbol{d'} / \| \boldsymbol{d'} \|_2$[/ref]
+ The reason being that such a
     vector is uniformly distributed across all unit-length directions (i.e., the
     angle of the vector, not it's length). We will vary the length ourselves via
     $\alpha$.
@@ -94,12 +99,4 @@ algorithms.
 - [Visualizing the Loss Landscape of Neural Nets](https://arxiv.org/abs/1712.09913)
 
 
-
-Notes
------
-
-[^sphericalgaussian]: More formally, vectors drawn from a spherical Gaussian are
-points uniformly distributed on the surface of a $d$-dimensional unit sphere,
-$\mathbb{S}^d$. Sampling a vector from a spherical Gaussian is straightforward:
-sample $\boldsymbol{d'} \sim \mathcal{N}(\boldsymbol{0},\boldsymbol{I})$,
-$\boldsymbol{d} = \boldsymbol{d'} / \| \boldsymbol{d'} \|_2$
+## Footnotes

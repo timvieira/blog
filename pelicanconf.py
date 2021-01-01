@@ -46,6 +46,7 @@ DEFAULT_PAGINATION = 1
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = False
+#RELATIVE_URLS = True
 
 # When creating a short summary of an article, this will be the default length
 # in words of the text created. This only applies if your content does not
@@ -54,22 +55,42 @@ RELATIVE_URLS = False
 SUMMARY_MAX_LENGTH = None
 
 PLUGIN_PATHS = [
-    '../plugins/pelican-plugins',
-    '../plugins',
+    '/home/timv/projects/blog/plugins/pelican-plugins',
 ]
 
-PLUGINS = ['render_math',
-           'liquid_tags.img',
-           #'liquid_tags.video',
-           #'liquid_tags.include_code',
-           'ipynb.liquid',
-           #'liquid_tags.notebook',
-           'liquid_tags.literal']
 
 STATIC_PATHS = ['images', 'figures', 'downloads', 'favicon.png']
 
 CODE_DIR = 'code'
-NOTEBOOK_DIR = 'notebook'
+#NOTEBOOK_DIR = 'content'
+
+
+PLUGINS = [
+    'render_math',
+    'liquid_tags.img',
+    #'liquid_tags.video',
+    #'liquid_tags.include_code',
+    'simple_footnotes',
+    'liquid_tags.literal',
+]
+
+#_______________________________________________________________________________
+# Jupyter notebook configuration
+# https://github.com/danielfrg/pelican-jupyter
+
+MARKUP = ("md", )
+
+LIQUID_CONFIGS = (("IPYNB_FIX_CSS", "False", ""),
+                  ("IPYNB_SKIP_CSS", "False", ""),
+                  ("IPYNB_MARKUP_USE_FIRST_CELL", "False", ""),
+                  ("IPYNB_GENERATE_SUMMARY", "False", ""),
+                  ("IPYNB_EXPORT_TEMPLATE", "base", ""),)
+IGNORE_FILES = [".ipynb_checkpoints"]
+
+PLUGINS.append('pelican_jupyter.liquid')
+
+#_______________________________________________________________________________
+#
 
 # Title menu options
 MENUITEMS = [
@@ -79,7 +100,8 @@ MENUITEMS = [
 
 NEWEST_FIRST_ARCHIVES = True
 
-DISQUS_SITENAME = 'graduatedescent'
+#DISQUS_SITEURL = 'http://timvieira.github.io/blog'
+#DISQUS_SITENAME = 'graduatedescent'
 
 # <octopress>
 DISPLAY_CATEGORIES_ON_MENU = False

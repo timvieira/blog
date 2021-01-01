@@ -159,17 +159,25 @@ style="display:none;"> **Proof of unbiasedness**. The following proof is a
 little different from that in the priority sampling papers. I think it's more
 straightforward. More importantly, it shows how we can extend the method to
 sample from slightly different without-replacement distributions (as long as we
-can compute $q_i = p(i \in S | \tau)$).
+can compute $q_i(\tau) = \mathrm{Pr}(i \in S \mid \tau) = \mathrm{Pr}(k_i \le \tau)$).
 
 $$
 \begin{eqnarray}
 \mathbb{E}\left[ \widehat{\mu}_{\text{PS}} \right]
-&=& \mathbb{E}_{\tau, u_1, \ldots u_n}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S] \right] \\
-&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \mathbb{E}_{u_i | \tau}\!\left[ \frac{p_i}{q_i} \cdot f(i) \cdot \boldsymbol{1}[ i \in S] \right] \right] \\
-&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot \mathbb{E}_{u_i | \tau}\!\Big[ \boldsymbol{1}[ i \in S] \Big] \right] \\
-&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i} \cdot f(i) \cdot q_i \right] \\
-&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n p_i \cdot f(i) \right] \\
-&=& \mathbb{E}_{\tau}\! \left[ \mu \right] \\
+&=& \mathbb{E}_{\tau, k_1, \ldots k_n}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i(\tau)} \cdot f(i) \cdot \boldsymbol{1}[ k_i \le \tau] \right] \\
+&=& \mathbb{E}_{\tau}\! \left[ \sum_{i=1}^n \frac{p_i}{q_i(\tau)} \cdot f(i) \cdot \mathbb{E}_{k_i | \tau}\!\Big[ \boldsymbol{1}[ k_i \le \tau  ] \Big] \right] \\
+&=& \mathbb{E}_{\tau}\! \left[
+   \sum_{i=1}^n \frac{p_i}{q_i(\tau)} \cdot f(i) \cdot
+   \mathrm{Pr}( k_i \le \tau )
+   \right] \\
+&=& \mathbb{E}_{\tau}\! \left[
+   \sum_{i=1}^n \frac{p_i}{q_i(\tau)} \cdot f(i) \cdot
+   q_i(\tau)
+   \right] \\
+&=& \mathbb{E}_{\tau}\! \left[
+   \sum_{i=1}^n p_i \cdot f(i)
+   \right] \\
+&=& \sum_{i=1}^n p_i \cdot f(i) \\
 &=& \mu
 \end{eqnarray}
 $$

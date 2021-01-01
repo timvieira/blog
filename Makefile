@@ -1,28 +1,18 @@
-PELICAN=pelican
-PELICANOPTS=
+html: clean
+	rm -rf output
+	mkdir -p output
+	pelican content -s publishconf.py
 
-BASEDIR=$(CURDIR)
-INPUTDIR=$(BASEDIR)/content
-OUTPUTDIR=$(BASEDIR)/output/blog
-CONFFILE=$(BASEDIR)/pelicanconf.py
-PUBLISHCONF=$(BASEDIR)/publishconf.py
-DEPLOYREPOSITORY=timvieira.github.io
+clean:
+	rm -rf output
 
-html: clean $(OUTPUTDIR)/index.html
-	@echo 'Done'
 
-$(OUTPUTDIR)/%.html:
-	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
-
-clean: $(OUTPUTDIR)
-	rm -rf $(BASEDIR)/output
+serve: clean html
+	( cd output/ && python -m http.server 8000 )
 
 push: html
 	./develop_server.sh stop
 	rm -rf ~/projects/self/timvieira.github.com/blog
 	mkdir ~/projects/self/timvieira.github.com/blog
-	rsync -a $(OUTPUTDIR)/. ~/projects/self/timvieira.github.com/blog/.
+	rsync -a output/blog/. ~/projects/self/timvieira.github.com/blog/.
 	( cd ~/projects/self/timvieira.github.com/ && hg addremove && hg ci -m 'update blog' && hg bookmarks -r tip master && hg push )
-
-$(OUTPUTDIR):
-	mkdir -p $(OUTPUTDIR)

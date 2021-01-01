@@ -33,11 +33,18 @@ Taylor approximation to $f$ at $x$. (For an in-depth discussion on notions of
 
 **The baseline:** Without access to gradient code, *approximating* the gradient
 takes $d+1$ function evaluations via the finite-difference approximation to the
-gradient,[^twosidedfd] which I've discussed a
+gradient,[ref]Of course, it's better to use the two-sided difference
+approximation to the gradient in practice, which requires $2 \cdot d$ function
+evaluations, not $d+1$.
+[/ref] which I've discussed a
 [few](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/)
 [times](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/). This
 shouldn't be surprising since that's the size of the object we're looking for
-anyways![^faster-but-noisy]
+anyways![ref]Note that we can get noisy, approximations with much fewer
+than $\mathcal{O}(d)$ evaluations, e.g.,
+[SPSA](https://en.wikipedia.org/wiki/Simultaneous_perturbation_stochastic_approximation)
+or even REINFORCE obtain gradients approximations with just $\mathcal{O}(1)$
+evaluations per iteration.[/ref]
 
 **Can we do better?** Suppose we had $(d+1)$ arbitrary points
 $\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(d+1)}$ in $\mathbb{R}^n$ with
@@ -112,12 +119,6 @@ reasonable alternative to gradients when they are unavailable (or not useful).
    [derivative-free optimization](https://en.wikipedia.org/wiki/Derivative-free_optimization)
    is a good starting point for learning more.
 
-[^twosidedfd]: Of course, it's better to use the two-sided difference
-approximation to the gradient in practice, which requires $2 \cdot d$ function
-evaluations, not $d+1$.
 
-[^faster-but-noisy]: Note that we can get noisy, approximations with much fewer
-than $\mathcal{O}(d)$ evaluations, e.g.,
-[SPSA](https://en.wikipedia.org/wiki/Simultaneous_perturbation_stochastic_approximation)
-or even REINFORCE obtain gradients approximations with just $\mathcal{O}(1)$
-evaluations per iteration.
+### Footnotes
+
