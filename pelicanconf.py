@@ -80,14 +80,19 @@ PLUGINS = [
 
 MARKUP = ("md", )
 
-LIQUID_CONFIGS = (("IPYNB_FIX_CSS", "False", ""),
-                  ("IPYNB_SKIP_CSS", "False", ""),
-                  ("IPYNB_MARKUP_USE_FIRST_CELL", "False", ""),
-                  ("IPYNB_GENERATE_SUMMARY", "False", ""),
-                  ("IPYNB_EXPORT_TEMPLATE", "base", ""),)
+LIQUID_CONFIGS = (
+    ("IPYNB_FIX_CSS", "False", ""),
+    ("IPYNB_SKIP_CSS", "False", ""),
+    ("IPYNB_MARKUP_USE_FIRST_CELL", "False", ""),
+    ("IPYNB_GENERATE_SUMMARY", "False", ""),
+    #("IPYNB_EXPORT_TEMPLATE", "base", ""),
+)
 IGNORE_FILES = [".ipynb_checkpoints"]
 
-PLUGINS.append('pelican_jupyter.liquid')
+#PLUGINS.append('pelican_jupyter.liquid')
+
+from pelican_jupyter import liquid as nb_liquid
+PLUGINS.append(nb_liquid)
 
 #_______________________________________________________________________________
 #

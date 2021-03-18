@@ -11,7 +11,6 @@ serve: clean html
 	( cd output/ && python -m http.server 8000 )
 
 push: html
-	./develop_server.sh stop
 	rm -rf ~/projects/self/timvieira.github.com/blog
 	mkdir ~/projects/self/timvieira.github.com/blog
 	rsync -a output/blog/. ~/projects/self/timvieira.github.com/blog/.

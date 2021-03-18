@@ -2,6 +2,10 @@
 ##
 # This section should match your Makefile
 ##
+
+echo "do not use this script anymore; use make serve."
+exit
+
 PELICAN=pelican
 PELICANOPTS=
 
