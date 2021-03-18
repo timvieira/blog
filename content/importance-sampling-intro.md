@@ -20,8 +20,8 @@ $$
 \mathbb{E}_{q}\! \left[ f^*(x) \right] = \mathbb{E}_{q}\! \left[ \frac{p(x)}{q(x)} f(x) \right] = \sum_{x} q(x) \frac{p(x)}{q(x)} f(x) = \sum_{x} p(x) f(x) = \mathbb{E}_{p}\! \left[ f(x) \right] = \mu
 $$
 
-<br/>Technical condition: $q$ must have support everywhere $p$ does, $p(x) > 0
-\Rightarrow q(x) > 0.$ Without this condition, the equation is biased! Note: $q$
+<br/>Technical condition: $q$ must have support everywhere $p$ does, $f(x) p(x) > 0
+\Rightarrow q(x) > 0.$  Without this condition, the equation is biased!  Note: $q$
 can support things that $p$ doesn't.
 
 Terminology: The quantity $w(x) = \frac{p(x)}{q(x)}$ is often referred to as the

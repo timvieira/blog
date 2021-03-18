@@ -29,7 +29,7 @@ $$
 \lambda^* = \underset{\lambda}{\textbf{argmin}}\
 \mathcal{L}_{\text{dev}}\left(\theta(\lambda) \right),
 $$
-where $\theta(\lambda)$ is the solution to,
+where $\theta(\lambda)$ is the solution to
 $$
 \frac{\partial \mathcal{L}_{\text{train}}(\theta, \lambda)}{\partial \theta} = 0.
 $$
