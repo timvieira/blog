@@ -73,12 +73,10 @@ $$
 Next, we solve for $\frac{\Delta_x}{\Delta_y}$.
 
 $$
-\Delta_x \frac{\partial g}{\partial x} = - \Delta_y \frac{\partial g}{\partial y}.
-$$
-
-
-$$
-\frac{\Delta_x}{\Delta_y}  = -\left( \frac{\partial g}{\partial y} \right)^{-1} \frac{\partial g}{\partial x}.
+\begin{align}
+\Delta_x \frac{\partial g}{\partial x} &= - \Delta_y \frac{\partial g}{\partial y} \\
+\frac{\Delta_x}{\Delta_y}  &= -\left( \frac{\partial g}{\partial x} \right)^{-1} \frac{\partial g}{\partial y}.
+\end{align}
 $$
 
 Back to the original problem: Now we can use the implicit function theorem to
