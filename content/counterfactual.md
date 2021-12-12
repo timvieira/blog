@@ -21,7 +21,7 @@ from a older one.
 In this post, I'll discuss some basic techniques for learning from logged
 data. For the large part, this post is based on things I learned from
 [Peshkin & Shelton (2002)](http://www.cs.ucr.edu/~cshelton/papers/docs/icml02.pdf)
-and [Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (two of all-time
+and [Bottou et al. (2013)](https://arxiv.org/abs/1209.2355) (two of my all-time
 favorite papers).
 
 After reading, have a look at the
