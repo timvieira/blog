@@ -9,8 +9,8 @@ $$
 \newcommand{\defeq}[0]{\overset{\scriptsize\text{def}}{=}}
 $$
 
-The expectation maximization algorithm (EM) is a poorly understood and poorly
-explained.
+The expectation maximization algorithm (EM) is a simple algorithm that is poorly
+explained in my opinion:
 
  * Explanations are littered with distracting model-specific details and messy
    variational inference notation that make it hard to see the signal in the
@@ -35,7 +35,7 @@ observations."  What that means is that there is an underlying i.i.d. process
 $\{ X_i \}_{i=1}^n$, which we do not get to fully observe.  Instead, we see an
 **incomplete observation**, which are (generally speaking) *constraints* on what
 $X_i$ might have been if only we had actually observed it.  In other words, we
-do not observe $X_i$, we observe that $g(X_i)$ is true.  We assume knowledge of
+do not observe $X_i$, we observe that $g(X_i)$.  We assume knowledge of
 the function, $g$ and that $g(x) \in \{0, 1\}$ for all $x \in
 \mathrm{domain}(X)$.
 
@@ -60,7 +60,8 @@ There are tons of weird incomplete observations types (i.e., families of $g$
 functions).  Every choice will result is some set of details that you will have
 to work out in order to accomodate.  For example, to accommodate intervals we
 can use the cumulative distribution function, $F(\cdot; \theta)$, $p(a_i \le X <
-b_i) = F(b_i; \theta) \cdot (1 - F(a_i; \theta))$.[ref]To support $a_i = b_i$, you swap in the pdf via a piecewise function when $a_i = b_i$ happens to be observed.[/ref]
+b_i) = F(b_i; \theta) \cdot (1 - F(a_i; \theta))$.[ref]To support $a_i = b_i$,
+you swap in the pdf via a piecewise function when $a_i = b_i$ happens to be observed.[/ref]
 
 
 The obvious thing to optimize is the **incomplete log-likelihood**
