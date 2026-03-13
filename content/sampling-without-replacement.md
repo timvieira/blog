@@ -51,7 +51,7 @@ Remarks
 
  - We saw a similar problem where we kept sampling the same individuals over and
    over again in my
-   [sqrt-biased sampling post](http://timvieira.github.io/blog/post/2016/06/28/sqrt-biased-sampling/).
+   [sqrt-biased sampling post](http://timvieira.github.io/blog/sqrt-biased-sampling/).
 -->
 
 **Sampling without replacement:** We can get around the problem of resampling
@@ -182,7 +182,7 @@ $$
    $f$ appropriately by $\alpha$, and encoding the subset via indicators in
    $f$'s dimensions. -->
    <!-- (e.g.,. via
-   [importance sampling](http://timvieira.github.io/blog/post/2016/05/28/the-optimal-proposal-distribution-is-not-p/)
+   [importance sampling](http://timvieira.github.io/blog/the-optimal-proposal-distribution-is-not-p/)
    or by modifying PS to sample proportional to $x_i = p_i \!\cdot\! |f_i|$ (as
    well as other straightforward modifications), but presumably with a surrogate
    for $f_i$ because we don't want to evaluate it). -->

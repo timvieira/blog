@@ -40,7 +40,7 @@ additional uses beyond computing gradients.
 through many approximate inference algorithms, e.g.,
 [Stoyanov+'11](http://www.jmlr.org/proceedings/papers/v15/stoyanov11a/stoyanov11a.pdf)
 and many of Justin Domke's papers, to avoid issues I've mentioned
-[before](http://timvieira.github.io/blog/post/2015/02/05/conditional-random-fields-as-deep-learning-models/). You
+[before](http://timvieira.github.io/blog/conditional-random-fields-as-deep-learning-models/). You
 can even backprop through optimization algorithms to get gradients of dev loss wrt
 hyperparameters, e.g.,
 [Domke'12](http://www.jmlr.org/proceedings/papers/v22/domke12/domke12.pdf) and

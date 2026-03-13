@@ -77,7 +77,7 @@ accurate. Of course, specialized code is probably a little more accurate, but
 that's not *really* why we bother to do it! The reason why we write specialized
 gradient code is *not* to improve numerical accuracy, it's to improve
 *efficiency*. As I've
-[ranted](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
+[ranted](http://timvieira.github.io/blog/evaluating-fx-is-as-fast-as-fx/)
 before, automatic differentiation techniques guarantee that evaluating $\nabla
 f(x)$ gradient should be as efficient as computing $f(x)$ (with the caveat that
 *space* complexity may increase substantially - i.e., space-time tradeoffs
@@ -181,13 +181,13 @@ Other common sources of bugs
 
 * I've written about gradient approximations before, you might like these
   articles:
-  [Gradient-vector products](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/),
-  [Complex-step method](http://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/).
+  [Gradient-vector products](http://timvieira.github.io/blog/gradient-vector-product/),
+  [Complex-step method](http://timvieira.github.io/blog/complex-step-derivative/).
 
 * The foundations of backprop:
-  [Backprop is not just the chain rule](http://timvieira.github.io/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/).
+  [Backprop is not just the chain rule](http://timvieira.github.io/blog/backprop-is-not-just-the-chain-rule/).
 
-* [I strongly recommend](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
+* [I strongly recommend](http://timvieira.github.io/blog/evaluating-fx-is-as-fast-as-fx/)
   learning how automatic differentiation works, I learned it from
   [Justin Domke's course notes](https://people.cs.umass.edu/~domke/courses/sml2011/08autodiff_nnets.pdf).
 

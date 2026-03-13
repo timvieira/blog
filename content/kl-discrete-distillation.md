@@ -1160,7 +1160,7 @@ frame();
 
 #### Connection to real language models
 
-Real language models use the same autoregressive factorization: $p(x_1, \ldots, x_T) = \prod_{t=1}^{T} p(x_t \mid x_{\lt t}) \cdot p(\text{eos} \mid x_{\le T})$. A full-context model ($n = T$) is a trigram here. (Our demo fixes sequence length at $T{=}3$, so there is no stopping probability to learn.)
+Real language models use the same autoregressive factorization: $p(x_1, \ldots, x_T) = p(\text{eos} \mid x_{\le T}) \prod_{t=1}^{T} p(x_t \mid x_{\lt t})$. A full-context model ($n = T$) is a trigram here. (Our demo fixes sequence length at $T{=}3$, so there is no stopping probability to learn.)
 
 Knowledge distillation trains a smaller student to match a teacher's output
 distribution. The choice of KL direction matters: forward KL (standard maximum

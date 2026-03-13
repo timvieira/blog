@@ -9,7 +9,7 @@ automatic differentiation techniques (including backprop) that will not be
 appreciated with this *dismissive* attitude.
 
 This leads to a poor understanding. As
-[I have ranted before](http://timvieira.github.io/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/):
+[I have ranted before](http://timvieira.github.io/blog/evaluating-fx-is-as-fast-as-fx/):
 people do not understand basic facts about autodiff.
 
 * Evaluating $\nabla f(x)$ is provably as fast as evaluating $f(x)$.
@@ -19,7 +19,7 @@ efficient optimization&mdash;is no slower to compute than the function
 itself. Contrast that with the finite-difference gradient approximation, which
 is quite accurate, but its runtime is $\textrm{dim}(x)$ times slower than
 evaluating $f$
-([discussed here](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/))!
+([discussed here](http://timvieira.github.io/blog/how-to-test-gradient-implementations/))!
 -->
 
 * Code for $\nabla f(x)$ can be derived by a rote program transformation, even
@@ -318,7 +318,7 @@ Example use cases:
 
 * Bi-level optimization: Solving an optimization problem with another one inside
   it. For example,
-  [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/post/2016/03/05/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
+  [gradient-based hyperparameter optimization](http://timvieira.github.io/blog/gradient-based-hyperparameter-optimization-and-the-implicit-function-theorem/)
   in machine learning. The implicit function theorem manages to get gradients of
   hyperparameters without needing to store any of the intermediate states of the
   optimization algorithm used in the inner optimization! This is a *huge* memory

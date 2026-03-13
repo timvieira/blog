@@ -33,7 +33,7 @@ There are a few reasons we might want to use importance sampling:
 
   3. **Variance reduction**: It might be the case that sampling directly from $p$ would require more samples to estimate $\mu.$ Check out these [great notes](http://www.columbia.edu/~mh2078/MCS04/MCS_var_red2.pdf) for more.
 
-  4. **Off-policy evaluation and learning**: We might want to collect some exploratory data from $q$ and evaluate different *policies* $p$ (e.g., to pick the best one). Here's a link to a future post on [off-policy evaluation and counterfactual reasoning (https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/) and some cool papers:
+  4. **Off-policy evaluation and learning**: We might want to collect some exploratory data from $q$ and evaluate different *policies* $p$ (e.g., to pick the best one). Here's a link to a future post on [off-policy evaluation and counterfactual reasoning (https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/) and some cool papers:
      [counterfactual reasoning](http://arxiv.org/abs/1209.2355),
      [reinforcement learning](http://arxiv.org/abs/cs/0204043),
      [contextual bandits](http://arxiv.org/abs/1103.4601),
@@ -50,4 +50,4 @@ There are a few common cases for $q$ worth separate consideration:
 **Drawbacks**: The main drawback of importance sampling is variance. A few bad samples with large weights can drastically throw off the estimator. Thus, it's often the case that a biased estimator is preferred, e.g., [estimating the partition function](https://hips.seas.harvard.edu/blog/2013/01/14/unbiased-estimators-of-partition-functions-are-basically-lower-bounds/), [clipping weights](http://arxiv.org/abs/1209.2355), [indirect importance sampling](http://arxiv.org/abs/cs/0204043). A secondary drawback is that both densities must be normalized, which is often intractable.
 
 **What's next?** I plan to cover variance reduction and
-[off-policy evaluation](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/) in more detail in future posts.
+[off-policy evaluation](https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/) in more detail in future posts.

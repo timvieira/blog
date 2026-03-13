@@ -4,7 +4,7 @@ comments: true
 tags: statistics, sampling, importance-sampling, Monte-Carlo, variance-reduction
 
 The following is a quick rant about
-[importance sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/)
+[importance sampling](http://timvieira.github.io/blog/importance-sampling/)
 (see that post for notation).
 
 I've heard the following **incorrect** statement one too many times,

@@ -14,7 +14,7 @@ perturb-and-MAP
 [(Hazan & Jaakkola, 2012)](http://cs.haifa.ac.il/~tamir/papers/mean-width-icml12.pdf),
 which is inspired by the
 [Gumbel-max-trick](https://hips.seas.harvard.edu/blog/2013/04/06/the-gumbel-max-trick-for-discrete-distributions/)
-(see [previous post](/blog/post/2014/07/31/gumbel-max-trick/)). The apparent similarity between weighted reservoir sampling and the Gumbel-max trick lead us to make some cute connections, which I'll describe in this post.
+(see [previous post](/blog/gumbel-max-trick/)). The apparent similarity between weighted reservoir sampling and the Gumbel-max trick lead us to make some cute connections, which I'll describe in this post.
 
 **The problem**: We're given a stream of unnormalized probabilities, $x_1, x_2, \cdots$. At any point in time $t$ we'd like to have a sampled index $i$ available, where the probability of $i$ is given by $\pi_t(i) = \frac{x_i}{
 \sum_{j=1}^t x_j}$.
@@ -101,7 +101,7 @@ Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is no
 @misc{vieira2014gumbel,
     title = {Gumbel-max trick and weighted reservoir sampling},
     author = {Tim Vieira},
-    url = {http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/},
+    url = {http://timvieira.github.io/blog/gumbel-max-trick-and-weighted-reservoir-sampling/},
     year = {2014}
 }
 </pre>

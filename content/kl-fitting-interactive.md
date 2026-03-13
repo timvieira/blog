@@ -3,7 +3,7 @@ date: 2026-03-13
 tags: statistics, machine-learning, probability, interactive
 comments: true
 
-In a [previous post](/blog/post/2014/10/06/kl-divergence-as-an-objective-function/),
+In a [previous post](/blog/kl-divergence-as-an-objective-function/),
 I covered the theory behind the two directions of KL divergence for fitting a
 model $q_\theta$ to a target $p$. The key takeaway: $\textbf{KL}(p \| q)$ is
 *inclusive* (mean-seeking) while $\textbf{KL}(q \| p)$ is *exclusive*

@@ -72,7 +72,7 @@ $\boldsymbol{d} = \boldsymbol{d'} / \| \boldsymbol{d'} \|_2$[/ref]
     that require a comparison of the perturbation sensitivities across several
     dimensions&mdash;this is closely related to why we like second-order and
     adaptive optimization algorithms
-    ([discussion](https://timvieira.github.io/blog/post/2016/05/27/dimensional-analysis-of-gradient-ascent/));
+    ([discussion](https://timvieira.github.io/blog/dimensional-analysis-of-gradient-ascent/));
     $\boldsymbol{d}$'s units must match the units of $\boldsymbol{x}$ in each
     coordinate!
 

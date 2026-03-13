@@ -110,7 +110,7 @@ products&mdash;i.e., you never have to materialize the Hessian. (Apparently,
 is a thing.) In fact, you don't even have to implement the Hessian-vector and
 Jacobian-vector products because they are accurately and efficiently
 approximated with centered differences (see
-[earlier post](/blog/post/2014/02/10/gradient-vector-product/)).
+[earlier post](/blog/gradient-vector-product/)).
 
 At the end of the day, this is an easy algorithm to implement! However, the
 estimate of the gradient can be temperamental if the linear system is

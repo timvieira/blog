@@ -99,7 +99,7 @@ Pro:
 Con:
 
  - Requires $f > 0$. But, we can use
-   [LogReal number class](http://timvieira.github.io/blog/post/2015/02/01/log-real-number-class/)
+   [LogReal number class](http://timvieira.github.io/blog/log-real-number-class/)
    to represent negative numbers in log-space, but we still need to be careful
    about zeros (like in the division trick).
 

@@ -9,7 +9,7 @@ p = \mathrm{Categorical}\left( \frac{1}{W} \cdot \vec{w} \right)
 \quad\text{where}\quad W = \sum_j w_j
 $$
 
-The following is a very simple and relatively famous algorithm due to [Efraimidis and Spirakis (2006)](https://www.sciencedirect.com/science/article/pii/S002001900500298X).  It has several useful properties (e.g., it is a one-pass "streaming" algorithm, separates data from noise, can be easily extended for streaming sampling without replacement).  It is also very closely related to the Gumbel-max trick ([Vieira,  2014](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
+The following is a very simple and relatively famous algorithm due to [Efraimidis and Spirakis (2006)](https://www.sciencedirect.com/science/article/pii/S002001900500298X).  It has several useful properties (e.g., it is a one-pass "streaming" algorithm, separates data from noise, can be easily extended for streaming sampling without replacement).  It is also very closely related to the Gumbel-max trick ([Vieira,  2014](http://timvieira.github.io/blog/gumbel-max-trick-and-weighted-reservoir-sampling/)).
 
 
 ```python
@@ -112,9 +112,9 @@ Cons:
 Further reading:
 
 - I have several posts on the topic of fast sampling algorithms
-([1](http://timvieira.github.io/blog/post/2016/11/21/heaps-for-incremental-computation/),
-[2](http://timvieira.github.io/blog/post/2016/07/04/fast-sigmoid-sampling/),
-[3](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/)).
+([1](http://timvieira.github.io/blog/heaps-for-incremental-computation/),
+[2](http://timvieira.github.io/blog/fast-sigmoid-sampling/),
+[3](http://timvieira.github.io/blog/gumbel-max-trick-and-weighted-reservoir-sampling/)).
 
 - Jake VanderPlas (2018) [The Waiting Time Paradox, or, Why Is My Bus Always Late?](http://jakevdp.github.io/blog/2018/09/13/waiting-time-paradox/).
 

@@ -18,7 +18,7 @@ Combined with stochastic gradient ascent, the likelihood-ratio gradient estimato
 problem.  It appears in policy gradient methods for reinforcement learning
 (e.g.,
 [Sutton et al. 1999](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation.pdf)),
-black-box optimization (e.g., [Wierstra et al. 2011](https://arxiv.org/abs/1106.4487)), and [causal reasoning](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/). There are two main ideas in the
+black-box optimization (e.g., [Wierstra et al. 2011](https://arxiv.org/abs/1106.4487)), and [causal reasoning](https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/). There are two main ideas in the
 trick: (1) the "score function" estimator and (2) the cancelation of
 complicating factors.
 
@@ -86,7 +86,7 @@ papers using it for "black box" variational inference
 ##### The Off-Policy Estimator
 
 Let's generalize this estimator to allow off-policy actions
-[importance-weighted estimator](https://timvieira.github.io/blog/post/2014/12/21/importance-sampling/). Here
+[importance-weighted estimator](https://timvieira.github.io/blog/importance-sampling/). Here
 $q$ is a distribution over the same space as $p$ with support at least
 everywhere $p$ has support.  $$ \begin{eqnarray*} \nabla_{\!\theta} \,
 \underset{p_\theta}{\mathbb{E}}\left[ r(x) \right] &=&
@@ -214,7 +214,7 @@ Some folks use an estimate of $J$, which is better than nothing.
  * You can improve your data efficiency and algorithm stability using off-line
    optimization (with your favorite deterministic optimization algorithm).  I
    have written a long article about offline optimization
-   [here](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/).
+   [here](https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/).
 
 
 ## Summary
@@ -229,7 +229,7 @@ things work.  I'll try to post my notes on those ideas soon.
    exists). This even holds if the evaluation is based on Monte Carlo.
 
  * The likelihood-ratio shows up all over the place, not just RL. It shows up in
-   [causal reasoning](https://timvieira.github.io/blog/post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)
+   [causal reasoning](https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/)
    more generally.
 
  * We described a general way to learn from watching someone else act in a world

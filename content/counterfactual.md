@@ -82,7 +82,7 @@ more difficult than (fully) supervised learning.
 
 **Estimating $J(\theta)$** [V1]: We obtain an unbiased estimator of $J(\theta)$
 with
-[importance sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/),
+[importance sampling](http://timvieira.github.io/blog/importance-sampling/),
 
 $$
 J(\theta)

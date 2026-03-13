@@ -12,7 +12,7 @@ $$
 $$
 
 **The usual way**: Exponentiate and normalize (using the
-[exp-normalize trick](/blog/post/2014/02/11/exp-normalize-trick/)), then use the
+[exp-normalize trick](/blog/exp-normalize-trick/)), then use the
 an algorithm for sampling from a discrete distribution (aka categorical):
 
 ```python
@@ -53,7 +53,7 @@ $-\log(-\log(\text{Uniform}(0,1))$
   2. Gumbel is a one-pass algorithm: It does not need to see all of the data
      (e.g., to normalize) before it can start partially sampling. Thus,
      Gumbel-max can be used for
-     [weighted sampling from a stream](http://timvieira.github.io/blog/post/2014/08/01/gumbel-max-trick-and-weighted-reservoir-sampling/).
+     [weighted sampling from a stream](http://timvieira.github.io/blog/gumbel-max-trick-and-weighted-reservoir-sampling/).
 
   3. Low-level efficiency: The Gumbel-max trick requires $2K$ calls to $\log$,
      whereas ordinary requires $K$ calls to $\exp$. Since $\exp$ and $\log$ are

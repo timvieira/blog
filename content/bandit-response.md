@@ -11,7 +11,7 @@ machine learning, this is know as bandit feedback, or learning from a partial
 response (and it probably has many other names).
 
 I have written about
-[counterfactual reasoning](post/2016/12/19/counterfactual-reasoning-and-learning-from-logged-data/)
+[counterfactual reasoning](counterfactual-reasoning-and-learning-from-logged-data/)
 before.
 
 In this post, I'll dive into partial feedback in more depth.

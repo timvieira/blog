@@ -18,8 +18,8 @@ thanks to the prevalence of hyperparameter optimization, so most people have
 used random search and at least know of Bayesian optimization.
 
 There are many ways to optimize a function! The gradient just happens to have a
-[beautiful](/blog/post/2017/08/18/backprop-is-not-just-the-chain-rule/) and
-[computationally efficient](/blog/post/2016/09/25/evaluating-fx-is-as-fast-as-fx/)
+[beautiful](/blog/backprop-is-not-just-the-chain-rule/) and
+[computationally efficient](/blog/evaluating-fx-is-as-fast-as-fx/)
 shortcut for finding *the direction of steepest descent* in Euclidean space.
 
 **What is a descent direction anyway?** For minimizing an function $f:
@@ -29,7 +29,7 @@ tangent to the surface of $f$ at the point $x$; the $(d+1)^{\text{th}}$
 coordinate comes from the value $f(x)$&mdash;think of it like a first-order
 Taylor approximation to $f$ at $x$. (For an in-depth discussion on notions of
 *steepest* descent, check out
-[this post](https://timvieira.github.io/blog/post/2019/04/19/steepest-ascent/).)
+[this post](https://timvieira.github.io/blog/steepest-ascent/).)
 
 **The baseline:** Without access to gradient code, *approximating* the gradient
 takes $d+1$ function evaluations via the finite-difference approximation to the
@@ -37,8 +37,8 @@ gradient,[ref]Of course, it's better to use the two-sided difference
 approximation to the gradient in practice, which requires $2 \cdot d$ function
 evaluations, not $d+1$.
 [/ref] which I've discussed a
-[few](http://timvieira.github.io/blog/post/2014/02/10/gradient-vector-product/)
-[times](http://timvieira.github.io/blog/post/2017/04/21/how-to-test-gradient-implementations/). This
+[few](http://timvieira.github.io/blog/gradient-vector-product/)
+[times](http://timvieira.github.io/blog/how-to-test-gradient-implementations/). This
 shouldn't be surprising since that's the size of the object we're looking for
 anyways![ref]Note that we can get noisy, approximations with much fewer
 than $\mathcal{O}(d)$ evaluations, e.g.,
