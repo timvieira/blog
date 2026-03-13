@@ -40,6 +40,10 @@ Figure by <a href="http://www.johnwinn.org/">John Winn</a>.
 </div>
 <br/>
 
+For an interactive version of this diagram where you can drag the modes around
+and watch both directions optimize in real time, see the
+[interactive KL divergence fitting](/blog/post/2026/03/13/interactive-kl-divergence-fitting/)
+post.
 
 ## Computational Perspecive
 
