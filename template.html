@@ -1561,6 +1561,8 @@ a.tag:hover {
 .jp-MarkdownCell .jp-InputArea { padding: 0; }
 .cm-editor { margin: 0; }
 
+html { overflow-y: scroll; }
+
 /* Tag filtering — fade then collapse */
 #blog-archives article {
     transition: opacity 0.25s ease;
@@ -1589,10 +1591,10 @@ aside.sidebar .tag,
 #blog-archives .tag {
     font-size: 0.75em;
 }
+aside.sidebar .tag.active,
+#blog-archives .tag.active,
 .tag.active {
-    background-color: #333;
-    color: #fff !important;
-    border-color: #333;
+    background-color: #d0d0c4;
 }
 .tag.disabled {
     opacity: 0.3;
