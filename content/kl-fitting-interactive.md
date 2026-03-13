@@ -11,8 +11,9 @@ model $q_\theta$ to a target $p$. The key takeaway: $\textbf{KL}(p \| q)$ is
 
 The widget below lets you watch both directions optimize simultaneously. The
 target $p$ is a Gaussian mixture (shaded region), and we fit a single Gaussian
-$q$ (colored curve) by gradient descent. Drag the modes of $p$ to rearrange
-them, or drag $q$ to set its starting point.
+$q$ (colored curve) using Adam. Drag the modes of $p$ to rearrange them, scroll
+to resize them, or drag $q$ to set its starting point. Use the + and − buttons
+to add or remove modes.
 
 <div id="kl-widget-container">
 <style>
@@ -58,12 +59,6 @@ them, or drag $q$ to set its starting point.
     padding: 4px 0 2px 4px;
     color: #333;
 }
-.kl-panel-stats {
-    font-size: 12px;
-    padding: 0 0 2px 4px;
-    color: #666;
-    font-family: Menlo, Monaco, monospace;
-}
 canvas.kl-canvas {
     display: block;
     width: 100%;
@@ -72,13 +67,16 @@ canvas.kl-canvas {
     border-radius: 4px;
     cursor: default;
 }
-.kl-speed-group {
+.kl-sliders {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 13px;
 }
-.kl-speed-group input[type=range] {
-    width: 80px;
+.kl-sliders input[type=range] {
+    flex: 1;
+    min-width: 60px;
 }
 </style>
 
@@ -92,20 +90,20 @@ canvas.kl-canvas {
         <option value="fixedvar">Gaussian(μ, fixed σ²)</option>
     </select>
     <button id="kl-reset">Reset</button>
-    <div class="kl-speed-group">
-        <label>Speed:</label>
-        <input type="range" id="kl-speed" min="1" max="20" value="5">
-    </div>
+</div>
+<div class="kl-sliders">
+    <label>Speed:</label>
+    <input type="range" id="kl-speed" min="1" max="20" value="2">
+    <label>Learning rate:</label>
+    <input type="range" id="kl-lr" min="0" max="100" value="50">
 </div>
 
 <div class="kl-panel-label">KL(p || q) &mdash; inclusive / mean-seeking</div>
-<div class="kl-panel-stats" id="kl-stats-inclusive">&nbsp;</div>
 <canvas class="kl-canvas" id="kl-canvas-inclusive" height="220"></canvas>
 
 <div style="height: 8px;"></div>
 
 <div class="kl-panel-label">KL(q || p) &mdash; exclusive / mode-seeking</div>
-<div class="kl-panel-stats" id="kl-stats-exclusive">&nbsp;</div>
 <canvas class="kl-canvas" id="kl-canvas-exclusive" height="220"></canvas>
 
 <script>
@@ -164,7 +162,7 @@ const X_MIN = -7, X_MAX = 7;
 const N_GRID = 500;
 const N_INT = 800;  // integration grid
 
-let stepsPerFrame = 5;
+let stepsPerFrame = 2;
 let family = 'gaussian';
 let pComponents = INITIAL_TARGET.map(c => ({ ...c }));
 
@@ -174,24 +172,23 @@ let qExc = { mu: 0, sigma: 1.5 };
 
 // Optimal solutions shown as dashed lines
 let qBruteInc = { mu: 0, sigma: 1 };  // inclusive: moment-matching (closed form)
-let qBrute = { mu: 0, sigma: 1 };     // exclusive: grid search
+let qBrute = { mu: 0, sigma: 1 };     // exclusive: best from multi-start
+let excLocalOptima = [];               // all local optima for exclusive
 
-// Learning rates
-const LR_INC = 0.05;     // inclusive: simple GD (convex, always converges)
-const LR_EXC = 0.08;     // exclusive: Adam base LR
+// Learning rate (shared, controlled by slider)
+let baseLR = 0.08;
 
-// Adam state for exclusive optimizer
-let adamState = null;
+// Adam states for both optimizers
+let adamInc = null, adamExc = null;
 function resetAdam() {
-    adamState = { mMu: 0, vMu: 0, mSig: 0, vSig: 0, t: 0 };
+    adamInc = { mMu: 0, vMu: 0, mSig: 0, vSig: 0, t: 0 };
+    adamExc = { mMu: 0, vMu: 0, mSig: 0, vSig: 0, t: 0 };
 }
 resetAdam();
 
 // Canvas setup
 const canvasInc = document.getElementById('kl-canvas-inclusive');
 const canvasExc = document.getElementById('kl-canvas-exclusive');
-const statsInc = document.getElementById('kl-stats-inclusive');
-const statsExc = document.getElementById('kl-stats-exclusive');
 
 function resizeCanvas(canvas) {
     const rect = canvas.getBoundingClientRect();
@@ -316,40 +313,59 @@ function computeOptimal() {
         qBruteInc.sigma = best.sigma;
     }
 
-    // === Exclusive KL(q||p): multi-start GD from each mode + overall mean ===
-    let bestExc = { kl: Infinity };
-    // Start from each mode of p
+    // === Exclusive KL(q||p): multi-start GD, collect all local optima ===
+    const allResults = [];
     for (const c of pComponents) {
-        const r = optimizeKL(computeKLExclusive, gradKLExclusive, c.mu, fixSigma ? 1.0 : c.sigma, fixSigma);
-        if (r.kl < bestExc.kl) bestExc = r;
+        allResults.push(optimizeKL(computeKLExclusive, gradKLExclusive, c.mu, fixSigma ? 1.0 : c.sigma, fixSigma));
     }
-    // Also start from overall mean
     const meanMu = pComponents.reduce((s, c) => s + c.w * c.mu, 0);
-    const r0 = optimizeKL(computeKLExclusive, gradKLExclusive, meanMu, startSigma, fixSigma);
-    if (r0.kl < bestExc.kl) bestExc = r0;
-    // Also start from midpoints between modes
+    allResults.push(optimizeKL(computeKLExclusive, gradKLExclusive, meanMu, startSigma, fixSigma));
     for (let i = 0; i < pComponents.length; i++) {
         for (let j = i + 1; j < pComponents.length; j++) {
             const mid = (pComponents[i].mu + pComponents[j].mu) / 2;
-            const r = optimizeKL(computeKLExclusive, gradKLExclusive, mid, startSigma, fixSigma);
-            if (r.kl < bestExc.kl) bestExc = r;
+            allResults.push(optimizeKL(computeKLExclusive, gradKLExclusive, mid, startSigma, fixSigma));
         }
     }
-    qBrute.mu = bestExc.mu;
-    qBrute.sigma = bestExc.sigma;
+    // Deduplicate: merge results with similar (mu, sigma)
+    excLocalOptima = [];
+    for (const r of allResults) {
+        const dup = excLocalOptima.find(o => Math.abs(o.mu - r.mu) < 0.3 && Math.abs(o.sigma - r.sigma) < 0.3);
+        if (dup) {
+            if (r.kl < dup.kl) { dup.mu = r.mu; dup.sigma = r.sigma; dup.kl = r.kl; }
+        } else {
+            excLocalOptima.push({ mu: r.mu, sigma: r.sigma, kl: r.kl });
+        }
+    }
+    excLocalOptima.sort((a, b) => a.kl - b.kl);
+    qBrute.mu = excLocalOptima[0].mu;
+    qBrute.sigma = excLocalOptima[0].sigma;
 }
 
 // ===== Gradient steps =====
-function stepInclusive() {
-    // KL(p || q) gradient is fully analytical for Gaussian q and mixture p.
-    // d/dmu KL = (mu - E_p[x]) / sigma^2
-    // d/dsigma KL = 1/sigma - E_p[(x-mu)^2] / sigma^3
-    const g = gradKLInclusive(qInc.mu, qInc.sigma);
-    qInc.mu -= LR_INC * g.dmu;
+function adamStep(q, gradMu, gradSigma, state) {
+    const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+    state.t++;
+    const lr = baseLR / (1 + 0.002 * state.t);
+
+    state.mMu = beta1 * state.mMu + (1 - beta1) * gradMu;
+    state.vMu = beta2 * state.vMu + (1 - beta2) * gradMu * gradMu;
+    const mMuHat = state.mMu / (1 - Math.pow(beta1, state.t));
+    const vMuHat = state.vMu / (1 - Math.pow(beta2, state.t));
+    q.mu -= lr * mMuHat / (Math.sqrt(vMuHat) + eps);
+
     if (family === 'gaussian') {
-        qInc.sigma -= LR_INC * g.dsigma;
-        qInc.sigma = Math.max(0.1, qInc.sigma);
+        state.mSig = beta1 * state.mSig + (1 - beta1) * gradSigma;
+        state.vSig = beta2 * state.vSig + (1 - beta2) * gradSigma * gradSigma;
+        const mSigHat = state.mSig / (1 - Math.pow(beta1, state.t));
+        const vSigHat = state.vSig / (1 - Math.pow(beta2, state.t));
+        q.sigma -= lr * mSigHat / (Math.sqrt(vSigHat) + eps);
+        q.sigma = Math.max(0.1, q.sigma);
     }
+}
+
+function stepInclusive() {
+    const g = gradKLInclusive(qInc.mu, qInc.sigma);
+    adamStep(qInc, g.dmu, family === 'gaussian' ? g.dsigma : 0, adamInc);
 }
 
 function stepExclusive() {
@@ -377,25 +393,7 @@ function stepExclusive() {
         gradSigma = -1.0 / sigma - EqzDLogP;
     }
 
-    // Adam update with LR decay for smooth convergence
-    const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
-    adamState.t++;
-    const lr = LR_EXC / (1 + 0.002 * adamState.t);  // gentle decay
-
-    adamState.mMu = beta1 * adamState.mMu + (1 - beta1) * gradMu;
-    adamState.vMu = beta2 * adamState.vMu + (1 - beta2) * gradMu * gradMu;
-    const mMuHat = adamState.mMu / (1 - Math.pow(beta1, adamState.t));
-    const vMuHat = adamState.vMu / (1 - Math.pow(beta2, adamState.t));
-    qExc.mu -= lr * mMuHat / (Math.sqrt(vMuHat) + eps);
-
-    if (family === 'gaussian') {
-        adamState.mSig = beta1 * adamState.mSig + (1 - beta1) * gradSigma;
-        adamState.vSig = beta2 * adamState.vSig + (1 - beta2) * gradSigma * gradSigma;
-        const mSigHat = adamState.mSig / (1 - Math.pow(beta1, adamState.t));
-        const vSigHat = adamState.vSig / (1 - Math.pow(beta2, adamState.t));
-        qExc.sigma -= lr * mSigHat / (Math.sqrt(vSigHat) + eps);
-        qExc.sigma = Math.max(0.1, qExc.sigma);
-    }
+    adamStep(qExc, gradMu, gradSigma, adamExc);
 }
 
 // ===== Drawing =====
@@ -413,7 +411,7 @@ function yToCanvas(y, canvas, yMax) {
     return canvas.height - margin - (y / yMax) * plotH;
 }
 
-function drawPanel(canvas, q, qBruteForce, colorQ, label) {
+function drawPanel(canvas, q, optima, colorQ, label) {
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -427,10 +425,12 @@ function drawPanel(canvas, q, qBruteForce, colorQ, label) {
         const qy = gaussPdf(x, q.mu, q.sigma);
         yMax = Math.max(yMax, py, qy);
     }
-    if (qBruteForce) {
-        for (let i = 0; i <= N_GRID; i++) {
-            const x = X_MIN + i * dx;
-            yMax = Math.max(yMax, gaussPdf(x, qBruteForce.mu, qBruteForce.sigma));
+    if (optima) {
+        for (const opt of optima) {
+            for (let i = 0; i <= N_GRID; i++) {
+                const x = X_MIN + i * dx;
+                yMax = Math.max(yMax, gaussPdf(x, opt.mu, opt.sigma));
+            }
         }
     }
     yMax *= 1.1;
@@ -472,20 +472,24 @@ function drawPanel(canvas, q, qBruteForce, colorQ, label) {
     ctx.lineWidth = 1.5 * dpr;
     ctx.stroke();
 
-    // Draw brute force q (dashed) if provided
-    if (qBruteForce) {
-        ctx.beginPath();
-        ctx.setLineDash([6 * dpr, 4 * dpr]);
-        for (let i = 0; i <= N_GRID; i++) {
-            const x = X_MIN + i * dx;
-            const y = gaussPdf(x, qBruteForce.mu, qBruteForce.sigma);
-            if (i === 0) ctx.moveTo(xToCanvas(x, canvas), yToCanvas(y, canvas, yMax));
-            else ctx.lineTo(xToCanvas(x, canvas), yToCanvas(y, canvas, yMax));
+    // Draw optima (dashed lines): global best darker, local optima lighter
+    if (optima) {
+        for (let oi = optima.length - 1; oi >= 0; oi--) {
+            const opt = optima[oi];
+            const isGlobal = (oi === 0);
+            ctx.beginPath();
+            ctx.setLineDash([6 * dpr, 4 * dpr]);
+            for (let i = 0; i <= N_GRID; i++) {
+                const x = X_MIN + i * dx;
+                const y = gaussPdf(x, opt.mu, opt.sigma);
+                if (i === 0) ctx.moveTo(xToCanvas(x, canvas), yToCanvas(y, canvas, yMax));
+                else ctx.lineTo(xToCanvas(x, canvas), yToCanvas(y, canvas, yMax));
+            }
+            ctx.strokeStyle = isGlobal ? 'rgba(80,80,80,0.6)' : 'rgba(150,150,150,0.35)';
+            ctx.lineWidth = (isGlobal ? 1.5 : 1) * dpr;
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
-        ctx.strokeStyle = 'rgba(100,100,100,0.5)';
-        ctx.lineWidth = 1.5 * dpr;
-        ctx.stroke();
-        ctx.setLineDash([]);
     }
 
     // Draw q (solid line)
@@ -525,14 +529,14 @@ function drawPanel(canvas, q, qBruteForce, colorQ, label) {
 let hoveredHandle = null;
 let dragState = null;
 
-function getHandles(canvas, q, qBruteForce) {
+function getHandles(canvas, q, optima) {
     const dpr = window.devicePixelRatio || 1;
     let yMax = 0;
     const dx = (X_MAX - X_MIN) / N_GRID;
     for (let i = 0; i <= N_GRID; i++) {
         const x = X_MIN + i * dx;
         yMax = Math.max(yMax, mixturePdf(x, pComponents), gaussPdf(x, q.mu, q.sigma));
-        if (qBruteForce) yMax = Math.max(yMax, gaussPdf(x, qBruteForce.mu, qBruteForce.sigma));
+        if (optima) for (const opt of optima) yMax = Math.max(yMax, gaussPdf(x, opt.mu, opt.sigma));
     }
     yMax *= 1.1;
 
@@ -552,9 +556,9 @@ function getHandles(canvas, q, qBruteForce) {
     return handles;
 }
 
-function hitTest(canvas, q, qBruteForce, mx, my) {
+function hitTest(canvas, q, optima, mx, my) {
     const dpr = window.devicePixelRatio || 1;
-    const handles = getHandles(canvas, q, qBruteForce);
+    const handles = getHandles(canvas, q, optima);
     let best = null, bestDist = 15 * dpr;
     for (const h of handles) {
         const d = Math.sqrt((mx - h.cx) ** 2 + (my - h.cy) ** 2);
@@ -585,7 +589,6 @@ function handleDragMove(pos) {
     if (dragState.handle.target === 'p') {
         dragState.handle.comp.mu = newMu;
         dragState.handle.comp.sigma = newSigma;
-        computeOptimal();
     } else {
         dragState.handle.q.mu = newMu;
         if (family === 'gaussian') {
@@ -599,12 +602,13 @@ function handleDragEnd() {
         dragState.canvas.style.cursor = 'default';
         dragState = null;
         resetAdam();
+        computeOptimal();
     }
 }
 
-function setupInteraction(canvas, q, getQBrute) {
+function setupInteraction(canvas, q, getOptima) {
     function startDrag(pos) {
-        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
         if (hit) {
             const startSigma = hit.target === 'p' ? hit.comp.sigma : hit.q.sigma;
             dragState = { canvas, handle: hit, startX: pos.x, startY: pos.y, startSigma };
@@ -621,7 +625,7 @@ function setupInteraction(canvas, q, getQBrute) {
             handleDragMove(pos);
             return;
         }
-        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
         hoveredHandle = hit;
         canvas.style.cursor = hit ? 'grab' : 'default';
     });
@@ -630,15 +634,17 @@ function setupInteraction(canvas, q, getQBrute) {
         if (startDrag(getPointerPos(canvas, e))) e.preventDefault();
     });
 
+    let wheelTimer = null;
     canvas.addEventListener('wheel', e => {
         const pos = getPointerPos(canvas, e);
-        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
         if (hit) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.05 : -0.05;
             if (hit.target === 'p') {
                 hit.comp.sigma = Math.max(0.2, hit.comp.sigma + delta);
-                computeOptimal();
+                clearTimeout(wheelTimer);
+                wheelTimer = setTimeout(computeOptimal, 200);
             } else if (family === 'gaussian') {
                 hit.q.sigma = Math.max(0.1, hit.q.sigma + delta);
             }
@@ -672,8 +678,8 @@ document.addEventListener('mousemove', e => {
     if (dragState) handleDragMove(getPointerPos(dragState.canvas, e));
 });
 
-setupInteraction(canvasInc, qInc, () => qBruteInc);
-setupInteraction(canvasExc, qExc, () => qBrute);
+setupInteraction(canvasInc, qInc, () => [qBruteInc]);
+setupInteraction(canvasExc, qExc, () => excLocalOptima);
 
 // ===== Controls =====
 document.getElementById('kl-add-mode').addEventListener('click', function() {
@@ -721,6 +727,11 @@ document.getElementById('kl-speed').addEventListener('input', function() {
     stepsPerFrame = parseInt(this.value);
 });
 
+document.getElementById('kl-lr').addEventListener('input', function() {
+    // Exponential scale: 0→0.005, 50→0.08, 100→1.0
+    baseLR = 0.005 * Math.pow(200, this.value / 100);
+});
+
 // ===== Animation loop =====
 function frame() {
     resizeCanvas(canvasInc);
@@ -733,20 +744,8 @@ function frame() {
         }
     }
 
-    drawPanel(canvasInc, qInc, qBruteInc, 'rgba(220, 50, 50, 1)', 'inclusive');
-    drawPanel(canvasExc, qExc, qBrute, 'rgba(50, 100, 220, 1)', 'exclusive');
-
-    // Update stats
-    const klInc = computeKLInclusive(qInc.mu, qInc.sigma);
-    const klExc = computeKLExclusive(qExc.mu, qExc.sigma);
-    statsInc.textContent = 'KL = ' + klInc.toFixed(4) +
-        '  |  μ = ' + qInc.mu.toFixed(3) +
-        '  |  σ = ' + qInc.sigma.toFixed(3) +
-        '  |  optimal: μ=' + qBruteInc.mu.toFixed(2) + ' σ=' + qBruteInc.sigma.toFixed(2);
-    statsExc.textContent = 'KL = ' + klExc.toFixed(4) +
-        '  |  μ = ' + qExc.mu.toFixed(3) +
-        '  |  σ = ' + qExc.sigma.toFixed(3) +
-        '  |  optimal: μ=' + qBrute.mu.toFixed(2) + ' σ=' + qBrute.sigma.toFixed(2);
+    drawPanel(canvasInc, qInc, [qBruteInc], 'rgba(220, 50, 50, 1)', 'inclusive');
+    drawPanel(canvasExc, qExc, excLocalOptima, 'rgba(50, 100, 220, 1)', 'exclusive');
 
     requestAnimationFrame(frame);
 }
@@ -764,16 +763,18 @@ frame();
 **What to look for:**
 
 - **Inclusive (top, red):** $q$ spreads out to cover all of $p$'s mass. It finds
-  the moment-matching solution&mdash;the mean and variance of the mixture. This
-  is convex, so gradient descent always converges to the global optimum.
+  the moment-matching solution&mdash;the mean and variance of the mixture. The
+  dashed line shows this global optimum. The problem is convex, so the optimizer
+  always converges.
 
-- **Exclusive (bottom, blue):** $q$ locks onto a single mode. The dashed gray
-  line shows the global optimum. The optimizer may find a different local minimum
-  each time you hit Reset&mdash;the landscape is nonconvex. Try it a few times!
+- **Exclusive (bottom, blue):** $q$ locks onto a single mode. The dashed lines
+  show local optima (darker = global best). The optimizer may find a different
+  local minimum each time you hit Reset&mdash;the landscape is nonconvex. Try it
+  a few times!
 
 - **Drag the handles** on $p$'s modes (dark circles) to move them. Scroll on a
   handle to change its width. You can also drag $q$'s handle (colored circle) to
-  set a new starting point.
+  set a new starting point. Use + and − to add or remove modes.
 
 - **Fixed-variance mode:** Switch to "Gaussian(μ, fixed σ²)" to see mode-seeking
   even more clearly&mdash;$q$ can only slide left and right.
