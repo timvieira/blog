@@ -1609,6 +1609,17 @@ body > header hgroup {
 }
 body > header nav {
     font-size: 0.65em;
+    margin-right: 240px;
+}
+@media only screen and (min-width: 992px) {
+    body > header nav {
+        margin-right: 300px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    body > header nav {
+        margin-right: 0;
+    }
 }
 body > header nav a {
     text-decoration: none;
@@ -1618,6 +1629,32 @@ body > header nav a {
 body > header nav a:hover {
     text-decoration: underline;
     color: #333;
+}
+
+/* Page transition */
+@view-transition { navigation: auto; }
+::view-transition-old(main-content) {
+    animation: fadeOut 0.25s ease forwards;
+}
+::view-transition-new(main-content) {
+    animation: fadeIn 0.3s ease;
+}
+::view-transition-old(article-body) {
+    animation: fadeOut 0.2s ease forwards;
+}
+::view-transition-new(article-body) {
+    animation: fadeIn 0.5s ease 0.6s both;
+}
+#main {
+    view-transition-name: main-content;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
   </style>
 
@@ -1653,7 +1690,7 @@ body > header nav a:hover {
 <div>
   <article class="hentry" role="article">
     <header>
-      <h1 class="entry-title">{{ post.title }}</h1>
+      <h1 class="entry-title" style="view-transition-name: title-{{ post.slug }}">{{ post.title }}</h1>
       <p class="meta">
         <time datetime="{{ post.date.isoformat() }}" pubdate>{{ post.date_str }}</time>
         <span class="byline author vcard">
@@ -1667,7 +1704,7 @@ body > header nav a:hover {
         {% endif %}
       </p>
     </header>
-    <div class="entry-content">
+    <div class="entry-content" style="view-transition-name: article-body">
       {{ post.content }}
     </div>
   </article>
@@ -1695,7 +1732,7 @@ body > header nav a:hover {
           <h2>{{ year }}</h2>
         {% endif %}
         <article data-tags="{{ post.tags|join(',') }}">
-          <h1><a href="{{ root }}/{{ post.url }}">{{ post.title }}</a></h1>
+          <h1 style="view-transition-name: title-{{ post.slug }}"><a href="{{ root }}/{{ post.url }}">{{ post.title }}</a></h1>
           <time datetime="{{ post.date.isoformat() }}" pubdate>
             <span class="month">{{ post.date.strftime('%b') }}</span>
             <span class="day">{{ post.date.strftime('%d') }}</span>
