@@ -1,6 +1,7 @@
 title: Discrete KL Divergence: N-gram Distillation
 date: 2026-03-13
-tags: statistics, machine-learning, probability, interactive, draft
+tags: statistics, machine-learning, probability, interactive
+status: draft
 comments: true
 
 In the [continuous KL demo](/blog/kl-fitting-interactive/), we watched
