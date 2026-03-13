@@ -1,4 +1,4 @@
-title: Estimating means in a finite universe
+title: Estimating Means in a Finite Universe
 date: 2017-07-03
 comments: true
 tags: sampling, statistics, reservoir-sampling, sampling-without-replacement

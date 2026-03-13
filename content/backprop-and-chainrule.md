@@ -1,4 +1,4 @@
-title: Backprop is not just the chain rule
+title: Backprop Is Not Just the Chain Rule
 date: 2017-08-18
 comments: true
 tags: calculus, automatic-differentiation, implicit-function-theorem, Lagrange-multipliers
@@ -28,7 +28,7 @@ evaluating $f$
   "automatic" transformation by hand!
 
 
-### Autodiff $\ne$ what you learned in calculus
+### Autodiff $\ne$ What You Learned in Calculus
 
 Let's try to understand the difference between autodiff and the type of
 differentiation that you learned in calculus, which is called *symbolic*
@@ -113,7 +113,7 @@ version of a program can be exponentially larger than a version with reuse.
 Boolean expression from conjunctive normal form to and disjunction normal.  -->
 
 
-## Autodiff by the method of Lagrange multipliers
+## Autodiff by the Method of Lagrange Multipliers
 
 Let's view the intermediate variables in our optimization problem as simple
 equality constraints in an equivalent *constrained* optimization problem. It
@@ -136,7 +136,7 @@ f &= d + e
 \end{align*}
 $$
 
-#### The general formulation
+#### The General Formulation
 \begin{align*}
   & \underset{\boldsymbol{x}}{\text{argmax}}\ z_n & \\
   & \text{s.t.}\quad z_i = x_i                          &\text{ for $1 \le i \le d$} \\
@@ -335,7 +335,7 @@ Example use cases:
   computing the value function in a Markov decision process.
 
 
-### Other methods for optimization?
+### Other Methods for Optimization?
 
 The connection to Lagrangians brings tons of algorithms for constrained
 optimization into the mix! We can imagine using more general algorithms for
@@ -372,7 +372,7 @@ variables.
 </center>
 -->
 
-## Further reading
+## Further Reading
 
 After working out the connection between backprop and the method of Lagrange
 multipliers, I discovered following paper, which beat me to it. I don't think my

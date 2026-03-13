@@ -1,4 +1,4 @@
-title: Evaluating ∇f(x) is as fast as f(x)
+title: Evaluating ∇f(x) Is as Fast as f(x)
 date: 2016-09-25
 comments: true
 tags: calculus, automatic-differentiation, rant, efficiency

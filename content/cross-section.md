@@ -1,4 +1,4 @@
-Title: Visualizing high-dimensional functions with cross-sections
+title: Visualizing High-Dimensional Functions with Cross-Sections
 date: 2014-02-12
 comments: true
 tags: visualization

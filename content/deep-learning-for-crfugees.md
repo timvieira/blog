@@ -1,4 +1,4 @@
-title: Conditional random fields as deep learning models?
+title: Conditional Random Fields as Deep Learning Models?
 date: 2015-02-05
 comments: true
 tags: machine-learning, deep-learning, structured-prediction

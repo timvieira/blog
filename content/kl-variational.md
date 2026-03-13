@@ -1,4 +1,4 @@
-title: KL-divergence as an objective function
+title: KL-Divergence as an Objective Function
 date: 2014-10-06
 tags: statistics, machine-learning, structured-prediction
 comments: true
@@ -7,7 +7,7 @@ It's well-known that
 [KL-divergence](http://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)
 is not symmetric, but which direction is right for fitting your model?
 
-#### Which KL is which? A cheat sheet
+#### Which KL Is Which? A Cheat Sheet
 If we're fitting $q_\theta$ to $p$ using
 
 $\textbf{KL}(p || q_\theta)$
@@ -31,7 +31,7 @@ As far as remembering the equation, I pretend that "$||$" is a division symbol,
 which happens to correspond nicely to a division symbol in the equation (I'm not
 sure it's intentional).
 
-## Inclusive vs. exclusive divergence
+## Inclusive vs. Exclusive Divergence
 
 <div style="background-color: #f2f2f2; border: 2px solid #ggg; padding: 10px;">
 
@@ -41,7 +41,7 @@ Figure by <a href="http://www.johnwinn.org/">John Winn</a>.
 <br/>
 
 
-## Computational perspecive
+## Computational Perspecive
 
 Let's look at what's involved in fitting a model $q_\theta$ in each
 direction. In this section, I'll describe the gradient and pay special attention
@@ -50,7 +50,7 @@ to the issue of normalization.
 **Notation**: $p,q_\theta$ are probabilty distributions. $p = \bar{p} / Z_p$,
 where $Z_p$ is the normalization constant. Similarly for $q$.
 
-### The easy direction $\textbf{KL}(q_\theta || p)$
+### The Easy Direction $\textbf{KL}(q_\theta || p)$
 
 \begin{align*}
 \textbf{KL}(q_\theta || p)
@@ -94,7 +94,7 @@ This direction is convenient because we don't need to normalize
 $p$. Unfortunately, the "easy" direction is nonconvex in general&mdash;unlike
 the "hard" direction, which (as we'll see shortly) is convex.
 
-### Harder direction $\textbf{KL}(p || q_\theta)$
+### Harder Direction $\textbf{KL}(p || q_\theta)$
 
 \begin{align*}
 \textbf{KL}(p || q_\theta)

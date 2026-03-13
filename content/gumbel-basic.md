@@ -1,4 +1,4 @@
-Title: Gumbel-max trick
+title: Gumbel-Max Trick
 date: 2014-07-31
 comments: true
 tags: sampling, Gumbel

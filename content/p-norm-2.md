@@ -1,4 +1,4 @@
-Title: Numerically stable p-norms
+title: Numerically Stable P-Norms
 date: 2014-11-10
 tags: numerical
 comments: true
@@ -38,7 +38,7 @@ This fails because we can't square ``big``
 ```
 
 
-## A little math
+## A Little Math
 
 There is a way to avoid overflowing because of a few large $x_i$.
 
@@ -64,7 +64,7 @@ $$
 \end{eqnarray*}
 $$
 
-## Back to numerical stability
+## Back to Numerical Stability
 
 Suppose we pick $\alpha = \max_i |x_i|$. Now, the largest number we have to take
 the power of is one&mdash;making it very difficult to overflow on the account of

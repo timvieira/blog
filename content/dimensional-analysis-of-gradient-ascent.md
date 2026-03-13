@@ -1,4 +1,4 @@
-title: Dimensional analysis of gradient ascent
+title: Dimensional Analysis of Gradient Ascent
 date: 2016-05-27
 comments: true
 tags: optimization, calculus

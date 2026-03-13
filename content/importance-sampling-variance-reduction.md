@@ -1,4 +1,4 @@
-title: Importance sampling for variance reduction
+title: Importance Sampling for Variance Reduction
 date: 2017-08-18
 comments: true
 status: draft
@@ -53,7 +53,7 @@ bad or expensive estimation can lead to a bad control variate estimator... this
 seems rare.
 
 
-# Adaptive importance sampling proposal distributions with the cross-entropy method
+# Adaptive Importance Sampling Proposal Distributions with the Cross-Entropy Method
 
 The [Cross Entropy Method](http://en.wikipedia.org/wiki/Cross-entropy_method)
 (see also: [tutorial](https://people.smp.uq.edu.au/DirkKroese/ps/aortut.pdf)).

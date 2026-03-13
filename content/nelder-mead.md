@@ -1,4 +1,4 @@
-Title: Black-box optimization
+title: Black-Box Optimization
 date: 2018-03-16
 comments: true
 tags: optimization, calculus
@@ -112,7 +112,7 @@ past function evaluations to find a descent directions, which serves as a
 reasonable alternative to gradients when they are unavailable (or not useful).
 
 
-### Further reading
+### Further Reading
 
  - There are plenty of other black-box optimization algorithms out there. The
    wiki page on

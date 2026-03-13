@@ -1,4 +1,4 @@
-title: How to test gradient implementations
+title: How to Test Gradient Implementations
 date: 2017-04-21
 comments: true
 tags: testing, calculus
@@ -20,7 +20,7 @@ and we want to test code that computes $\nabla f$. (Note that these techniques
 also apply when $f$ has multivariate output.)
 
 
-## Finite-difference approximation
+## Finite-Difference Approximation
 
 The main way that people test gradient computation is by comparing it against a
 finite-difference (FD) approximation to the gradient:
@@ -68,7 +68,7 @@ to compute it.
    small examples.
 
 
-### Why not just use the FD approximation as your gradient?
+### Why Not Just Use the FD Approximation as Your Gradient?
 
 For low-dimensional functions, you can straight-up use the finite-difference
 approximation instead of rolling code to compute the gradient. (Take $n$
@@ -128,7 +128,7 @@ All these measurements (and the scatter plot) can be computed with
 which I find super useful when debugging absolutely anything numerical.
 
 
-## Bonus tests
+## Bonus Tests
 
 **Testing modules**: You can test the different modules of your code as well
 (assuming you have a composable module-based setup). E.g., I test my DP

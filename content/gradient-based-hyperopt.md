@@ -1,4 +1,4 @@
-title: Gradient-based hyperparameter optimization and the implicit function theorem
+title: Gradient-Based Hyperparameter Optimization and the Implicit Function Theorem
 date: 2016-03-05
 comments: true
 tags: calculus, hyperparameter-optimization, implicit-function-theorem

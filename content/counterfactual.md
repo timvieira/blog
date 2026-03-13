@@ -1,4 +1,4 @@
-title: Counterfactual reasoning and learning from logged data
+title: Counterfactual Reasoning and Learning from Logged Data
 date: 2016-12-19
 comments: true
 tags: counterfactual-reasoning, importance-sampling, machine-learning

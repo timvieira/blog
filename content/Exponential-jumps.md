@@ -1,4 +1,4 @@
-title: Faster reservoir sampling by waiting
+title: Faster Reservoir Sampling by Waiting
 date: 2019-06-11
 comments: true
 tags: sampling, reservoir-sampling, Gumbel, sampling-without-replacement
@@ -24,7 +24,7 @@ When $X_i \sim \mathrm{Exponential}(w_i)$, $R = {\mathrm{argmin}}_i X_i$, and $T
 $R \sim p$ and $T \sim \mathrm{Exponential}\left( \sum_i w_i \right)$.
 
 
-## Fewer random variates by waiting
+## Fewer Random Variates by Waiting
 
 One down-side of this one-pass algorithm is that it requires $\mathcal{O}(n)$ uniform random variates.  Contrast that with the usual, two-pass methods for sampling from a categorical distribution, which only need $\mathcal{O}(1)$ samples.  E&S'06 also present a much less well-known algorithm, called the "Exponential jumps" algorithm, which is a one-pass algorithm that only requires $\mathcal{O}(\log(n))$ random variates (in expectation).  That's *way* fewer random variates and a small price to pay if you are trying to avoid paging-in data from disk a second time.
 
@@ -93,7 +93,7 @@ $$
 Given that the waiting time correctly matches the walking algorithm, the remaining detail is to check that $X_k$ is equivalent under the condition that it goes into the reservoir.  This conditioning is why the jumping algorithm must generate a *truncated* random variate: a random variate that is guaranteed to less than the previous minimum.  In the [Gumbel-max world](https://cmaddis.github.io/gumbel-machinery), this is used in the top-down generative story.
 
 
-## Closing thoughts
+## Closing Thoughts
 
 Pros:
 

@@ -1,4 +1,4 @@
-title: Generating truncated random variates
+title: Generating Truncated Random Variates
 date: 2020-06-30
 comments: true
 tags: notebook, sampling, statistics

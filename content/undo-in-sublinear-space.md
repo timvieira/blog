@@ -1,4 +1,4 @@
-title: Reversing a sequence with sublinear space
+title: Reversing a Sequence with Sublinear Space
 date: 2016-10-01
 comments: true
 tags: algorithms, automatic-differentiation, data-structures
@@ -173,7 +173,7 @@ been used in a number of place, including
   which allows a user to inspect program state while moving forward *and
   backward* in time.
 
-## Sample code
+## Sample Code
 
 * [The basics](https://gist.github.com/timvieira/d2ac72ec3af7972d2471035011cbf1e2):
   Simple implementation complete with test cases.

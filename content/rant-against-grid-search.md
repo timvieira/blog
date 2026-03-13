@@ -1,4 +1,4 @@
-Title: Rant against grid search
+title: Rant Against Grid Search
 date: 2014-07-22
 comments: true
 tags: hyperparameter-optimization

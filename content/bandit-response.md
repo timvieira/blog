@@ -1,4 +1,4 @@
-title: Learning from bandit feedback
+title: Learning from Bandit Feedback
 date: 2017-11-30
 comments: true
 tags: counterfactual-reasoning, importance-sampling, machine-learning, bandit, rl

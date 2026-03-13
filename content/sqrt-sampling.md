@@ -1,4 +1,4 @@
-title: Sqrt-biased sampling
+title: Sqrt-Biased Sampling
 date: 2016-06-28
 comments: true
 tags: sampling, decision-making

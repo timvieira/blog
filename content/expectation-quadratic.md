@@ -1,4 +1,4 @@
-Title: Expected value of a quadratic and the Delta method
+title: Expected Value of a Quadratic and the Delta Method
 date: 2014-07-21
 comments: true
 tags: statistics

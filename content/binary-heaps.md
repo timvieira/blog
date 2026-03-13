@@ -1,4 +1,4 @@
-title: Heaps for incremental computation
+title: Heaps for Incremental Computation
 date: 2016-11-21
 comments: true
 tags: sampling, datastructures, incremental-computation

@@ -1,4 +1,4 @@
-title: Steepest ascent
+title: Steepest Ascent
 date: 2019-04-19
 comments: true
 tags: optimization, notebook

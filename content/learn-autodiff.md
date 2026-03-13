@@ -1,4 +1,4 @@
-title: Learn automatic differentiation
+title: Learn Automatic Differentiation
 date: 2016-09-25
 comments: true
 status: draft

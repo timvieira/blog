@@ -1,4 +1,4 @@
-title: Hot take: Expectation maximization
+title: Hot Take: Expectation Maximization
 date: 2019-11-20
 comments: true
 status: draft

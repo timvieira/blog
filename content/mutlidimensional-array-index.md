@@ -1,4 +1,4 @@
-title: Multidimensional array index
+title: Multidimensional Array Index
 date: 2016-01-17
 comments: true
 tags: datastructures
@@ -12,7 +12,7 @@ We'll assume each dimension $a, b, c, \ldots$ is a positive integer and bounded
 $a \le A, b \le B, c \le C, \ldots$
 
 
-### Start small
+### Start Small
 
 Let's start by looking at $n = 3$ and generalize from there.
 
@@ -57,7 +57,7 @@ Sidenote: We don't actually need the bound $a \le A$ in either ``index`` or
 ``inverse``. This gives us a little extra flexibility because our first
 dimension can be infinite/unknown.
 
-### General case
+### General Case
 
 ```python
 def index(a, A):
@@ -87,7 +87,7 @@ def inverse(ix, A):
 
 ## Appendix
 
-### Testing the general case
+### Testing the General Case
 
 ```python
 import numpy as np, itertools

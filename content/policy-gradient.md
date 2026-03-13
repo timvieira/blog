@@ -1,4 +1,4 @@
-title: The likelihood-ratio gradient
+title: The Likelihood-Ratio Gradient
 date: 2019-04-20
 comments: true
 tags: optimization, rl, machine-learning
@@ -23,7 +23,7 @@ trick: (1) the "score function" estimator and (2) the cancelation of
 complicating factors.
 
 
-#### Part 1: The score function gradient estimator
+#### Part 1: The Score Function Gradient Estimator
 
 Suppose we can sample $x^{(j)} \sim p_\theta$. This opens up the following
 (unbiased) Monte Carlo estimators for $J$ and its gradient,
@@ -83,7 +83,7 @@ papers using it for "black box" variational inference
    which tells you the reward of all possible trajectories.
 
 
-##### The off-policy estimator
+##### The Off-Policy Estimator
 
 Let's generalize this estimator to allow off-policy actions
 [importance-weighted estimator](https://timvieira.github.io/blog/post/2014/12/21/importance-sampling/). Here
@@ -101,7 +101,7 @@ everywhere $p$ has support.  $$ \begin{eqnarray*} \nabla_{\!\theta} \,
 Note that we recover the original estimator when $q=p$.
 
 
-#### Part 2: The convenient cancelation of complicating components
+#### Part 2: The Convenient Cancelation of Complicating Components
 
 The real power of the *likelihood-ratio* part of this method comes when you have
 the ability to sample $x$, but *not* the ability to compute the probability of
@@ -156,7 +156,7 @@ $$
 \end{eqnarray*}
 $$
 
-#### The baseline trick
+#### The Baseline Trick
 
 These estimators should always be used in conjunction with a baseline function
 or more generally a control variate. There are many options for deriving control
@@ -187,7 +187,7 @@ which we can compute with sampling-based estimators of the quantities.
 
 Some folks use an estimate of $J$, which is better than nothing.
 
-#### Important points
+#### Important Points
 
  * Always use a baseline.
 

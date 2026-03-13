@@ -1,4 +1,4 @@
-title: Gradient of a product
+title: Gradient of a Product
 date: 2015-07-29
 comments: true
 tags: calculus, numerical, automatic-differentiation, datastructures

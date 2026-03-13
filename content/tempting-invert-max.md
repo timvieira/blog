@@ -1,4 +1,4 @@
-title: A tempting algorithm for inverting max
+title: A Tempting Algorithm for Inverting Max
 date: 2017-08-15
 comments: true
 status: draft

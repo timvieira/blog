@@ -1,4 +1,4 @@
-Title: Gumbel-max trick and weighted reservoir sampling
+title: Gumbel-Max Trick and Weighted Reservoir Sampling
 date: 2014-08-01
 comments: true
 tags: sampling, Gumbel, reservoir-sampling, sampling-without-replacement
@@ -106,7 +106,7 @@ Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is no
 }
 </pre>
 
-## Further reading
+## Further Reading
 
 I have a few other articles that are related to
 [sampling without replacement](http://timvieira.github.io/blog/tag/sampling-without-replacement.html),

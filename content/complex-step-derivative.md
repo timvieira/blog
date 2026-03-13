@@ -1,4 +1,4 @@
-title: Complex-step derivative
+title: Complex-Step Derivative
 date: 2014-08-07
 comments: true
 tags: calculus, numerical

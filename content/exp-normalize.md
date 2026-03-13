@@ -1,4 +1,4 @@
-Title: Exp-normalize trick
+title: Exp-Normalize Trick
 date: 2014-02-11
 comments: true
 tags: numerical

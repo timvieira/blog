@@ -1,4 +1,4 @@
-title: Log-Real number class
+title: Log-Real Number Class
 date: 2015-02-01
 comments: true
 tags: numerical, datastructures

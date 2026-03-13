@@ -1,4 +1,4 @@
-title: The optimal proposal distribution is not p
+title: The Optimal Proposal Distribution Is Not P
 date: 2016-05-28
 comments: true
 tags: statistics, sampling, importance-sampling

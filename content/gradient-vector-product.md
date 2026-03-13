@@ -1,4 +1,4 @@
-title: Gradient-vector product
+title: Gradient-Vector Product
 date: 2014-02-10
 comments: true
 tags: calculus
