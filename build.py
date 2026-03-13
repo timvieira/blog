@@ -231,7 +231,8 @@ def process_post(filepath):
     # Tags
     tags = [t.strip() for t in meta.get("tags", "").split(",") if t.strip()]
 
-    url = f"post/{date:%Y}/{date:%m}/{date:%d}/{slug}/"
+    old_url = f"post/{date:%Y}/{date:%m}/{date:%d}/{slug}/"
+    url = f"{slug}/"
     depth = len(Path(url).parts)
     root = "/".join([".."] * depth)
 
@@ -252,6 +253,7 @@ def process_post(filepath):
         "slug": slug,
         "content": content,
         "url": url,
+        "old_url": old_url,
     }
 
 
@@ -307,6 +309,20 @@ def build():
             all_tags=all_tags,
         )
         (post_dir / "index.html").write_text(html, encoding="utf-8")
+
+        # Create redirect from old dated URL to the canonical slug URL
+        old_dir = OUTPUT_DIR / post["old_url"]
+        old_dir.mkdir(parents=True, exist_ok=True)
+        redirect_url = "/blog/" + post["url"]
+        redirect_html = (
+            f'<!DOCTYPE html><html><head>'
+            f'<meta http-equiv="refresh" content="0; url={redirect_url}">'
+            f'<link rel="canonical" href="{redirect_url}">'
+            f'</head><body>'
+            f'Redirecting to <a href="{redirect_url}">{post["title"]}</a>'
+            f'</body></html>'
+        )
+        (old_dir / "index.html").write_text(redirect_html, encoding="utf-8")
 
     # Render archive index (lives at output root)
     html = template.render(
