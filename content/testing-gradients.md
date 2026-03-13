@@ -1,7 +1,7 @@
 title: How to Test Gradient Implementations
 date: 2017-04-21
 comments: true
-tags: testing, calculus
+tags: testing, calculus, gradient, numerical
 
 <!--
 **Who should read this?** Nowadays, you're probably just using automatic

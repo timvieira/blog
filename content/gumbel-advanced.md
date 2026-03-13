@@ -1,7 +1,7 @@
 title: Gumbel-Max Trick and Weighted Reservoir Sampling
 date: 2014-08-01
 comments: true
-tags: sampling, Gumbel, reservoir-sampling, sampling-without-replacement
+tags: sampling, Gumbel, reservoir-sampling, sampling-without-replacement, probability, tricks, statistics
 
 A while back, [Hanna](http://people.cs.umass.edu/~wallach/) and I stumbled upon
 the following blog post:

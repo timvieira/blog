@@ -1,7 +1,7 @@
 title: Expected Value of a Quadratic and the Delta Method
 date: 2014-07-21
 comments: true
-tags: statistics
+tags: statistics, probability
 
 **Expected value of a quadratic**: Suppose we'd like to compute the expectation of a quadratic function, i.e., $\mathbb{E}\left[ x^{\top}\negthinspace\negthinspace A x \right]$ , where $x$ is a random vector and $A$ is deterministic _symmetric_ matrix. Let $\mu$ and $\Sigma$ be the mean and variance of $x$. It turns out the expected value of a quadratic has the following simple form:
 

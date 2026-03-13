@@ -1,7 +1,7 @@
 title: The Likelihood-Ratio Gradient
 date: 2019-04-20
 comments: true
-tags: optimization, RL, machine-learning
+tags: optimization, RL, machine-learning, gradient
 
 **Setup**: We're trying to optimize a function of the form
 

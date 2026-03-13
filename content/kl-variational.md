@@ -1,6 +1,6 @@
 title: KL-Divergence as an Objective Function
 date: 2014-10-06
-tags: statistics, machine-learning, structured-prediction
+tags: statistics, machine-learning, structured-prediction, probability
 comments: true
 
 It's well-known that

@@ -1,6 +1,6 @@
 title: Fast Rank-One Updates to Matrix Inverse?
 date: 2021-03-25
 comments: true
-tags: numerical, efficiency, notebook
+tags: numerical, efficiency, notebook, linear-algebra
 
 {% notebook Rank-one-update.ipynb cells[1:] %}

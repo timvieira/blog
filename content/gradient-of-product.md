@@ -1,7 +1,7 @@
 title: Gradient of a Product
 date: 2015-07-29
 comments: true
-tags: calculus, numerical, automatic-differentiation, datastructures
+tags: calculus, numerical, automatic-differentiation, datastructures, gradient
 
 $$
 \newcommand{\gradx}[1]{\grad{x}{ #1 }}
