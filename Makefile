@@ -5,7 +5,7 @@ clean:
 	rm -rf output
 
 serve: clean html
-	( cd output/blog/ && python3 -m http.server 8000 )
+	( cd output/ && python3 -m http.server 8000 )
 
 deploy: html
 	rm -rf ~/projects/self/timvieira.github.com/blog2

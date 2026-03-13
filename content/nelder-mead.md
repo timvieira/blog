@@ -87,7 +87,7 @@ process: pick the worst point, reflect it through the center of mass, etc.
    other points stay stuck.
 
    <center>
-   ![Nelder-Mead animation](https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nelder-Mead_Himmelblau.gif/320px-Nelder-Mead_Himmelblau.gif)
+   ![Nelder-Mead animation](/blog/images/Nelder-Mead_Himmelblau.gif)
    <br/>*(animation source: Wikipedia page for Nelder-Mead)*
    </center>
 

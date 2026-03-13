@@ -63,4 +63,4 @@ $-\log(-\log(\text{Uniform}(0,1))$
      for efficiency, e.g. python+numpy.
 
 **Further reading**: I have a few posts relating to the Gumbel-max trick. Have a
-look at [posts tagged with Gumbel](/blog/tag/gumbel.html).
+look at [posts tagged with Gumbel](https://timvieira.github.io/blog/index.html#tag=gumbel).

@@ -239,8 +239,8 @@ at $m=n$. (Note that MC's x-axis measures raw evaluations, not distinct ones.)
 
 
 **Further reading:** If you liked this post, you might like my other posts
-tagged with [sampling](http://timvieira.github.io/blog/tag/sampling.html) and
-[reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html).
+tagged with [sampling](https://timvieira.github.io/blog/index.html#tag=sampling) and
+[reservoir sampling](https://timvieira.github.io/blog/index.html#tag=reservoir-sampling).
 
  - Edith Cohen, "The Magic of Random Sampling"
    ([slides](http://www.cohenwang.com/edith/Talks/MagicSampling201611.pdf),

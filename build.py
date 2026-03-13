@@ -128,7 +128,7 @@ def _protect_math(body):
     # Protect display math ($$...$$), bare \begin{}...\end{}, then inline ($...$)
     body = re.sub(r'\$\$.*?\$\$', save, body, flags=re.DOTALL)
     body = re.sub(r'\\begin\{[^}]+\}.*?\\end\{[^}]+\}', save, body, flags=re.DOTALL)
-    body = re.sub(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)', save, body)
+    body = re.sub(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)', save, body, flags=re.DOTALL)
     return body, placeholders
 
 
@@ -139,9 +139,51 @@ def _restore_math(html, placeholders):
     return html
 
 
+def _convert_simple_footnotes(body):
+    """Convert legacy [ref]...[/ref] tags to markdown [^N] footnote syntax."""
+    footnotes = []
+
+    def replace_ref(match):
+        n = len(footnotes) + 1
+        footnotes.append(f"[^{n}]: {match.group(1).strip()}")
+        return f"[^{n}]"
+
+    body = re.sub(r'\[ref\](.*?)\[/ref\]', replace_ref, body, flags=re.DOTALL)
+    if footnotes:
+        body = body.rstrip() + "\n\n" + "\n\n".join(footnotes)
+    return body
+
+
+def _render_md_in_html_blocks(body):
+    """Pre-render markdown inside HTML block tags.
+
+    The standard markdown processor skips markdown inside HTML blocks.
+    This finds content between block-level HTML tags and renders it
+    inline, so images, emphasis, links, etc. all work inside HTML.
+    """
+    block_tags = r'address|article|aside|blockquote|center|details|dialog|dd|div|dl|dt|fieldset|figcaption|figure|footer|form|h[1-6]|header|hgroup|hr|li|main|nav|ol|p|pre|section|summary|table|ul'
+
+    def render_inner(m):
+        open_tag = m.group(1)
+        inner = m.group(2)
+        close_tag = m.group(3)
+        md = markdown.Markdown(extensions=["extra"])
+        rendered = md.convert(inner.strip())
+        return f"{open_tag}\n{rendered}\n{close_tag}"
+
+    return re.sub(
+        rf'(<(?:{block_tags})(?:\s[^>]*)?>)(.*?)(</(?:{block_tags})>)',
+        render_inner,
+        body,
+        flags=re.DOTALL,
+    )
+
+
 def render_markdown(body):
     """Render markdown string to HTML with math-friendly settings."""
+    body = _convert_simple_footnotes(body)
     body, placeholders = _protect_math(body)
+    body = _render_md_in_html_blocks(body)
     md = markdown.Markdown(
         extensions=["extra", "codehilite", "toc"],
         extension_configs={

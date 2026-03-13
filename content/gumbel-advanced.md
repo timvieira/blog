@@ -109,9 +109,9 @@ Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is no
 ## Further Reading
 
 I have a few other articles that are related to
-[sampling without replacement](http://timvieira.github.io/blog/tag/sampling-without-replacement.html),
-[reservoir sampling](http://timvieira.github.io/blog/tag/reservoir-sampling.html),
-and [Gumbel tricks](http://timvieira.github.io/blog/tag/gumbel.html).
+[sampling without replacement](https://timvieira.github.io/blog/index.html#tag=sampling-without-replacement),
+[reservoir sampling](https://timvieira.github.io/blog/index.html#tag=reservoir-sampling),
+and [Gumbel tricks](https://timvieira.github.io/blog/index.html#tag=gumbel).
 
 Here are a few interesting papers that build on the ideas in this article.
 
