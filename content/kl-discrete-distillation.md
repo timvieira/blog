@@ -1,9 +1,9 @@
 title: Discrete KL Divergence: N-gram Distillation
 date: 2026-03-13
-tags: statistics, machine-learning, probability, interactive
+tags: statistics, machine-learning, probability, interactive, draft
 comments: true
 
-In the [continuous KL demo](/blog/post/kl-fitting-interactive/), we watched
+In the [continuous KL demo](/blog/kl-fitting-interactive/), we watched
 forward and reverse KL fit a Gaussian to a mixture. Now let's move to **discrete
 distributions**, framed as language model distillation.
 
@@ -262,7 +262,26 @@ teacher exactly.
     vertical-align: middle;
     margin-right: 2px;
 }
-@media (max-width: 500px) {
+.dkl-panel-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+.dkl-panel-row .dkl-panel {
+    flex: 1;
+    min-width: 0;
+}
+canvas.dkl-stats-canvas {
+    display: block;
+    width: 220px;
+    min-height: 150px;
+    flex-shrink: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+@media (max-width: 600px) {
+    .dkl-panel-row { flex-direction: column; }
+    canvas.dkl-stats-canvas { width: 100%; height: 160px; }
     .dkl-sup-label, .dkl-bar-label { width: 80px; font-size: 10px; }
     .dkl-sup-val, .dkl-bar-vals { width: 32px; font-size: 10px; }
 }
@@ -284,7 +303,7 @@ teacher exactly.
 </div>
 <div class="dkl-sliders">
     <label>Speed:</label>
-    <input type="range" id="dkl-speed" min="1" max="50" value="5">
+    <input type="range" id="dkl-speed" min="1" max="50" value="2">
     <label>LR:</label>
     <input type="range" id="dkl-lr" min="0" max="100" value="50">
 </div>
@@ -310,7 +329,10 @@ teacher exactly.
         <span class="dkl-legend-swatch" style="background:rgba(220,50,50,0.5);margin-left:4px"></span>q
     </span>
 </div>
+<div class="dkl-panel-row">
 <div class="dkl-panel" id="dkl-panel-fwd"></div>
+<canvas class="dkl-stats-canvas" id="dkl-stats-fwd"></canvas>
+</div>
 <div class="dkl-wasted" id="dkl-wasted-fwd">
     Outside support: <span></span>
     <span class="dkl-wasted-bar dkl-wasted-bar-fwd"></span>
@@ -326,7 +348,10 @@ teacher exactly.
         <span class="dkl-legend-swatch" style="background:rgba(50,100,220,0.5);margin-left:4px"></span>q
     </span>
 </div>
+<div class="dkl-panel-row">
 <div class="dkl-panel" id="dkl-panel-rev"></div>
+<canvas class="dkl-stats-canvas" id="dkl-stats-rev"></canvas>
+</div>
 <div class="dkl-wasted" id="dkl-wasted-rev">
     Outside support: <span></span>
     <span class="dkl-wasted-bar dkl-wasted-bar-rev"></span>
@@ -393,7 +418,7 @@ var PRESETS = {
 var support = [];
 var teacher = new Float64Array(N_SEQ); // lookup: idx -> p
 var ngramOrder = 1;
-var stepsPerFrame = 5;
+var stepsPerFrame = 2;
 var baseLR = 0.1;
 var dragging = null; // {idx, startX, startP}
 
@@ -638,6 +663,152 @@ function renormalize() {
     if (total > 0) for (var i = 0; i < support.length; i++) support[i].p /= total;
 }
 
+// ===== Sufficient statistics: n-gram counts =====
+var statsFwdCanvas = document.getElementById('dkl-stats-fwd');
+var statsRevCanvas = document.getElementById('dkl-stats-rev');
+
+// Compute pooled n-gram counts from a distribution over sequences.
+// For order k, extracts all k-grams from each 3-word sequence and sums.
+// Returns Float64Array of size V^k.
+function ngramCounts(probs, n, order) {
+    var size = Math.pow(V, order);
+    var counts = new Float64Array(size);
+    for (var idx = 0; idx < N_SEQ; idx++) {
+        var x = idxToSeq(idx);
+        var qx = seqProb(probs, n, x);
+        if (qx < 1e-20) continue;
+        for (var start = 0; start <= T - order; start++) {
+            var gi = 0;
+            for (var k = 0; k < order; k++) gi = gi * V + x[start + k];
+            counts[gi] += qx;
+        }
+    }
+    return counts;
+}
+
+function teacherNgramCounts(order) {
+    var size = Math.pow(V, order);
+    var counts = new Float64Array(size);
+    for (var i = 0; i < support.length; i++) {
+        var x = support[i].seq, px = support[i].p;
+        for (var start = 0; start <= T - order; start++) {
+            var gi = 0;
+            for (var k = 0; k < order; k++) gi = gi * V + x[start + k];
+            counts[gi] += px;
+        }
+    }
+    return counts;
+}
+
+// Decode an n-gram index back to a label string
+function ngramLabel(gi, order) {
+    var words = [];
+    for (var k = order - 1; k >= 0; k--) {
+        words[k] = VOCAB[gi % V];
+        gi = Math.floor(gi / V);
+    }
+    return words.join(' ');
+}
+
+// Cached display list — rebuilt only when teacher or n-gram order changes
+var cachedStatsItems = null;
+var cachedStatsOrder = -1;
+
+function rebuildStatsItems() {
+    var order = ngramOrder;
+    var pCounts = teacherNgramCounts(order);
+    var items = [];
+    var size = Math.pow(V, order);
+    for (var gi = 0; gi < size; gi++) {
+        if (pCounts[gi] > 0) {
+            items.push({ gi: gi, label: ngramLabel(gi, order), p: pCounts[gi], qFwd: 0, qRev: 0 });
+        }
+    }
+    items.sort(function(a, b) { return b.p - a.p; });
+    if (items.length > 24) items.length = 24;
+    cachedStatsItems = items;
+    cachedStatsOrder = order;
+}
+
+function resizeCanvas(canvas) {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    var w = Math.round(rect.width * dpr);
+    var h = Math.round(rect.height * dpr);
+    if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+    }
+}
+
+function drawStats(canvas, qCounts, colorRgba) {
+    resizeCanvas(canvas);
+    if (!cachedStatsItems || cachedStatsItems.length === 0) return;
+    var items = cachedStatsItems;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.width, H = canvas.height;
+    var titleH = 14 * dpr;
+    var labelH = 50 * dpr; // space for rotated labels
+    var padL = 4 * dpr, padR = 4 * dpr;
+    var plotH = H - titleH - labelH;
+    var plotW = W - padL - padR;
+    var n = items.length;
+    var groupW = plotW / n;
+    var barW = Math.max(2, Math.min(groupW * 0.35, 8 * dpr));
+    var gapInner = Math.max(1, barW * 0.15);
+    var baseline = titleH + plotH;
+
+    // Find max for scaling
+    var maxVal = 0;
+    for (var i = 0; i < n; i++) {
+        var qv = qCounts[items[i].gi];
+        if (items[i].p > maxVal) maxVal = items[i].p;
+        if (qv > maxVal) maxVal = qv;
+    }
+    maxVal = Math.max(maxVal, 0.01) * 1.15;
+
+    // Title
+    ctx.fillStyle = '#888';
+    ctx.font = 'bold ' + (9 * dpr) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(ngramOrder + '-gram counts: p vs q', W / 2, 11 * dpr);
+
+    // Baseline
+    ctx.strokeStyle = '#e8e8e8';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, baseline);
+    ctx.lineTo(W - padR, baseline);
+    ctx.stroke();
+
+    for (var i = 0; i < n; i++) {
+        var center = padL + (i + 0.5) * groupW;
+        var pH = (items[i].p / maxVal) * (plotH - 4 * dpr);
+        var qH = (qCounts[items[i].gi] / maxVal) * (plotH - 4 * dpr);
+
+        // Teacher bar (gray)
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.fillRect(center - barW - gapInner / 2, baseline - pH, barW, Math.max(pH, 0.5));
+
+        // Student bar (colored)
+        ctx.fillStyle = colorRgba;
+        ctx.fillRect(center + gapInner / 2, baseline - qH, barW, Math.max(qH, 0.5));
+
+        // Rotated label
+        ctx.save();
+        ctx.translate(center, baseline + 4 * dpr);
+        ctx.rotate(-Math.PI / 3);
+        ctx.fillStyle = '#999';
+        ctx.font = (7.5 * dpr) + 'px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(items[i].label, 0, 0);
+        ctx.restore();
+    }
+}
+
 // ===== DOM references =====
 var supportListEl = document.getElementById('dkl-support-list');
 var panelFwdEl = document.getElementById('dkl-panel-fwd');
@@ -656,6 +827,7 @@ var revBarEls = [];
 function rebuildAllDOM() {
     support.sort(function(a, b) { return b.p - a.p; });
     rebuildTeacher();
+    rebuildStatsItems();
     rebuildSupportDOM();
     rebuildPanelDOM(panelFwdEl, 'fwd');
     rebuildPanelDOM(panelRevEl, 'rev');
@@ -833,10 +1005,10 @@ document.addEventListener('touchmove', function(e) {
     }
 }, { passive: false });
 document.addEventListener('mouseup', function() {
-    if (dragging) { dragging = null; resetAdam(); }
+    if (dragging) { dragging = null; resetAdam(); rebuildStatsItems(); }
 });
 document.addEventListener('touchend', function() {
-    if (dragging) { dragging = null; resetAdam(); }
+    if (dragging) { dragging = null; resetAdam(); rebuildStatsItems(); }
 });
 
 // ===== Interaction: remove sequence =====
@@ -888,6 +1060,7 @@ ngramBtns.forEach(function(btn) {
         ngramBtns.forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
         initStudent();
+        rebuildStatsItems();
     });
 });
 
@@ -930,13 +1103,19 @@ function frame() {
         lastRevResult = computeReverseKL(logitsRev, ngramOrder);
     }
 
+    if (cachedStatsOrder !== ngramOrder) rebuildStatsItems();
+
     if (lastFwdResult && fwdBarEls.length === support.length) {
         updatePanelBars(fwdBarEls, lastFwdResult.probs, ngramOrder,
                         lastFwdResult.kl, lastFwdResult.wasted, 'fwd');
+        var qFwdCounts = ngramCounts(lastFwdResult.probs, ngramOrder, ngramOrder);
+        drawStats(statsFwdCanvas, qFwdCounts, 'rgba(220, 50, 50, 0.55)');
     }
     if (lastRevResult && revBarEls.length === support.length) {
         updatePanelBars(revBarEls, lastRevResult.probs, ngramOrder,
                         lastRevResult.kl, lastRevResult.wasted, 'rev');
+        var qRevCounts = ngramCounts(lastRevResult.probs, ngramOrder, ngramOrder);
+        drawStats(statsRevCanvas, qRevCounts, 'rgba(50, 100, 220, 0.55)');
     }
 
     requestAnimationFrame(frame);
@@ -973,14 +1152,27 @@ frame();
 - **Ambiguous preset:** Two equally-weighted clusters of phrases. Reverse KL may
   pick one cluster and abandon the other; forward KL tries to cover both.
 
+- **N-gram counts** (right): Shows the sufficient statistics of the
+  model&mdash;pooled n-gram frequencies under teacher (gray) and student
+  (colored). Forward KL (MLE) is moment-matching: these bars converge exactly.
+  Reverse KL has no such guarantee, so the counts may diverge even at
+  convergence. Switch n-gram order to see unigram, bigram, or trigram counts.
+
 #### Connection to real language models
 
-Real language models use the same autoregressive factorization: $p(x_1, \ldots,
-x_T) = \prod_t p(x_t \mid x_{<t})$. A full-context model ($n = T$) is a
-trigram here. Knowledge distillation trains a smaller student to match a
-teacher's output distribution. The choice of KL direction matters: forward KL
-(standard maximum likelihood) produces broad, covering students, while reverse
-KL (used in some RLHF variants) produces sharper, more focused ones. The n-gram
-order is a stand-in for model capacity&mdash;a smaller model simply can't
-represent all the teacher's correlations, and *how* it fails depends on the
-objective.
+Real language models use the same autoregressive factorization: $p(x_1, \ldots, x_T) = \prod_{t=1}^{T} p(x_t \mid x_{\lt t}) \cdot p(\text{eos} \mid x_{\le T})$. A full-context model ($n = T$) is a trigram here. (Our demo fixes sequence length at $T{=}3$, so there is no stopping probability to learn.)
+
+Knowledge distillation trains a smaller student to match a teacher's output
+distribution. The choice of KL direction matters: forward KL (standard maximum
+likelihood) produces broad, covering students, while reverse KL (used in some
+RLHF variants) produces sharper, more focused ones. The n-gram order is a
+stand-in for model capacity&mdash;a smaller model simply can't represent all the
+teacher's correlations, and *how* it fails depends on the objective.
+
+The n-gram model is an exponential family: each conditional $q(x_t \mid
+\text{ctx})$ is a categorical with natural parameters (the logits) and
+sufficient statistics (token indicators). At the MLE solution (forward KL), the
+expected sufficient statistics under $q$ match the observed statistics under
+$p$&mdash;this is the moment-matching property. Reverse KL has no such
+guarantee, so the marginals panel on the right shows how the two directions
+differ in what statistics they preserve.
