@@ -563,35 +563,62 @@ function hitTest(canvas, q, qBruteForce, mx, my) {
     return best;
 }
 
-function getMousePos(canvas, e) {
+function getPointerPos(canvas, e) {
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
+    // Support both mouse and touch events
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-        x: (e.clientX - rect.left) * dpr,
-        y: (e.clientY - rect.top) * dpr
+        x: (clientX - rect.left) * dpr,
+        y: (clientY - rect.top) * dpr
     };
 }
 
+// Shared drag update logic
+function handleDragMove(pos) {
+    if (!dragState) return;
+    const newMu = canvasToX(pos.x, dragState.canvas);
+    const dpr = window.devicePixelRatio || 1;
+    const dy = pos.y - dragState.startY;
+    const newSigma = Math.max(0.15, dragState.startSigma + dy / (150 * dpr));
+    if (dragState.handle.target === 'p') {
+        dragState.handle.comp.mu = newMu;
+        dragState.handle.comp.sigma = newSigma;
+        computeOptimal();
+    } else {
+        dragState.handle.q.mu = newMu;
+        if (family === 'gaussian') {
+            dragState.handle.q.sigma = newSigma;
+        }
+    }
+}
+
+function handleDragEnd() {
+    if (dragState) {
+        dragState.canvas.style.cursor = 'default';
+        dragState = null;
+        resetAdam();
+    }
+}
+
 function setupInteraction(canvas, q, getQBrute) {
+    function startDrag(pos) {
+        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
+        if (hit) {
+            const startSigma = hit.target === 'p' ? hit.comp.sigma : hit.q.sigma;
+            dragState = { canvas, handle: hit, startX: pos.x, startY: pos.y, startSigma };
+            canvas.style.cursor = 'grabbing';
+            return true;
+        }
+        return false;
+    }
+
+    // Mouse events
     canvas.addEventListener('mousemove', e => {
-        const pos = getMousePos(canvas, e);
+        const pos = getPointerPos(canvas, e);
         if (dragState && dragState.canvas === canvas) {
-            const newMu = canvasToX(pos.x, canvas);
-            // Vertical drag adjusts sigma: dragging down = wider, up = narrower
-            const dy = pos.y - dragState.startY;
-            const dpr = window.devicePixelRatio || 1;
-            const sigmaDelta = dy / (150 * dpr);  // scale factor for sensitivity
-            const newSigma = Math.max(0.15, dragState.startSigma + sigmaDelta);
-            if (dragState.handle.target === 'p') {
-                dragState.handle.comp.mu = newMu;
-                dragState.handle.comp.sigma = newSigma;
-                computeOptimal();
-            } else {
-                dragState.handle.q.mu = newMu;
-                if (family === 'gaussian') {
-                    dragState.handle.q.sigma = newSigma;
-                }
-            }
+            handleDragMove(pos);
             return;
         }
         const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
@@ -600,18 +627,11 @@ function setupInteraction(canvas, q, getQBrute) {
     });
 
     canvas.addEventListener('mousedown', e => {
-        const pos = getMousePos(canvas, e);
-        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
-        if (hit) {
-            const startSigma = hit.target === 'p' ? hit.comp.sigma : hit.q.sigma;
-            dragState = { canvas, handle: hit, startX: pos.x, startY: pos.y, startSigma };
-            canvas.style.cursor = 'grabbing';
-            e.preventDefault();
-        }
+        if (startDrag(getPointerPos(canvas, e))) e.preventDefault();
     });
 
     canvas.addEventListener('wheel', e => {
-        const pos = getMousePos(canvas, e);
+        const pos = getPointerPos(canvas, e);
         const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
         if (hit) {
             e.preventDefault();
@@ -624,34 +644,32 @@ function setupInteraction(canvas, q, getQBrute) {
             }
         }
     }, { passive: false });
+
+    // Touch events
+    canvas.addEventListener('touchstart', e => {
+        if (e.touches.length === 1 && startDrag(getPointerPos(canvas, e))) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+        if (dragState && dragState.canvas === canvas) {
+            handleDragMove(getPointerPos(canvas, e));
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', e => {
+        if (dragState && dragState.canvas === canvas) {
+            handleDragEnd();
+            e.preventDefault();
+        }
+    });
 }
 
-document.addEventListener('mouseup', () => {
-    if (dragState) {
-        dragState.canvas.style.cursor = 'default';
-        dragState = null;
-        resetAdam();
-    }
-});
-
+document.addEventListener('mouseup', handleDragEnd);
 document.addEventListener('mousemove', e => {
-    if (dragState) {
-        const pos = getMousePos(dragState.canvas, e);
-        const newMu = canvasToX(pos.x, dragState.canvas);
-        const dpr = window.devicePixelRatio || 1;
-        const dy = pos.y - dragState.startY;
-        const newSigma = Math.max(0.15, dragState.startSigma + dy / (150 * dpr));
-        if (dragState.handle.target === 'p') {
-            dragState.handle.comp.mu = newMu;
-            dragState.handle.comp.sigma = newSigma;
-            computeOptimal();
-        } else {
-            dragState.handle.q.mu = newMu;
-            if (family === 'gaussian') {
-                dragState.handle.q.sigma = newSigma;
-            }
-        }
-    }
+    if (dragState) handleDragMove(getPointerPos(dragState.canvas, e));
 });
 
 setupInteraction(canvasInc, qInc, () => qBruteInc);
