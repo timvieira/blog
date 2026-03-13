@@ -52,7 +52,6 @@ them, or drag $q$ to set its starting point.
     min-width: 60px;
 }
 .kl-controls button:hover { background: #eee; }
-.kl-controls button.active { background: #4a90d9; color: #fff; border-color: #3a7bc8; }
 .kl-panel-label {
     font-size: 13px;
     font-weight: 700;
@@ -84,19 +83,14 @@ canvas.kl-canvas {
 </style>
 
 <div class="kl-controls">
-    <label>Target p:</label>
-    <select id="kl-preset">
-        <option value="bimodal">Two modes (separated)</option>
-        <option value="close">Two modes (close)</option>
-        <option value="trimodal">Three modes</option>
-        <option value="skewed">Skewed mixture</option>
-    </select>
+    <label>Target modes</label>
+    <button id="kl-add-mode">+</button>
+    <button id="kl-remove-mode">−</button>
     <label>Fit q:</label>
     <select id="kl-family">
         <option value="gaussian">Gaussian(μ, σ²)</option>
         <option value="fixedvar">Gaussian(μ, fixed σ²)</option>
     </select>
-    <button id="kl-play" class="active">Play</button>
     <button id="kl-reset">Reset</button>
     <div class="kl-speed-group">
         <label>Speed:</label>
@@ -159,37 +153,20 @@ function integrate(f, a, b, n) {
     return s * h;
 }
 
-// ===== Presets =====
-const PRESETS = {
-    bimodal: [
-        { mu: -2.5, sigma: 0.8, w: 0.5 },
-        { mu: 2.5, sigma: 0.8, w: 0.5 }
-    ],
-    close: [
-        { mu: -0.8, sigma: 0.7, w: 0.5 },
-        { mu: 0.8, sigma: 0.7, w: 0.5 }
-    ],
-    trimodal: [
-        { mu: -3, sigma: 0.6, w: 0.33 },
-        { mu: 0, sigma: 0.6, w: 0.34 },
-        { mu: 3, sigma: 0.6, w: 0.33 }
-    ],
-    skewed: [
-        { mu: -1.5, sigma: 0.5, w: 0.7 },
-        { mu: 2.5, sigma: 1.2, w: 0.3 }
-    ]
-};
+// ===== Initial target =====
+const INITIAL_TARGET = [
+    { mu: -2.5, sigma: 0.8, w: 0.5 },
+    { mu: 2.5, sigma: 0.8, w: 0.5 }
+];
 
 // ===== State =====
 const X_MIN = -7, X_MAX = 7;
 const N_GRID = 500;
 const N_INT = 800;  // integration grid
 
-let playing = true;
 let stepsPerFrame = 5;
-let preset = 'bimodal';
 let family = 'gaussian';
-let pComponents = [];  // deep-copied from PRESETS
+let pComponents = INITIAL_TARGET.map(c => ({ ...c }));
 
 // Two fitted distributions: inclusive and exclusive
 let qInc = { mu: 0, sigma: 1.5 };
@@ -228,21 +205,13 @@ function initCanvases() {
     resizeCanvas(canvasExc);
 }
 
-// ===== Deep copy preset =====
-function loadPreset(name) {
-    preset = name;
-    pComponents = PRESETS[name].map(c => ({ ...c }));
-    resetQ();
-    computeOptimal();
-}
 
 function resetQ() {
-    // Random-ish init: pick a random mode for exclusive, center for inclusive
-    const modeIdx = Math.floor(Math.random() * pComponents.length);
-    qExc.mu = pComponents[modeIdx].mu + (Math.random() - 0.5) * 0.5;
-    qExc.sigma = 1.0 + Math.random() * 0.5;
-    qInc.mu = 0;
-    qInc.sigma = 2.0;
+    // Random init across the full range
+    qExc.mu = (Math.random() - 0.5) * 10;   // [-5, 5]
+    qExc.sigma = 0.3 + Math.random() * 2.5;  // [0.3, 2.8]
+    qInc.mu = (Math.random() - 0.5) * 10;
+    qInc.sigma = 0.3 + Math.random() * 2.5;
     resetAdam();
 }
 
@@ -556,13 +525,14 @@ function drawPanel(canvas, q, qBruteForce, colorQ, label) {
 let hoveredHandle = null;
 let dragState = null;
 
-function getHandles(canvas, q) {
+function getHandles(canvas, q, qBruteForce) {
     const dpr = window.devicePixelRatio || 1;
     let yMax = 0;
     const dx = (X_MAX - X_MIN) / N_GRID;
     for (let i = 0; i <= N_GRID; i++) {
         const x = X_MIN + i * dx;
         yMax = Math.max(yMax, mixturePdf(x, pComponents), gaussPdf(x, q.mu, q.sigma));
+        if (qBruteForce) yMax = Math.max(yMax, gaussPdf(x, qBruteForce.mu, qBruteForce.sigma));
     }
     yMax *= 1.1;
 
@@ -582,9 +552,9 @@ function getHandles(canvas, q) {
     return handles;
 }
 
-function hitTest(canvas, q, mx, my) {
+function hitTest(canvas, q, qBruteForce, mx, my) {
     const dpr = window.devicePixelRatio || 1;
-    const handles = getHandles(canvas, q);
+    const handles = getHandles(canvas, q, qBruteForce);
     let best = null, bestDist = 15 * dpr;
     for (const h of handles) {
         const d = Math.sqrt((mx - h.cx) ** 2 + (my - h.cy) ** 2);
@@ -602,7 +572,7 @@ function getMousePos(canvas, e) {
     };
 }
 
-function setupInteraction(canvas, q) {
+function setupInteraction(canvas, q, getQBrute) {
     canvas.addEventListener('mousemove', e => {
         const pos = getMousePos(canvas, e);
         if (dragState && dragState.canvas === canvas) {
@@ -624,14 +594,14 @@ function setupInteraction(canvas, q) {
             }
             return;
         }
-        const hit = hitTest(canvas, q, pos.x, pos.y);
+        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
         hoveredHandle = hit;
         canvas.style.cursor = hit ? 'grab' : 'default';
     });
 
     canvas.addEventListener('mousedown', e => {
         const pos = getMousePos(canvas, e);
-        const hit = hitTest(canvas, q, pos.x, pos.y);
+        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
         if (hit) {
             const startSigma = hit.target === 'p' ? hit.comp.sigma : hit.q.sigma;
             dragState = { canvas, handle: hit, startX: pos.x, startY: pos.y, startSigma };
@@ -642,7 +612,7 @@ function setupInteraction(canvas, q) {
 
     canvas.addEventListener('wheel', e => {
         const pos = getMousePos(canvas, e);
-        const hit = hitTest(canvas, q, pos.x, pos.y);
+        const hit = hitTest(canvas, q, getQBrute(), pos.x, pos.y);
         if (hit) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.05 : -0.05;
@@ -660,6 +630,7 @@ document.addEventListener('mouseup', () => {
     if (dragState) {
         dragState.canvas.style.cursor = 'default';
         dragState = null;
+        resetAdam();
     }
 });
 
@@ -683,12 +654,31 @@ document.addEventListener('mousemove', e => {
     }
 });
 
-setupInteraction(canvasInc, qInc);
-setupInteraction(canvasExc, qExc);
+setupInteraction(canvasInc, qInc, () => qBruteInc);
+setupInteraction(canvasExc, qExc, () => qBrute);
 
 // ===== Controls =====
-document.getElementById('kl-preset').addEventListener('change', function() {
-    loadPreset(this.value);
+document.getElementById('kl-add-mode').addEventListener('click', function() {
+    // Add a new mode at a random position not too close to existing ones
+    let mu = (Math.random() - 0.5) * 8;
+    const sigma = 0.5 + Math.random() * 0.5;
+    // Reweight: equal weights across all components
+    const n = pComponents.length + 1;
+    const w = 1 / n;
+    for (const c of pComponents) c.w = w;
+    pComponents.push({ mu, sigma, w });
+    resetQ();
+    computeOptimal();
+});
+
+document.getElementById('kl-remove-mode').addEventListener('click', function() {
+    if (pComponents.length <= 1) return;
+    pComponents.pop();
+    // Reweight
+    const w = 1 / pComponents.length;
+    for (const c of pComponents) c.w = w;
+    resetQ();
+    computeOptimal();
 });
 
 document.getElementById('kl-family').addEventListener('change', function() {
@@ -698,12 +688,6 @@ document.getElementById('kl-family').addEventListener('change', function() {
         qExc.sigma = 1.0;
     }
     computeOptimal();
-});
-
-document.getElementById('kl-play').addEventListener('click', function() {
-    playing = !playing;
-    this.textContent = playing ? 'Pause' : 'Play';
-    this.classList.toggle('active', playing);
 });
 
 document.getElementById('kl-reset').addEventListener('click', function() {
@@ -724,7 +708,7 @@ function frame() {
     resizeCanvas(canvasInc);
     resizeCanvas(canvasExc);
 
-    if (playing) {
+    if (!dragState) {
         for (let i = 0; i < stepsPerFrame; i++) {
             stepInclusive();
             stepExclusive();
@@ -750,7 +734,8 @@ function frame() {
 }
 
 // ===== Init =====
-loadPreset('bimodal');
+resetQ();
+computeOptimal();
 initCanvases();
 frame();
 
