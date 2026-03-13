@@ -7,7 +7,7 @@ clean:
 serve: clean html
 	( cd output/blog/ && python3 -m http.server 8000 )
 
-push: html
+deploy: html
 	rm -rf ~/projects/self/timvieira.github.com/blog2
 	mkdir ~/projects/self/timvieira.github.com/blog2
 	rsync -a output/blog/. ~/projects/self/timvieira.github.com/blog2/.
