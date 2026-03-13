@@ -1,6 +1,6 @@
 title: Numerically Stable P-Norms
 date: 2014-11-10
-tags: numerical
+tags: numerical, tricks
 comments: true
 
 Consider the p-norm

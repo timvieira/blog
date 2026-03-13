@@ -1,7 +1,7 @@
 title: Estimating Means in a Finite Universe
 date: 2017-07-03
 comments: true
-tags: sampling, statistics, reservoir-sampling, sampling-without-replacement
+tags: sampling, statistics, reservoir-sampling, sampling-without-replacement, Monte-Carlo
 
 
 <style>

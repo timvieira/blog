@@ -1,7 +1,7 @@
 title: Importance Sampling
 date: 2014-12-21
 comments: true
-tags: statistics, importance-sampling, sampling
+tags: statistics, importance-sampling, sampling, Monte-Carlo
 
 Importance sampling is a powerful and pervasive technique in statistics, machine learning, and randomized algorithms.
 

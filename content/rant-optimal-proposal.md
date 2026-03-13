@@ -1,7 +1,7 @@
 title: The Optimal Proposal Distribution Is Not P
 date: 2016-05-28
 comments: true
-tags: statistics, sampling, importance-sampling
+tags: statistics, sampling, importance-sampling, Monte-Carlo, variance-reduction
 
 The following is a quick rant about
 [importance sampling](http://timvieira.github.io/blog/post/2014/12/21/importance-sampling/)

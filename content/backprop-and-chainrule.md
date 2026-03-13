@@ -1,7 +1,7 @@
 title: Backprop Is Not Just the Chain Rule
 date: 2017-08-18
 comments: true
-tags: calculus, automatic-differentiation, implicit-function-theorem, Lagrange-multipliers
+tags: calculus, automatic-differentiation, implicit-function-theorem, Lagrange-multipliers, gradient
 
 Almost everyone I know says that "backprop is just the chain rule." Although
 that's *basically true*, there are some subtle and beautiful things about
