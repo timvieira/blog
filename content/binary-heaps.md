@@ -17,35 +17,8 @@ form of the quantity we're going to compute is $z = \bigoplus_{i=1}^n w_i$,
 where $\oplus$ is some associative binary operator with identity element
 $\boldsymbol{0}$.
 
-<style>
-.toggle-button {
-    background-color: #555555;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-}
-.derivation {
-  background-color: #f2f2f2;
-  border: thin solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-</style>
-
-<script>
-// workaround for when markdown/mathjax gets confused by the
-// javascript dollar function.
-function toggle(x) { $(x).toggle(); }
-</script>
-
-<button class="toggle-button" onclick="toggle('#operator-mathy');">more formally...</button>
-<div id="operator-mathy" class="derivation" style="display:none">
+<details class="derivation" markdown="1">
+<summary>Formal definition</summary>
 
 * $\boldsymbol{w} \in \boldsymbol{K}^n$
 
@@ -57,7 +30,7 @@ function toggle(x) { $(x).toggle(); }
 * Identity element: $\boldsymbol{0} \in \boldsymbol{K}$ such that $k \oplus
   \boldsymbol{0} = \boldsymbol{0} \oplus k = k$, for all $k \in \boldsymbol{K}$.
 
-</div>
+</details>
 
 **The trick**: Essentially, the trick boils down to *parenthesis placement* in
 the expression which computes $z$. A freedom we assumed via the associative

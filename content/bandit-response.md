@@ -4,16 +4,6 @@ comments: true
 tags: counterfactual-reasoning, importance-sampling, machine-learning, RL
 status: draft
 
-<style> .toggle-button { background-color: #555555; border: none; color: white;
-padding: 10px 15px; border-radius: 6px; text-align: center; text-decoration:
-none; display: inline-block; font-size: 16px; cursor: pointer; } .derivation {
-background-color: #f2f2f2; border: thin solid #ddd; padding: 10px;
-margin-bottom: 10px; } </style>
-<script>
-/* workaround for when markdown/mathjax gets confused by the javascript dollar function. */
-function toggle(x) { $(x).toggle(); }
-</script>
-
 
 At the heart of reinforcement learning lies the Robert Frost dilemma where an
 agent finds themselves remis about a path not taken (<code>#yolo</code>). In

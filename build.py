@@ -113,15 +113,43 @@ def render_notebook(nb_path, start=0, end=None):
     return html
 
 
+def _protect_math(body):
+    """Protect LaTeX math blocks from markdown processing.
+
+    Replaces content inside $$...$$ and $...$ with placeholders,
+    so markdown doesn't mangle characters like * and _.
+    """
+    placeholders = []
+
+    def save(m):
+        placeholders.append(m.group(0))
+        return f"\x00MATH{len(placeholders) - 1}\x00"
+
+    # Protect display math ($$...$$), bare \begin{}...\end{}, then inline ($...$)
+    body = re.sub(r'\$\$.*?\$\$', save, body, flags=re.DOTALL)
+    body = re.sub(r'\\begin\{[^}]+\}.*?\\end\{[^}]+\}', save, body, flags=re.DOTALL)
+    body = re.sub(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)', save, body)
+    return body, placeholders
+
+
+def _restore_math(html, placeholders):
+    """Restore LaTeX math from placeholders."""
+    for i, original in enumerate(placeholders):
+        html = html.replace(f"\x00MATH{i}\x00", original)
+    return html
+
+
 def render_markdown(body):
     """Render markdown string to HTML with math-friendly settings."""
+    body, placeholders = _protect_math(body)
     md = markdown.Markdown(
         extensions=["extra", "codehilite", "toc"],
         extension_configs={
             "codehilite": {"css_class": "highlight"},
         },
     )
-    return md.convert(body)
+    html = md.convert(body)
+    return _restore_math(html, placeholders)
 
 
 def process_post(filepath):

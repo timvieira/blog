@@ -38,36 +38,8 @@ $$
 \sum_{t=1}^\infty t \cdot (1 - q_j)^{t-1} q_{j} = 1/q_{j}.
 $$
 
-<style>
-.toggle-button {
-    background-color: #555555;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-}
-.derivation {
-  background-color: #f2f2f2;
-  border: thin solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-</style>
-
-<script>
-// workaround for when markdown/mathjax gets confused by the
-// javascript dollar function.
-function toggle(x) { $(x).toggle(); }
-</script>
-
-<button onclick="toggle('#derivation-series')" class="toggle-button">Derivation</button>
-<div id="derivation-series" style="display:none;" class="derivation">
-**Derivation**:
+<details class="derivation" markdown="1">
+<summary>Derivation</summary>
 
 We start with
 $$
@@ -101,7 +73,7 @@ $$
 = \frac{1}{q_j}
 $$
 
-</div>
+</details>
 
 
 The equation says that expected time it takes to sample $j$ for *the first time*
@@ -148,8 +120,9 @@ q^*_i = \frac{ \sqrt{p_i} }{ \sum_{j=1}^n \sqrt{p_j} }.
 $$
 
 
-<button onclick="toggle('#Lagrange')" class="toggle-button">Derivation</button>
-<div id="Lagrange" style="display:none;" class="derivation">
+<details class="derivation" markdown="1">
+<summary>Derivation</summary>
+
 To solve this constrained optimization problem, we form the
 Lagrangian,
 
@@ -174,7 +147,7 @@ $$
 q^*_i = \frac{ \sqrt{p_i} }{ \sum_{j=1}^n \sqrt{p_j} }.
 $$
 
-</div>
+</details>
 
 
 **How much better is $q^*$?**
@@ -200,13 +173,13 @@ $\boldsymbol{p}.$ Additional cooking experiments are not so advantageous.
   (perfect every time) and do not necessarily sum to one over the cookbook.
 
 Following a similar derivation to before, the time to cook the special recipe
-$j$ and cook it correctly is,
+$j$ and cook it correctly is
 $$
-\sum_{t=1}^\infty t \cdot (1 - \color{red}{s_j} q_j)^{t-1} q_{j} \color{red}{s_j} = \frac{1}{s_j \cdot q_j}
+\sum_{t=1}^\infty t \cdot (1 - {\color{red} s_j} \cdot q_j)^{t-1} {\color{red} s_j} \cdot q_{j} = \frac{1}{{\color{red} s_j} \cdot q_j}
 $$
 That gives rise to a modified objective,
 $$
-f'(\boldsymbol{q}) = \sum_{i=1}^n \frac{p_i}{\color{red}{s_i} \cdot q_i}
+f'(\boldsymbol{q}) = \sum_{i=1}^n \frac{p_i}{{\color{red} s_i} \cdot q_i}
 $$
 
 This is exactly the same as the previous objective, except we've replaced $p_i$

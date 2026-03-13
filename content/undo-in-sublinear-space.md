@@ -34,35 +34,9 @@ $$
 \underset{k}{\textrm{argmin}}\ k+n/k = \sqrt{n}
 $$
 
-<style>
-.toggle-button {
-    background-color: #555555;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-}
-.derivation {
-  background-color: #f2f2f2;
-  border: thin solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-</style>
+<details class="derivation" markdown="1">
+<summary>Derivation</summary>
 
-<script>
-// workaround for when markdown/mathjax gets confused by the
-// javascript dollar function.
-function toggle(x) { $(x).toggle(); }
-</script>
-
-<button onclick="toggle('#derivation-optimal-space')" class="toggle-button">Derivation</button>
-<div id="derivation-optimal-space" style="display:none;" class="derivation">
 To get the minimum, we solve for $k$ that sets the derivative to zero.
 $$
 \begin{eqnarray}
@@ -79,14 +53,15 @@ Since it's safe to assume that $n,k \ge 1$ and $\frac{\partial^2}{\partial k\,
 \partial k} = 2 n / k^3 > 0$ this is indeed a minimum. It's also global minimum
 because $k+n/k$ is convex in $k$ when $n,k > 0$.
 
-</div>
+</details>
 
 That's nuts! We get away with *sublinear* space $\mathcal{O}(\sqrt{n})$ and we
 only blow up our runtime by a factor of 2. Also, I really love the "introduce a
 parameter then optimize it out" trick.
 
-<button onclick="toggle('#code-sqrt-space')">Code</button>
-<div id="code-sqrt-space" style="display:none;">
+<details markdown="1">
+<summary>Code</summary>
+
 ```python
 def sqrt_space(f, s0, n):
     k = int(ceil(sqrt(n)))
@@ -116,7 +91,8 @@ def step(f, s, k):
         B.append(s)
     return B
 ```
-</div>
+
+</details>
 
 **Idea 3**: What if we apply "the remember $k$ states" trick *recursively*? I'm
 going to work this out for $k=2$ (and then claim that the value of $k$ doesn't
@@ -137,8 +113,9 @@ mergesort, we know that it flattens to $\mathcal{O}(n \log n)$ time. Also, just
 like in the case of sorting, the branching factor doesn't matter so we're happy
 with or initial assumption that $k=2$.
 
-<button onclick="toggle('#code-recursive')">Code</button>
-<div id="code-recursive" style="display:none;">
+<details markdown="1">
+<summary>Code</summary>
+
 ```python
 def recursive(f, s0, b, e):
     if e - b == 1:
@@ -154,7 +131,8 @@ def recursive(f, s0, b, e):
         for s in recursive(f, s0, b, b+d):
             yield s
 ```
-</div>
+
+</details>
 
 
 ## Remarks

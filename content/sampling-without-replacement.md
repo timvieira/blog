@@ -4,31 +4,6 @@ comments: true
 tags: sampling, statistics, reservoir-sampling, sampling-without-replacement, Monte-Carlo
 
 
-<style>
-.toggle-button {
-    background-color: #555555;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-}
-.derivation {
-  background-color: #f2f2f2;
-  border: thin solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-</style>
-<script>
-// workaround for when markdown/mathjax gets confused by the
-// javascript dollar function.
-function toggle(x) { $(x).toggle(); }
-</script>
 
 **Introduction**: In this post, I'm going to describe some efficient approaches
 to estimating the mean of a random variable that takes on only finitely many
@@ -153,9 +128,10 @@ $\tau$ that makes computing $q_i$ easy. Thus, for priority sampling, we can use
 $q_i = p(i \in S | \tau)$. This auxillary variable adds a tiny bit extra noise
 in our estimator, which is tantamount to one extra sample.
 
-<button class="toggle-button" onclick="toggle('#ps-unbiased');">Show proof of
-unbiasedness</button> <div id="ps-unbiased" class="derivation"
-style="display:none;"> **Proof of unbiasedness**. The following proof is a
+<details class="derivation" markdown="1">
+<summary>Proof of unbiasedness</summary>
+
+The following proof is a
 little different from that in the priority sampling papers. I think it's more
 straightforward. More importantly, it shows how we can extend the method to
 sample from slightly different without-replacement distributions (as long as we
@@ -181,7 +157,7 @@ $$
 &=& \mu
 \end{eqnarray}
 $$
-</div>
+</details>
 
 
 **Remarks**:

@@ -3,16 +3,6 @@ date: 2016-12-19
 comments: true
 tags: counterfactual-reasoning, importance-sampling, machine-learning, RL
 
-<style> .toggle-button { background-color: #555555; border: none; color: white;
-padding: 10px 15px; border-radius: 6px; text-align: center; text-decoration:
-none; display: inline-block; font-size: 16px; cursor: pointer; } .derivation {
-background-color: #f2f2f2; border: thin solid #ddd; padding: 10px;
-margin-bottom: 10px; } </style>
-<script>
-/* workaround for when markdown/mathjax gets confused by the javascript dollar function. */
-function toggle(x) { $(x).toggle(); }
-</script>
-
 
 Counterfactual reasoning is *reasoning about data that we did not observe*. For
 example, reasoning about the expected reward of new policy given data collected
