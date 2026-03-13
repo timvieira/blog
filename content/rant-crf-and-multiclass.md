@@ -1,7 +1,7 @@
 title: Multiclass Logistic Regression and Conditional Random Fields Are the Same Thing
 date: 2015-04-29
 comments: true
-tags: machine-learning, rant, crf
+tags: machine-learning, rant, CRF
 
 A short rant: Multiclass logistic regression and conditional random fields (CRF)
 are the same thing. This comes to a surprise to many people because CRFs tend to

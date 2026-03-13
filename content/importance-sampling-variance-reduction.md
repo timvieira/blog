@@ -2,7 +2,7 @@ title: Importance Sampling for Variance Reduction
 date: 2017-08-18
 comments: true
 status: draft
-tags: calculus, automatic-differentiation
+tags: calculus, automatic-differentiation, importance-sampling
 
 I've written before CITE about how the "optimial proposal distribution" is not
 $p$. Here, I'll spell out how to derive proposal distributions that improve on

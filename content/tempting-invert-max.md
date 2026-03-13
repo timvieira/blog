@@ -2,7 +2,7 @@ title: A Tempting Algorithm for Inverting Max
 date: 2017-08-15
 comments: true
 status: draft
-tags: algorithm, failed-ideas
+tags: algorithms, failed-ideas
 
 In my recent TACL paper, we came up with a clever algorithm for turning an n^5
 algorithm into an n^3 algorithm, but leveraging an annealing approximation. The

@@ -1,7 +1,7 @@
 title: Reversing a Sequence with Sublinear Space
 date: 2016-10-01
 comments: true
-tags: algorithms, automatic-differentiation, data-structures
+tags: algorithms, automatic-differentiation, datastructures
 
 Suppose we have a computation which generates sequence of states $s_1 \ldots
 s_n$ according to $s_{t} = f(s_{t-1})$ where $s_0$ is given.

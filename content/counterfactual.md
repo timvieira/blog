@@ -1,7 +1,7 @@
 title: Counterfactual Reasoning and Learning from Logged Data
 date: 2016-12-19
 comments: true
-tags: counterfactual-reasoning, importance-sampling, machine-learning
+tags: counterfactual-reasoning, importance-sampling, machine-learning, RL
 
 <style> .toggle-button { background-color: #555555; border: none; color: white;
 padding: 10px 15px; border-radius: 6px; text-align: center; text-decoration:

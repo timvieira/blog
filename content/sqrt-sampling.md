@@ -1,7 +1,7 @@
 title: Sqrt-Biased Sampling
 date: 2016-06-28
 comments: true
-tags: sampling, decision-making
+tags: sampling, decision-making, importance-sampling
 
 The following post is about instance of "sampling in proportion to $p$ is not
 optimal, but you probably think it is." It's surprising how few people seem to

@@ -1,7 +1,7 @@
 title: Learning from Bandit Feedback
 date: 2017-11-30
 comments: true
-tags: counterfactual-reasoning, importance-sampling, machine-learning, bandit, rl
+tags: counterfactual-reasoning, importance-sampling, machine-learning, RL
 status: draft
 
 <style> .toggle-button { background-color: #555555; border: none; color: white;
