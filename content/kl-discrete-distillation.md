@@ -4,7 +4,8 @@ tags: statistics, machine-learning, probability, interactive, draft
 comments: true
 
 In the [continuous KL demo](/blog/kl-fitting-interactive/), we watched
-forward and reverse KL fit a Gaussian to a mixture. Now let's move to **discrete
+forward and reverse KL fit a Gaussian to a mixture (see also [KL-divergence as
+an objective function](/blog/kl-variational/)). Now let's move to **discrete
 distributions**, framed as language model distillation.
 
 A **teacher** assigns probabilities to 3-word phrases from an 8-word vocabulary
