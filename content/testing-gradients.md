@@ -57,7 +57,7 @@ Obviously, how you test $f$ depends strongly on what it's supposed to compute.
 
  - Example: For a conditional random field (CRF), you can also test that your
    implementation of a dynamic program for computing $\log Z_\theta(x)$ is
-   correctly by comparing against brute-force enumeration of $\mathcal{Y}(x)$ on
+   correct by comparing against brute-force enumeration of $\mathcal{Y}(x)$ on
    small examples.
 
 Similarly, you can directly test the gradient code if you know a different way

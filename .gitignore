@@ -1,11 +1,7 @@
-syntax: glob
-
-output/*
+output/
 *.pid
 *.pyc
 .hgsub
 .ipynb_checkpoints
 cache/
 theme/TuftePelican
-
-.git
