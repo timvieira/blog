@@ -10,7 +10,7 @@ model $q_\theta$ to a target $p$. The key takeaway: $\textbf{KL}(p \| q)$ is
 (mode-seeking). But reading about it is one thing&mdash;seeing it is another.
 
 The widget below lets you watch both directions optimize simultaneously. The
-target $p$ is a Gaussian mixture (shown in gray), and we fit a single Gaussian
+target $p$ is a Gaussian mixture (shaded region), and we fit a single Gaussian
 $q$ (colored curve) by gradient descent. Drag the modes of $p$ to rearrange
 them, or drag $q$ to set its starting point.
 
@@ -68,6 +68,7 @@ them, or drag $q$ to set its starting point.
 canvas.kl-canvas {
     display: block;
     width: 100%;
+    height: 220px;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: default;
@@ -105,13 +106,13 @@ canvas.kl-canvas {
 
 <div class="kl-panel-label">KL(p || q) &mdash; inclusive / mean-seeking</div>
 <div class="kl-panel-stats" id="kl-stats-inclusive">&nbsp;</div>
-<canvas class="kl-canvas" id="kl-canvas-inclusive" height="200"></canvas>
+<canvas class="kl-canvas" id="kl-canvas-inclusive" height="220"></canvas>
 
 <div style="height: 8px;"></div>
 
 <div class="kl-panel-label">KL(q || p) &mdash; exclusive / mode-seeking</div>
 <div class="kl-panel-stats" id="kl-stats-exclusive">&nbsp;</div>
-<canvas class="kl-canvas" id="kl-canvas-exclusive" height="200"></canvas>
+<canvas class="kl-canvas" id="kl-canvas-exclusive" height="220"></canvas>
 
 <script>
 (function() {
@@ -200,7 +201,7 @@ let qBrute = { mu: 0, sigma: 1 };     // exclusive: grid search
 
 // Learning rates
 const LR_INC = 0.05;     // inclusive: simple GD (convex, always converges)
-const LR_EXC = 0.03;     // exclusive: Adam base LR
+const LR_EXC = 0.08;     // exclusive: Adam base LR
 
 // Adam state for exclusive optimizer
 let adamState = null;
@@ -764,8 +765,8 @@ frame();
   is convex, so gradient descent always converges to the global optimum.
 
 - **Exclusive (bottom, blue):** $q$ locks onto a single mode. The dashed gray
-  line shows the brute-force optimum. GD may find a different mode each time you
-  hit Reset&mdash;the landscape is nonconvex. Try it a few times!
+  line shows the global optimum. The optimizer may find a different local minimum
+  each time you hit Reset&mdash;the landscape is nonconvex. Try it a few times!
 
 - **Drag the handles** on $p$'s modes (dark circles) to move them. Scroll on a
   handle to change its width. You can also drag $q$'s handle (colored circle) to
@@ -785,5 +786,3 @@ The choice of KL direction determines what your model *learns to ignore*:
 - **Exclusive** ($\textbf{KL}(q \| p)$): $q$ can safely ignore modes of $p$,
   collapsing onto just one. It would rather be precise about one thing than
   vaguely right about everything. This is what variational inference does.
-
-For the full derivations, see the [companion post](/blog/post/2014/10/06/kl-divergence-as-an-objective-function/).
