@@ -411,12 +411,7 @@ function yToCanvas(y, canvas, yMax) {
     return canvas.height - margin - (y / yMax) * plotH;
 }
 
-function drawPanel(canvas, q, optima, colorQ, label) {
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Compute max y for scaling
+function computeYMax(q, optima) {
     let yMax = 0;
     const dx = (X_MAX - X_MIN) / N_GRID;
     for (let i = 0; i <= N_GRID; i++) {
@@ -433,7 +428,14 @@ function drawPanel(canvas, q, optima, colorQ, label) {
             }
         }
     }
-    yMax *= 1.1;
+    return yMax;
+}
+
+function drawPanel(canvas, q, optima, colorQ, label, yMax) {
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const dx = (X_MAX - X_MIN) / N_GRID;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw x-axis
     const margin = 20 * dpr;
@@ -528,17 +530,10 @@ function drawPanel(canvas, q, optima, colorQ, label) {
 // ===== Interaction =====
 let hoveredHandle = null;
 let dragState = null;
+let sharedYMax = 1;
 
-function getHandles(canvas, q, optima) {
+function getHandles(canvas, q, optima, yMax) {
     const dpr = window.devicePixelRatio || 1;
-    let yMax = 0;
-    const dx = (X_MAX - X_MIN) / N_GRID;
-    for (let i = 0; i <= N_GRID; i++) {
-        const x = X_MIN + i * dx;
-        yMax = Math.max(yMax, mixturePdf(x, pComponents), gaussPdf(x, q.mu, q.sigma));
-        if (optima) for (const opt of optima) yMax = Math.max(yMax, gaussPdf(x, opt.mu, opt.sigma));
-    }
-    yMax *= 1.1;
 
     const handles = [];
     for (const c of pComponents) {
@@ -556,9 +551,9 @@ function getHandles(canvas, q, optima) {
     return handles;
 }
 
-function hitTest(canvas, q, optima, mx, my) {
+function hitTest(canvas, q, optima, mx, my, yMax) {
     const dpr = window.devicePixelRatio || 1;
-    const handles = getHandles(canvas, q, optima);
+    const handles = getHandles(canvas, q, optima, yMax);
     let best = null, bestDist = 15 * dpr;
     for (const h of handles) {
         const d = Math.sqrt((mx - h.cx) ** 2 + (my - h.cy) ** 2);
@@ -608,7 +603,7 @@ function handleDragEnd() {
 
 function setupInteraction(canvas, q, getOptima) {
     function startDrag(pos) {
-        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y, sharedYMax);
         if (hit) {
             const startSigma = hit.target === 'p' ? hit.comp.sigma : hit.q.sigma;
             dragState = { canvas, handle: hit, startX: pos.x, startY: pos.y, startSigma };
@@ -625,7 +620,7 @@ function setupInteraction(canvas, q, getOptima) {
             handleDragMove(pos);
             return;
         }
-        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y, sharedYMax);
         hoveredHandle = hit;
         canvas.style.cursor = hit ? 'grab' : 'default';
     });
@@ -637,7 +632,7 @@ function setupInteraction(canvas, q, getOptima) {
     let wheelTimer = null;
     canvas.addEventListener('wheel', e => {
         const pos = getPointerPos(canvas, e);
-        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y);
+        const hit = hitTest(canvas, q, getOptima(), pos.x, pos.y, sharedYMax);
         if (hit) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.05 : -0.05;
@@ -744,8 +739,14 @@ function frame() {
         }
     }
 
-    drawPanel(canvasInc, qInc, [qBruteInc], 'rgba(220, 50, 50, 1)', 'inclusive');
-    drawPanel(canvasExc, qExc, excLocalOptima, 'rgba(50, 100, 220, 1)', 'exclusive');
+    // Compute shared yMax so both panels use the same scale
+    sharedYMax = Math.max(
+        computeYMax(qInc, [qBruteInc]),
+        computeYMax(qExc, excLocalOptima)
+    ) * 1.1;
+
+    drawPanel(canvasInc, qInc, [qBruteInc], 'rgba(220, 50, 50, 1)', 'inclusive', sharedYMax);
+    drawPanel(canvasExc, qExc, excLocalOptima, 'rgba(50, 100, 220, 1)', 'exclusive', sharedYMax);
 
     requestAnimationFrame(frame);
 }
