@@ -198,9 +198,7 @@ def process_post(filepath):
     """Process a single post: parse, handle notebooks, render to HTML."""
     meta, body = parse_post(filepath)
 
-    # Skip drafts
-    if meta.get("status", "").lower() == "draft":
-        return None
+    is_draft = meta.get("status", "").lower() == "draft"
 
     # Check for notebook embedding
     nb_match = NOTEBOOK_RE.search(body)
@@ -254,6 +252,7 @@ def process_post(filepath):
         "content": content,
         "url": url,
         "old_url": old_url,
+        "draft": is_draft,
     }
 
 
@@ -282,17 +281,21 @@ def build():
 
     # Sort by date, newest first
     posts.sort(key=lambda p: p["date"], reverse=True)
-    print(f"\n{len(posts)} posts (drafts excluded)")
 
-    # Collect all unique tags (preserving order of first appearance)
+    # Separate drafts from published posts
+    drafts = [p for p in posts if p["draft"]]
+    published = [p for p in posts if not p["draft"]]
+    print(f"\n{len(published)} posts, {len(drafts)} drafts")
+
+    # Collect all unique tags (from published posts only)
     seen_tags = {}
-    for post in posts:
+    for post in published:
         for tag in post["tags"]:
             if tag not in seen_tags:
                 seen_tags[tag] = True
     all_tags = list(seen_tags.keys())
 
-    # Render each post
+    # Render all posts (including drafts)
     for post in posts:
         post_dir = OUTPUT_DIR / post["url"]
         post_dir.mkdir(parents=True, exist_ok=True)
@@ -302,7 +305,7 @@ def build():
         html = template.render(
             page_type="article",
             post=post,
-            posts=posts,
+            posts=published,
             site_name=SITE_NAME,
             root=root,
             author=AUTHOR,
@@ -327,13 +330,27 @@ def build():
     # Render archive index (lives at output root)
     html = template.render(
         page_type="archive",
-        posts=posts,
+        posts=published,
         site_name=SITE_NAME,
         root=".",
         author=AUTHOR,
         all_tags=all_tags,
     )
     (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
+
+    # Render drafts index
+    if drafts:
+        drafts_dir = OUTPUT_DIR / "drafts"
+        drafts_dir.mkdir(parents=True, exist_ok=True)
+        html = template.render(
+            page_type="archive",
+            posts=drafts,
+            site_name=SITE_NAME,
+            root="..",
+            author=AUTHOR,
+            all_tags=all_tags,
+        )
+        (drafts_dir / "index.html").write_text(html, encoding="utf-8")
 
     # Copy static assets
     for static_dir in STATIC_DIRS:
@@ -353,7 +370,7 @@ def build():
     (OUTPUT_DIR / "pygments.css").write_text(pygments_css, encoding="utf-8")
 
     # Generate Atom feed
-    build_feed(posts)
+    build_feed(published)
 
     print(f"\nDone. Output in {OUTPUT_DIR}/")
 
