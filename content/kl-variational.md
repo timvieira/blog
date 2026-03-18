@@ -33,7 +33,7 @@ sure it's intentional).
 
 ## Inclusive vs. Exclusive Divergence
 
-<div style="background-color: #f2f2f2; border: 2px solid #ggg; padding: 10px;">
+<div style="background-color: #f2f2f2; padding: 10px;">
 
 <img src="http://timvieira.github.io/blog/images/KL-inclusive-exclusive.png" />
 Figure by <a href="http://www.johnwinn.org/">John Winn</a>.
@@ -122,11 +122,6 @@ The log-density ratio $\log(q_\theta/p)$ must be uncorrelated with the
 sufficient statistics under $q_\theta$. No feature can predict
 whether $q_\theta$ is over- or under-estimating $p$&mdash;if one could, the
 optimizer would exploit it to further reduce the KL.
-
-| | Gradient (exp. family) | Optimality condition |
-|---|---|---|
-| $\textbf{KL}(p \| q_\theta)$ | $\mathbb{E}_p[\phi_q] - \mathbb{E}_{q_\theta}[\phi_q]$ | Moment matching |
-| $\textbf{KL}(q_\theta \| p)$ | $\text{Cov}_{q_\theta}[\phi_q,\; \log(q_\theta/p)]$ | Residual orthogonality |
 
 ### Harder Direction $\textbf{KL}(p || q_\theta)$
 
