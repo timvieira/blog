@@ -79,19 +79,18 @@ EM is based on a chicken-and-egg type of story:
  2. If we had $\theta$, we could complete the data using the model's
     distribution over the missing values.
 
-That's basically what EM is going to do:
+That's basically what EM does.  Start with an initial guess of
+$\theta$,[ref]Alternatively, one can initialize with a guess of the data
+completions and reorder the two steps below "M-E" rather than
+"E-M."[/ref] then alternate:
 
- * **Initialize:** Guess model parameters $\theta$.  [ref]Alternatively, one can
-   initialize with a guess of the data completions and reorder the two steps
-   below "M-E" rather than "E-M."[/ref]
+ * **E step:** Use the current model $p_\theta$ to "complete" the data in a manner
+   consistent with the observations.  That is, form a distribution over what
+   the complete data could have been, given what we observed.
 
- * **Repeat** until some convergence criterion is met:
+ * **M step:** Re-fit the model to that completed data.
 
-   * **E step:** Use the current model to "complete" the data in a manner
-     consistent with the observations.  That is, form a distribution over what
-     the complete data could have been, given what we observed.
-
-   * **M step:** Re-fit the model to that completed data.
+Repeat until convergence.
 
 
 ## Monte Carlo EM
@@ -99,16 +98,16 @@ That's basically what EM is going to do:
 Consider a slightly dumbed-down version of EM, called Monte Carlo EM (MCEM).
 
 MCEM iteratively fills in the missing data by sampling completions from the
-current model $\widehat{\theta}$ (sometimes called bootstrapping).
+current model $\theta$ (sometimes called bootstrapping).
 
 - **E step:** Sample a completion for each $i$:
-  $\widehat{x}_i \sim p_{\widehat{\theta}}(\cdot \mid g(X_i) = 1)$.
+  $\widehat{x}_i \sim p_{\theta}(\cdot \mid g(X_i) = 1)$.
   This gives us a "complete" dataset that satisfies the observed constraints.
 
 - **M step:** Compute the MLE of $\theta$ on the completed dataset
   $\{ \widehat{x}_i \}_{i=1}^n$.
 
-Note that sampling from $p_{\widehat{\theta}}(\cdot \mid g(X_i) = 1)$ is not
+Note that sampling from $p_{\theta}(\cdot \mid g(X_i) = 1)$ is not
 necessarily easy&mdash;it requires sampling from the posterior under the current
 model, which is often the hard part of EM regardless of the variant.  The point
 of MCEM is not that it is easier to *implement*, but that it is easier to *think
@@ -122,7 +121,7 @@ fit) from the mathematical machinery.
 We could take more than one sample per $i$ in the E step.  If we took
 infinitely many samples, we would recover what traditional EM does.  In particular,
 traditional EM uses the complete distribution, $q_i$, when it is tractable to do
-so.  In other words, rather than sampling from $p_{\widehat{\theta}}(\cdot \mid
+so.  In other words, rather than sampling from $p_{\theta}(\cdot \mid
 g(X_i) = 1)$, we use the distribution directly in the M step to reduce the approximation error.
 
 Using the full distribution introduces some ugly notation that hides the signal.
