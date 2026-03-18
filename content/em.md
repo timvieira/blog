@@ -1,8 +1,8 @@
-title: Hot Take: Expectation Maximization
+title: The Simple Idea Behind EM
 date: 2019-11-20
 comments: true
 status: draft
-tags: machine-learning, statistics, hot-take
+tags: machine-learning, statistics, rant
 
 $$
 \newcommand{\ind}[1]{\boldsymbol{1}\left[ #1 \right]}
@@ -14,20 +14,16 @@ explained in my opinion:
 
  * Explanations are littered with distracting model-specific details and messy
    variational inference notation that make it hard to see the signal in the
-   noise.[ref]Why such a messy presentation?  My guess is that the theory is
-     bleeding into the exposition.  EM's convergence proofs are based on
-     iterative lower-bound maximization, so presentations lean on that
-     machinery.  The proofs are valuable, but they are not the only way to
-     understand the algorithm.[/ref]
+   noise.[ref]Many textbook presentations frame EM as iterative lower-bound
+     maximization, e.g., following the variational view of
+     [Neal & Hinton (1998)](https://link.springer.com/chapter/10.1007/978-94-011-5014-9_12).
+     That perspective is valuable&mdash;it's the basis for most convergence
+     proofs&mdash;but it front-loads a lot of variational machinery before the
+     reader has any intuition for what the algorithm is actually doing.[/ref]
 
- * Today, I will give my hot take.  I will create a bridge between EM and MLE,
-   which I believe makes it easier to see the signal in the noise.
-
-   <!--
-   There are no
-   KL divergences, lower bounds, or convergence proofs to distract from what's
-   going on.
-   -->
+ * In this post, I'll build a bridge between EM and MLE that I think makes
+   the algorithm much easier to understand.  No KL divergences, no lower
+   bounds, no convergence proofs.
 
 EM is an algorithm for maximum-likelihood estimation when we have "incomplete
 observations."  There is an underlying i.i.d. process $\{ X_i \}_{i=1}^n$, which
