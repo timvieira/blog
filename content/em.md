@@ -112,30 +112,28 @@ of the model $\widehat{\theta}$ (sometimes called bootstrapping).
 - **M step:** Compute the fully observed maximum-likelihood estimate of $\theta$ on the
   approximate dataset $\{ \widehat{x}_i \}_{i=1}^n$.
 
-The beauty of MCEM is that the M step is just ordinary MLE on a complete
+Note that sampling from $p_{\widehat{\theta}}(\cdot \mid g(X_i) = 1)$ is not
+necessarily easy&mdash;it requires sampling from the posterior under the current
+model, which is often the hard part of EM regardless of the variant.  The point
+of MCEM is not that it is easier to *implement*, but that it is easier to *think
+about*:</b> once you have the samples, the M step is just ordinary MLE on a complete
 dataset&mdash;exactly the same code you'd write if you had observed the data
-directly.
-
+directly.  This cleanly separates the conceptual story (complete the data, then
+fit) from the mathematical machinery.
 ## From MCEM to EM
 
-We could take more than one sample per $i$ in the E step as
-long as we take an equal number per example (in expectation).  If we took
+We could take more than one sample per $i$ in the E step.  If we took
 infinitely many samples, we match what traditional EM does.  In particular,
 traditional EM uses the complete distribution, $q_i$, when it is tractable to do
 so.  In other words, rather than sampling from $p_{\widehat{\theta}}(\cdot \mid
 g(X_i) = 1)$, we use the distribution directly in the M step to reduce the approximation error.
 
 Using the full distribution introduces some ugly notation that hides the signal.
-It is also harder to implement: you have to extend the M step to compute the
-expectation over complete datasets.  The sampling version conveniently uses the
-exact same code as fully observed MLE (i.e., a dataset of $\{ x_i \}_{i=1}^n$).
-
-Leveraging the distribution is generally an efficiency win, so it is worth doing
-if you need the extra accuracy (no sampling error that results from the
-approximate E step) and efficiency (no need to take lots of samples).  That
-said, the MCEM algorithm is a pretty good algorithm since it is very fast to
-implement.
-
+It also requires extending the M step to compute expectations over complete
+datasets, rather than just fitting a single dataset.</b>  Leveraging the distribution
+is generally an efficiency win (no sampling error, no need for many samples), so
+it is worth doing when tractable.  But the conceptual content is the same: EM is
+just MCEM with sampling replaced by exact expectations.
 
 ## Takeaway
 
@@ -143,6 +141,6 @@ EM is often presented as a variational lower-bound algorithm, which is useful fo
 proving convergence but obscures the core idea.  The core idea is simple: if you
 knew the complete data you'd just do MLE; if you knew the parameters you could
 fill in the missing data.  EM alternates between these two steps.  MCEM makes
-this especially transparent&mdash;the E step is sampling, the M step is ordinary
-MLE&mdash;and traditional EM is just MCEM with the sampling replaced by exact
-expectations.
+this especially transparent&mdash;not because sampling is easy, but because
+thinking in terms of "sample then fit" strips away the notational overhead and
+reveals the simple structure underneath.
