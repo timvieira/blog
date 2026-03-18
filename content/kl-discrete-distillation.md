@@ -3,6 +3,7 @@ date: 2026-03-13
 tags: statistics, machine-learning, probability, interactive
 status: draft
 comments: true
+todo: The reverse KL covariance scatter plot (third column in each panel row) needs work — not yet clearly communicating Cov_q[φ, log(q/p)] → 0 as the reverse KL first-order optimality condition. Try different visualizations (bar chart, conditional excess, etc.) or rethink the layout.
 
 In the [continuous KL demo](/blog/kl-fitting-interactive/), we watched
 forward and reverse KL fit a Gaussian to a mixture (see also [KL-divergence as
@@ -334,6 +335,7 @@ canvas.dkl-stats-canvas {
 <div class="dkl-panel-row">
 <div class="dkl-panel" id="dkl-panel-fwd"></div>
 <canvas class="dkl-stats-canvas" id="dkl-stats-fwd"></canvas>
+<canvas class="dkl-stats-canvas" id="dkl-cov-fwd"></canvas>
 </div>
 <div class="dkl-wasted" id="dkl-wasted-fwd">
     Outside support: <span></span>
@@ -353,6 +355,7 @@ canvas.dkl-stats-canvas {
 <div class="dkl-panel-row">
 <div class="dkl-panel" id="dkl-panel-rev"></div>
 <canvas class="dkl-stats-canvas" id="dkl-stats-rev"></canvas>
+<canvas class="dkl-stats-canvas" id="dkl-cov-rev"></canvas>
 </div>
 <div class="dkl-wasted" id="dkl-wasted-rev">
     Outside support: <span></span>
@@ -811,6 +814,130 @@ function drawStats(canvas, qCounts, colorRgba) {
     }
 }
 
+// ===== Covariance of sufficient statistics with log-density ratio =====
+var covFwdCanvas = document.getElementById('dkl-cov-fwd');
+var covRevCanvas = document.getElementById('dkl-cov-rev');
+
+// Compute Cov_q[phi_i, log(q/p)] and E_q[phi_i] for each n-gram feature.
+// Returns { cov: Float64Array, counts: Float64Array }.
+function ngramCovLogRatio(probs, n, order) {
+    var size = Math.pow(V, order);
+    var phiR = new Float64Array(size);   // E_q[phi_i * R]
+    var phi  = new Float64Array(size);   // E_q[phi_i]
+    var eR = 0;                          // E_q[R] = KL(q||p)
+    for (var idx = 0; idx < N_SEQ; idx++) {
+        var x = idxToSeq(idx);
+        var qx = seqProb(probs, n, x);
+        if (qx < 1e-30) continue;
+        var px = teacher[idx];
+        var R = Math.log(qx) - (px > 0 ? Math.log(px) : LOG_ZERO);
+        var qR = qx * R;
+        eR += qR;
+        for (var start = 0; start <= T - order; start++) {
+            var gi = 0;
+            for (var k = 0; k < order; k++) gi = gi * V + x[start + k];
+            phiR[gi] += qR;
+            phi[gi] += qx;
+        }
+    }
+    var cov = new Float64Array(size);
+    for (var i = 0; i < size; i++) {
+        cov[i] = phiR[i] - phi[i] * eR;
+    }
+    return { cov: cov, counts: phi };
+}
+
+function drawCov(canvas, covResult, colorRgba) {
+    resizeCanvas(canvas);
+    if (!cachedStatsItems || cachedStatsItems.length === 0) return;
+    var items = cachedStatsItems;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.width, H = canvas.height;
+    var titleH = 16 * dpr;
+    var padL = 30 * dpr, padR = 8 * dpr;
+    var padT = titleH + 4 * dpr, padB = 12 * dpr;
+    var plotW = W - padL - padR;
+    var plotH = H - padT - padB;
+    var n = items.length;
+
+    // Gather data points: x = E_q[phi_i], y = Cov_q[phi_i, R]
+    var pts = [];
+    var maxX = 0, maxAbsY = 0;
+    for (var i = 0; i < n; i++) {
+        var gi = items[i].gi;
+        var x = covResult.counts[gi];
+        var y = covResult.cov[gi];
+        pts.push({ x: x, y: y, label: items[i].label });
+        if (x > maxX) maxX = x;
+        var ay = Math.abs(y);
+        if (ay > maxAbsY) maxAbsY = ay;
+    }
+    maxX = Math.max(maxX, 0.01) * 1.1;
+    maxAbsY = Math.max(maxAbsY, 0.005) * 1.15;
+
+    // Title
+    ctx.fillStyle = '#888';
+    ctx.font = 'bold ' + (9 * dpr) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Cov_q[\u03C6, log q/p]', W / 2, 11 * dpr);
+
+    // Axes
+    var zeroY = padT + plotH / 2;  // y=0 line
+
+    // y=0 reference line (prominent)
+    ctx.strokeStyle = '#bbb';
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath();
+    ctx.moveTo(padL, zeroY);
+    ctx.lineTo(W - padR, zeroY);
+    ctx.stroke();
+
+    // x=0 axis
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = '#aaa';
+    ctx.font = (7.5 * dpr) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('E_q[\u03C6]', padL + plotW / 2, H - 1 * dpr);
+    ctx.save();
+    ctx.translate(8 * dpr, padT + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('cov', 0, 0);
+    ctx.restore();
+
+    // Y tick marks
+    ctx.fillStyle = '#ccc';
+    ctx.font = (6.5 * dpr) + 'px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('+' + maxAbsY.toFixed(3), padL - 3 * dpr, padT + 4 * dpr);
+    ctx.fillText('-' + maxAbsY.toFixed(3), padL - 3 * dpr, padT + plotH);
+    ctx.fillText('0', padL - 3 * dpr, zeroY + 3 * dpr);
+
+    // Dots
+    var dotR = Math.max(3 * dpr, 4);
+    for (var i = 0; i < pts.length; i++) {
+        var px = padL + (pts[i].x / maxX) * plotW;
+        var py = zeroY - (pts[i].y / maxAbsY) * (plotH / 2);
+
+        ctx.beginPath();
+        ctx.arc(px, py, dotR, 0, 2 * Math.PI);
+        ctx.fillStyle = colorRgba;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+}
+
 // ===== DOM references =====
 var supportListEl = document.getElementById('dkl-support-list');
 var panelFwdEl = document.getElementById('dkl-panel-fwd');
@@ -1112,12 +1239,16 @@ function frame() {
                         lastFwdResult.kl, lastFwdResult.wasted, 'fwd');
         var qFwdCounts = ngramCounts(lastFwdResult.probs, ngramOrder, ngramOrder);
         drawStats(statsFwdCanvas, qFwdCounts, 'rgba(220, 50, 50, 0.55)');
+        var covFwdResult = ngramCovLogRatio(lastFwdResult.probs, ngramOrder, ngramOrder);
+        drawCov(covFwdCanvas, covFwdResult, 'rgba(220, 50, 50, 0.55)');
     }
     if (lastRevResult && revBarEls.length === support.length) {
         updatePanelBars(revBarEls, lastRevResult.probs, ngramOrder,
                         lastRevResult.kl, lastRevResult.wasted, 'rev');
         var qRevCounts = ngramCounts(lastRevResult.probs, ngramOrder, ngramOrder);
         drawStats(statsRevCanvas, qRevCounts, 'rgba(50, 100, 220, 0.55)');
+        var covRevResult = ngramCovLogRatio(lastRevResult.probs, ngramOrder, ngramOrder);
+        drawCov(covRevCanvas, covRevResult, 'rgba(50, 100, 220, 0.55)');
     }
 
     requestAnimationFrame(frame);
@@ -1173,8 +1304,53 @@ teacher's correlations, and *how* it fails depends on the objective.
 
 The n-gram model is an exponential family: each conditional $q(x_t \mid
 \text{ctx})$ is a categorical with natural parameters (the logits) and
-sufficient statistics (token indicators). At the MLE solution (forward KL), the
-expected sufficient statistics under $q$ match the observed statistics under
-$p$&mdash;this is the moment-matching property. Reverse KL has no such
-guarantee, so the marginals panel on the right shows how the two directions
-differ in what statistics they preserve.
+sufficient statistics (token indicators).
+
+<div style="border-left: 4px solid #e44; padding-left: 12px; margin: 1em 0; background: #fff5f5;">
+
+**[NEW — remove this wrapper after review]**
+
+#### What does each direction actually optimize for?
+
+The optimality conditions make the difference precise. Following the notation
+from [KL-divergence as an objective function](/blog/kl-divergence-as-an-objective-function/), let $q_\theta$ be the
+student and $p$ the teacher, with $\phi_q$ denoting the sufficient statistics of
+$q$'s exponential family.
+
+**Forward KL** $\textbf{KL}(p \| q_\theta)$: the gradient is $\mathbb{E}_p[\phi_q] -
+\mathbb{E}_q[\phi_q]$, so at the optimum:
+
+$$\mathbb{E}_p\!\left[\phi_q\right] = \mathbb{E}_q\!\left[\phi_q\right]$$
+
+This is **moment matching**&mdash;the expected sufficient statistics under $q$
+must equal those under $p$. For the n-gram model, these statistics are token
+indicators conditioned on context, so the n-gram count bars on the right
+converge exactly. This is why forward KL *is* maximum likelihood estimation.
+
+**Reverse KL** $\textbf{KL}(q_\theta \| p)$: the gradient
+(from the [earlier post](/blog/kl-divergence-as-an-objective-function/)) is
+$\sum_d \nabla[q_\theta(d)](\log q_\theta(d) - \log p(d))$, which for an
+exponential family gives the optimality condition:
+
+$$\text{Cov}_{q}\!\left[\phi_q(d),\; \log \frac{q_\theta(d)}{p(d)}\right] = 0$$
+
+In words: **the log-density ratio $\log(q/p)$ must be uncorrelated with the
+sufficient statistics under $q$'s own measure.** The "residual"
+$\log(q/p)$&mdash;how much the student over- or under-estimates each
+sequence&mdash;has been made orthogonal to the model's feature space. No
+feature can predict the direction of the remaining error; if one could, the
+optimizer would exploit it.
+
+This is a weaker condition than moment matching. The moments $\mathbb{E}_q[\phi_q]$
+and $\mathbb{E}_p[\phi_q]$ can disagree&mdash;the n-gram count bars *don't*
+converge&mdash;as long as the disagreement is uncorrelated with the features
+themselves. Watch the "N-gram counts" panel under reverse KL: even at
+convergence, the gray and blue bars diverge. Forward KL's bars always match.
+
+The condition is also **self-referential**: the expectation is under $q$, not
+$p$, so $q$ gets to choose which sequences matter for evaluating its own
+residual. This is why reverse KL is mode-seeking&mdash;it can ignore regions
+where $p$ has mass by placing negligible $q$-mass there, effectively removing
+those sequences from its own evaluation.
+
+</div>
