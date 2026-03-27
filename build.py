@@ -179,10 +179,37 @@ def _render_md_in_html_blocks(body):
     )
 
 
+def _protect_mermaid(body):
+    """Replace ```mermaid...``` blocks with placeholders before markdown rendering."""
+    mermaid_blocks = []
+    def replace(m):
+        idx = len(mermaid_blocks)
+        mermaid_blocks.append(m.group(1))
+        return f"MERMAID_PLACEHOLDER_{idx}"
+    body = re.sub(r'```mermaid\n(.*?)```', replace, body, flags=re.DOTALL)
+    return body, mermaid_blocks
+
+
+def _restore_mermaid(html, mermaid_blocks):
+    """Restore mermaid placeholders as <div class="mermaid"> elements."""
+    for i, block in enumerate(mermaid_blocks):
+        html = html.replace(
+            f"MERMAID_PLACEHOLDER_{i}",
+            f'<div class="mermaid">\n{block}</div>',
+        )
+        # Also handle case where markdown wraps it in a <p>
+        html = html.replace(
+            f"<p>MERMAID_PLACEHOLDER_{i}</p>",
+            f'<div class="mermaid">\n{block}</div>',
+        )
+    return html
+
+
 def render_markdown(body):
     """Render markdown string to HTML with math-friendly settings."""
     body = _convert_simple_footnotes(body)
     body, placeholders = _protect_math(body)
+    body, mermaid_blocks = _protect_mermaid(body)
     body = _render_md_in_html_blocks(body)
     md = markdown.Markdown(
         extensions=["extra", "codehilite", "toc"],
@@ -191,7 +218,9 @@ def render_markdown(body):
         },
     )
     html = md.convert(body)
-    return _restore_math(html, placeholders)
+    html = _restore_math(html, placeholders)
+    html = _restore_mermaid(html, mermaid_blocks)
+    return html
 
 
 def process_post(filepath):
@@ -200,18 +229,31 @@ def process_post(filepath):
 
     is_draft = meta.get("status", "").lower() == "draft"
 
-    # Check for notebook embedding
-    nb_match = NOTEBOOK_RE.search(body)
-    if nb_match:
-        nb_src = nb_match.group(1)
-        start = int(nb_match.group(2)) if nb_match.group(2) else 0
-        end = int(nb_match.group(3)) if nb_match.group(3) else None
-        nb_path = CONTENT_DIR / nb_src
-        if not nb_path.exists():
-            print(f"  WARNING: notebook not found: {nb_path}", file=sys.stderr)
-            return None
-        print(f"  Converting notebook: {nb_src} [{start}:{end}]")
-        content = render_notebook(nb_path, start=start, end=end)
+    # Check for notebook embedding (supports multiple {% notebook %} tags)
+    nb_matches = list(NOTEBOOK_RE.finditer(body))
+    if nb_matches:
+        parts = []
+        last_end = 0
+        for nb_match in nb_matches:
+            # Render any markdown before this notebook tag
+            pre = body[last_end:nb_match.start()].strip()
+            if pre:
+                parts.append(render_markdown(pre))
+            nb_src = nb_match.group(1)
+            start = int(nb_match.group(2)) if nb_match.group(2) else 0
+            end = int(nb_match.group(3)) if nb_match.group(3) else None
+            nb_path = CONTENT_DIR / nb_src
+            if not nb_path.exists():
+                print(f"  WARNING: notebook not found: {nb_path}", file=sys.stderr)
+                return None
+            print(f"  Converting notebook: {nb_src} [{start}:{end}]")
+            parts.append(render_notebook(nb_path, start=start, end=end))
+            last_end = nb_match.end()
+        # Render any markdown after the last notebook tag
+        post = body[last_end:].strip()
+        if post:
+            parts.append(render_markdown(post))
+        content = "\n".join(parts)
     else:
         content = render_markdown(body)
 
