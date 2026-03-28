@@ -1565,8 +1565,8 @@ a.tag:hover {
 .margin-note {
     float: right;
     clear: right;
-    width: 180px;
-    margin-right: -220px;
+    width: 250px;
+    margin-right: -290px;
     padding: 0.4em 0.6em;
     font-size: 0.75em;
     line-height: 1.3;
@@ -1577,11 +1577,17 @@ a.tag:hover {
     /* On narrow screens, fall back to inline float */
     .margin-note {
         margin-right: 0;
-        max-width: 180px;
+        max-width: 250px;
         margin-left: 1em;
         margin-bottom: 0.5em;
     }
 }
+
+/* Pseudocode blocks */
+.pseudocode { border: 1px solid #ccc; border-radius: 4px; padding: 0.4em 0.8em; margin: 1em 0; background: #fafafa; line-height: 1.0; }
+.pseudocode p { margin: 0.1em 0; }
+.pseudocode p:last-child { margin-bottom: 0; }
+.pseudocode b { font-weight: 700; }
 
 /* Verified-identity pills (✓ footnote markers) */
 a.verified {
@@ -1752,13 +1758,14 @@ details.derivation[open]::details-content {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
         processEscapes: true,
+        {% if post is defined and post.tex_macros %}macros: {{ post.tex_macros | tojson }},{% endif %}
       },
       chtml: {
         scale: 1,
       },
     };
   </script>
-  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({startOnLoad: false, math: {enabled: true}});

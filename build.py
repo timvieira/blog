@@ -139,6 +139,63 @@ def _restore_math(html, placeholders):
     return html
 
 
+def _extract_macros(body):
+    """Extract <macros>...</macros> block, return (body_without_macros, macros_dict).
+
+    Parses LaTeX \\newcommand and \\def into a dict suitable for MathJax tex.macros.
+    """
+    m = re.search(r'<macros>(.*?)</macros>', body, re.DOTALL)
+    if not m:
+        return body, {}
+    block = m.group(1)
+    body = body[:m.start()] + body[m.end():]
+    macros = {}
+
+    def _match_braced(s, start):
+        """Return content between matched braces starting at s[start]='{'. """
+        assert s[start] == '{'
+        depth, i = 1, start + 1
+        while i < len(s) and depth > 0:
+            if s[i] == '{': depth += 1
+            elif s[i] == '}': depth -= 1
+            i += 1
+        return s[start + 1 : i - 1], i
+
+    i = 0
+    while i < len(block):
+        # \newcommand{\name}[nargs]{expansion} or \def\name{expansion}
+        cm = re.match(r'\\(?:newcommand|renewcommand)\{\\(\w+)\}', block[i:])
+        if cm:
+            i += cm.end()
+            nargs = None
+            if i < len(block) and block[i] == '[':
+                j = block.index(']', i)
+                nargs = int(block[i + 1 : j])
+                i = j + 1
+            expansion, i = _match_braced(block, i)
+            macros[cm.group(1)] = [expansion, nargs] if nargs else expansion
+            continue
+        dm = re.match(r'\\def\\(\w+)', block[i:])
+        if dm:
+            i += dm.end()
+            expansion, i = _match_braced(block, i)
+            macros[dm.group(1)] = expansion
+            continue
+        i += 1
+
+    return body, macros
+
+
+def _convert_sidenotes(body):
+    """Convert <footnote>...</footnote> to sidenote markup."""
+    return re.sub(
+        r'<footnote>(.*?)</footnote>',
+        r'<label class="sidenote-number"></label><span class="margin-note">\1</span>',
+        body,
+        flags=re.DOTALL,
+    )
+
+
 def _convert_simple_footnotes(body):
     """Convert legacy [ref]...[/ref] tags to markdown [^N] footnote syntax."""
     footnotes = []
@@ -207,6 +264,7 @@ def _restore_mermaid(html, mermaid_blocks):
 
 def render_markdown(body):
     """Render markdown string to HTML with math-friendly settings."""
+    body = _convert_sidenotes(body)
     body = _convert_simple_footnotes(body)
     body, placeholders = _protect_math(body)
     body, mermaid_blocks = _protect_mermaid(body)
@@ -228,6 +286,9 @@ def process_post(filepath):
     meta, body = parse_post(filepath)
 
     is_draft = meta.get("status", "").lower() == "draft"
+
+    # Extract LaTeX macros for MathJax config
+    body, tex_macros = _extract_macros(body)
 
     # Check for notebook embedding (supports multiple {% notebook %} tags)
     nb_matches = list(NOTEBOOK_RE.finditer(body))
@@ -295,6 +356,7 @@ def process_post(filepath):
         "url": url,
         "old_url": old_url,
         "draft": is_draft,
+        "tex_macros": tex_macros,
     }
 
 
