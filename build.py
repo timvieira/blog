@@ -218,8 +218,8 @@ def render_markdown(body):
         },
     )
     html = md.convert(body)
-    html = _restore_math(html, placeholders)
     html = _restore_mermaid(html, mermaid_blocks)
+    html = _restore_math(html, placeholders)
     return html
 
 
