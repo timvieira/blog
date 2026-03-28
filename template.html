@@ -1561,6 +1561,45 @@ a.tag:hover {
 .jp-MarkdownCell .jp-InputArea { padding: 0; }
 .cm-editor { margin: 0; }
 
+/* Margin notes — float into the right margin without biting into paragraph text */
+.margin-note {
+    float: right;
+    clear: right;
+    width: 180px;
+    margin-right: -200px;
+    padding: 0.4em 0.6em;
+    font-size: 0.75em;
+    color: #999;
+    border-left: 2px solid #ddd;
+}
+@media only screen and (max-width: 1100px) {
+    /* On narrow screens, fall back to inline float */
+    .margin-note {
+        margin-right: 0;
+        max-width: 180px;
+        margin-left: 1em;
+        margin-bottom: 0.5em;
+    }
+}
+
+/* Verified-identity pills (✓ footnote markers) */
+a.verified {
+    display: inline-block;
+    background: #e8e8e8;
+    color: #888;
+    font-size: 0.6em;
+    padding: 0 0.25em;
+    border-radius: 0.6em;
+    text-decoration: none;
+    vertical-align: super;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+}
+a.verified:hover {
+    background: #ccc;
+    color: #2e7d32;
+}
+
 html { overflow-y: scroll; }
 
 /* Tag filtering — fade then collapse */
@@ -1705,6 +1744,9 @@ details.derivation[open]::details-content {
   <!-- MathJax 3 -->
   <script>
     window.MathJax = {
+      startup: {
+        typeset: false,
+      },
       tex: {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
