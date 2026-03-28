@@ -1330,17 +1330,23 @@ body>footer p:last-child {
 .entry-content table {
     border-spacing: 0;
     border-collapse: collapse;
-    margin-bottom: 1.5em
+    margin-bottom: 1.5em;
+    font-size: 0.92em;
 }
 
 .entry-content table th {
-    font-weight: bold
+    font-weight: bold;
+    border-bottom: 2px solid #333;
 }
 
 .entry-content table td,
 .entry-content table th {
-    border: solid #e0e0e0 1px;
-    padding: 2px
+    padding: 5px 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.entry-content table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 dl {
