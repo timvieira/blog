@@ -1778,6 +1778,11 @@ details.derivation.draft > summary::before {
     window.MathJax = {
       startup: {
         typeset: false,
+        ready: function() {
+          MathJax.startup.defaultReady();
+          // Signal that MathJax is fully ready
+          window._mathjaxReady = MathJax.startup.promise;
+        }
       },
       tex: {
         inlineMath: [['$', '$']],
@@ -1790,40 +1795,14 @@ details.derivation.draft > summary::before {
       },
     };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({startOnLoad: false, math: {enabled: true}});
     // 1) Render Mermaid first (its built-in KaTeX handles $$ in labels)
     await mermaid.run({querySelector: '.mermaid'});
-    // 2) Wait for MathJax to actually load (the defer script may not have
-    //    executed yet—window.MathJax exists from the config block, but
-    //    MathJax.startup.promise is only set after the library runs).
-    function waitForMathJax() {
-      return new Promise(resolve => {
-        if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
-          resolve();
-        } else {
-          const observer = new MutationObserver(() => {
-            if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
-              observer.disconnect();
-              resolve();
-            }
-          });
-          observer.observe(document, {childList: true, subtree: true});
-          // Fallback: also poll in case the script loads without DOM mutations
-          const interval = setInterval(() => {
-            if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
-              clearInterval(interval);
-              observer.disconnect();
-              resolve();
-            }
-          }, 50);
-        }
-      });
-    }
-    await waitForMathJax();
-    // 3) Remove mermaid SVGs temporarily, typeset page with MathJax, restore
+    // 2) MathJax is loaded synchronously above, so startup.promise exists.
+    //    Remove mermaid SVGs temporarily, typeset page with MathJax, restore.
     await MathJax.startup.promise;
     const saved = [];
     document.querySelectorAll('.mermaid').forEach(el => {
