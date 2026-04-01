@@ -1776,14 +1776,6 @@ details.derivation.draft > summary::before {
   <!-- MathJax 3 -->
   <script>
     window.MathJax = {
-      startup: {
-        typeset: false,
-        ready: function() {
-          MathJax.startup.defaultReady();
-          // Signal that MathJax is fully ready
-          window._mathjaxReady = MathJax.startup.promise;
-        }
-      },
       tex: {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
@@ -1796,22 +1788,6 @@ details.derivation.draft > summary::before {
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({startOnLoad: false, math: {enabled: true}});
-    // 1) Render Mermaid first (its built-in KaTeX handles $$ in labels)
-    await mermaid.run({querySelector: '.mermaid'});
-    // 2) MathJax is loaded synchronously above, so startup.promise exists.
-    //    Remove mermaid SVGs temporarily, typeset page with MathJax, restore.
-    await MathJax.startup.promise;
-    const saved = [];
-    document.querySelectorAll('.mermaid').forEach(el => {
-      saved.push({el, parent: el.parentNode, next: el.nextSibling});
-      el.remove();
-    });
-    await MathJax.typesetPromise();
-    saved.forEach(({el, parent, next}) => parent.insertBefore(el, next));
-  </script>
 </head>
 
 <body>
