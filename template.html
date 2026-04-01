@@ -486,7 +486,7 @@ body>header {
 }
 
 #content {
-    overflow: hidden
+    overflow: visible
 }
 
 #content>div,
@@ -1571,21 +1571,32 @@ a.tag:hover {
 .margin-note {
     float: right;
     clear: right;
-    width: 250px;
-    margin-right: -290px;
-    padding: 0.4em 0.6em;
+    width: 220px;
+    margin-right: -250px;
+    padding: 0.3em 0.5em;
     font-size: 0.75em;
     line-height: 1.3;
     color: #999;
     border-left: 2px solid #ddd;
 }
-@media only screen and (max-width: 1100px) {
-    /* On narrow screens, fall back to inline float */
+@media only screen and (max-width: 1060px) {
+    /* Standalone margin notes (no sidenote number): show inline */
     .margin-note {
-        margin-right: 0;
-        max-width: 250px;
-        margin-left: 1em;
-        margin-bottom: 0.5em;
+        float: none;
+        width: auto;
+        margin: 0.5em 0;
+    }
+    /* Numbered sidenotes: hide until clicked */
+    .sidenote-number + .margin-note {
+        display: none;
+        max-width: 100%;
+        padding: 0.4em 0.8em;
+        background: #f8f8f8;
+        border-radius: 4px;
+    }
+    .sidenote-number { cursor: pointer; }
+    .sidenote-number.active + .margin-note {
+        display: block;
     }
 }
 
@@ -1727,6 +1738,14 @@ details.derivation[open]::details-content {
     opacity: 1;
 }
 
+details.derivation.draft {
+    background-color: #f3edf7;
+    border-color: #c9a0dc;
+}
+details.derivation.draft > summary::before {
+    border-color: transparent transparent transparent #8b5cf6;
+}
+
 /* Page transition */
 @view-transition { navigation: auto; }
 ::view-transition-old(main-content) {
@@ -1777,17 +1796,42 @@ details.derivation[open]::details-content {
     mermaid.initialize({startOnLoad: false, math: {enabled: true}});
     // 1) Render Mermaid first (its built-in KaTeX handles $$ in labels)
     await mermaid.run({querySelector: '.mermaid'});
-    // 2) Remove mermaid SVGs temporarily, typeset page with MathJax, restore
-    if (window.MathJax && MathJax.startup) {
-      await MathJax.startup.promise;
-      const saved = [];
-      document.querySelectorAll('.mermaid').forEach(el => {
-        saved.push({el, parent: el.parentNode, next: el.nextSibling});
-        el.remove();
+    // 2) Wait for MathJax to actually load (the defer script may not have
+    //    executed yet—window.MathJax exists from the config block, but
+    //    MathJax.startup.promise is only set after the library runs).
+    function waitForMathJax() {
+      return new Promise(resolve => {
+        if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+          resolve();
+        } else {
+          const observer = new MutationObserver(() => {
+            if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+              observer.disconnect();
+              resolve();
+            }
+          });
+          observer.observe(document, {childList: true, subtree: true});
+          // Fallback: also poll in case the script loads without DOM mutations
+          const interval = setInterval(() => {
+            if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+              clearInterval(interval);
+              observer.disconnect();
+              resolve();
+            }
+          }, 50);
+        }
       });
-      await MathJax.typesetPromise();
-      saved.forEach(({el, parent, next}) => parent.insertBefore(el, next));
     }
+    await waitForMathJax();
+    // 3) Remove mermaid SVGs temporarily, typeset page with MathJax, restore
+    await MathJax.startup.promise;
+    const saved = [];
+    document.querySelectorAll('.mermaid').forEach(el => {
+      saved.push({el, parent: el.parentNode, next: el.nextSibling});
+      el.remove();
+    });
+    await MathJax.typesetPromise();
+    saved.forEach(({el, parent, next}) => parent.insertBefore(el, next));
   </script>
 </head>
 
@@ -2032,5 +2076,13 @@ details.derivation[open]::details-content {
     })();
   </script>
   {% endif %}
+<script>
+// Toggle sidenotes on narrow screens
+document.querySelectorAll('.sidenote-number').forEach(function(el) {
+  el.addEventListener('click', function() {
+    el.classList.toggle('active');
+  });
+});
+</script>
 </body>
 </html>
