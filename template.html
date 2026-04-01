@@ -1776,6 +1776,16 @@ details.derivation.draft > summary::before {
   <!-- MathJax 3 -->
   <script>
     window.MathJax = {
+      startup: {
+        typeset: false,    // We typeset manually after all widgets have built their DOM
+        ready: function() {
+          MathJax.startup.defaultReady();
+          MathJax.startup.promise.then(function() {
+            // Typeset the full page once MathJax is ready
+            MathJax.typesetPromise();
+          });
+        }
+      },
       tex: {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
