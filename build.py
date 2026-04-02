@@ -22,7 +22,7 @@ from pygments.formatters import HtmlFormatter
 CONTENT_DIR = Path("content")
 OUTPUT_DIR = Path("output/blog")
 TEMPLATE_DIR = Path(".")
-STATIC_DIRS = ["images", "figures", "downloads"]
+STATIC_DIRS = ["images", "figures", "downloads", "css"]
 SITE_NAME = "Graduate Descent"
 
 def slugify(title):
