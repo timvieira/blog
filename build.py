@@ -357,6 +357,7 @@ def process_post(filepath):
         "old_url": old_url,
         "draft": is_draft,
         "tex_macros": tex_macros,
+        "external_url": meta.get("external_url", ""),
     }
 
 
@@ -399,8 +400,10 @@ def build():
                 seen_tags[tag] = True
     all_tags = list(seen_tags.keys())
 
-    # Render all posts (including drafts)
+    # Render all posts (including drafts), skip external-link posts
     for post in posts:
+        if post["external_url"]:
+            continue
         post_dir = OUTPUT_DIR / post["url"]
         post_dir.mkdir(parents=True, exist_ok=True)
         # post lives at e.g. post/2021/03/20/slug/index.html — 5 levels deep

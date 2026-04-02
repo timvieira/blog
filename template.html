@@ -109,7 +109,7 @@
           <h2>{{ year }}</h2>
         {% endif %}
         <article data-tags="{{ post.tags|join(',') }}">
-          <h1 style="view-transition-name: title-{{ post.slug }}"><a href="{{ root }}/{{ post.url }}">{{ post.title }}</a></h1>
+          <h1 style="view-transition-name: title-{{ post.slug }}"><a href="{% if post.external_url %}{{ post.external_url }}{% else %}{{ root }}/{{ post.url }}{% endif %}">{{ post.title }}</a></h1>
           <time datetime="{{ post.date.isoformat() }}" pubdate>
             <span class="month">{{ post.date.strftime('%b') }}</span>
             <span class="day">{{ post.date.strftime('%d') }}</span>

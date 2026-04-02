@@ -836,6 +836,15 @@ article {
     padding-top: 0em
 }
 
+.entry-content {
+    text-align: justify;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    word-wrap: break-word
+}
+
 article header {
     overflow: hidden;
     position: relative;
