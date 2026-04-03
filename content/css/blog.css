@@ -379,10 +379,20 @@ body div.pagination:after,
 
 body {
     -webkit-text-size-adjust: none;
-    max-width: 1200px;
+    max-width: 750px;
     position: relative;
     margin: 0 auto
 }
+
+@media only screen and (min-width: 1060px) {
+    body {
+        max-width: 1050px
+    }
+    #content {
+        margin-right: 300px
+    }
+}
+
 
 body>header,
 body>nav,
@@ -394,66 +404,9 @@ body #content>div>section {
     padding-right: 18px
 }
 
-@media only screen and (min-width: 480px) {
-    body>header,
-    body>nav,
-    body>footer,
-    body #content>article,
-    body #content>div>article,
-    body #content>div>section {
-        padding-left: 25px;
-        padding-right: 25px
-    }
-}
-
-@media only screen and (min-width: 768px) {
-    body>header,
-    body>nav,
-    body>footer,
-    body #content>article,
-    body #content>div>article,
-    body #content>div>section {
-        padding-left: 35px;
-        padding-right: 35px
-    }
-}
-
-@media only screen and (min-width: 992px) {
-    body>header,
-    body>nav,
-    body>footer,
-    body #content>article,
-    body #content>div>article,
-    body #content>div>section {
-        padding-left: 55px;
-        padding-right: 55px
-    }
-}
-
 body div.pagination {
     margin-left: 18px;
     margin-right: 18px
-}
-
-@media only screen and (min-width: 480px) {
-    body div.pagination {
-        margin-left: 25px;
-        margin-right: 25px
-    }
-}
-
-@media only screen and (min-width: 768px) {
-    body div.pagination {
-        margin-left: 35px;
-        margin-right: 35px
-    }
-}
-
-@media only screen and (min-width: 992px) {
-    body div.pagination {
-        margin-left: 55px;
-        margin-right: 55px
-    }
 }
 
 body>header {
@@ -615,12 +568,10 @@ body.sidebar-footer .toggle-sidebar {
     }
     #content {
         overflow: visible;
-        margin-right: 240px;
         position: relative
     }
-    .no-sidebar #content {
-        margin-right: 0;
-        border-right: 0
+    #main:has(aside.sidebar) #content {
+        margin-right: 240px
     }
     .collapse-sidebar #content {
         margin-right: 240px
@@ -680,9 +631,6 @@ body.sidebar-footer .toggle-sidebar {
 @media only screen and (min-width: 992px) {
     body>header {
         font-size: 1.3em
-    }
-    #content {
-        margin-right: 300px
     }
     #content>div,
     #content>article {
