@@ -1686,6 +1686,9 @@ body > header nav a:hover {
     color: #333;
 }
 
+/* KaTeX — default 1.21em is too large for Garamond's small x-height */
+.katex { font-size: 1.05em; }
+
 /* Collapsible derivations */
 details.derivation {
     background-color: #f2f2f2;
