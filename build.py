@@ -439,7 +439,14 @@ def build():
 
     # Root index: for satellite repos with one post, use the article itself
     if SATELLITE and len(published) == 1:
-        post = published[0]
+        post = dict(published[0])
+        # Rewrite relative paths: article content uses ../ (relative to slug/),
+        # but the root index is one level up, so strip one ../ prefix
+        post["content"] = re.sub(
+            r'(href|src)="\.\.\/',
+            r'\1="./',
+            post["content"],
+        )
         html = template.render(
             page_type="article",
             post=post,
