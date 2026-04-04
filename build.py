@@ -24,6 +24,7 @@ OUTPUT_DIR = Path("output/blog")
 TEMPLATE_DIR = Path(".")
 STATIC_DIRS = ["images", "figures", "downloads", "css"]
 SITE_NAME = "Graduate Descent"
+EXTRA_TEMPLATE_VARS = {}  # satellite posts can set e.g. {"css_url": "/blog/css/blog.css"}
 
 def slugify(title):
     """Convert a title to a URL slug, matching Pelican's default behavior."""
@@ -417,6 +418,7 @@ def build():
             root=root,
             author=AUTHOR,
             all_tags=all_tags,
+            **EXTRA_TEMPLATE_VARS,
         )
         (post_dir / "index.html").write_text(html, encoding="utf-8")
 
@@ -442,6 +444,7 @@ def build():
         root=".",
         author=AUTHOR,
         all_tags=all_tags,
+        **EXTRA_TEMPLATE_VARS,
     )
     (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
 
@@ -456,6 +459,7 @@ def build():
             root="..",
             author=AUTHOR,
             all_tags=all_tags,
+            **EXTRA_TEMPLATE_VARS,
         )
         (drafts_dir / "index.html").write_text(html, encoding="utf-8")
 

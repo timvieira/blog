@@ -20,7 +20,7 @@
   <link rel="alternate" type="application/atom+xml" title="{{ site_name }} Atom Feed" href="{{ root }}/atom.xml">
   <link rel="stylesheet" href="{{ root }}/pygments.css">
 
-  <link rel="stylesheet" href="{{ root }}/css/blog.css">
+  <link rel="stylesheet" href="{{ css_url | default(root ~ '/css/blog.css') }}">
 
   <!-- MathJax 3 -->
   <script>

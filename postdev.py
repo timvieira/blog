@@ -1,32 +1,80 @@
-"""Dev tools for satellite blog posts hosted outside the main blog repo.
+#!/usr/bin/env python3
+"""Build and dev server for satellite blog posts.
 
-Provides a dev server with CSS proxying, file watching with auto-rebuild,
-and a deploy helper that rewrites CSS references to the hosted blog URL.
+Usage:
+    postdev dev       # build + watch + serve
+    postdev build     # build only
+    postdev deploy    # build + commit output/ + push
 
-Usage from a satellite post repo:
+Reads config from [tool.postdev] in pyproject.toml, or from postdev.toml.
+All fields are optional with sensible defaults:
 
-    import sys; from pathlib import Path
-    sys.path.insert(0, str(Path.home() / "projects/blog/main"))
-    import postdev
-
-    # Dev server (proxies /css/* to blog's CSS directory)
-    postdev.serve("output", port=8000)
-
-    # File watcher with debounced rebuild
-    postdev.watch(["content"], build_fn=my_build)
-
-    # Deploy: rewrite CSS refs to absolute URL
-    postdev.rewrite_blog_css("output")
+    [tool.postdev]
+    content = "content"     # source directory
+    output = "output"       # build output directory
+    static = []             # extra dirs to copy from content/ (e.g. ["images"])
+    build = true            # false for hand-crafted HTML (no build.py step)
+    port = 8000             # dev server port
 """
 
-import re
+import subprocess
+import sys
 import threading
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
 BLOG_DIR = Path(__file__).resolve().parent
 BLOG_CSS_DIR = BLOG_DIR / "content" / "css"
-BLOG_CSS_URL = "https://timvieira.github.io/blog/css/blog.css"
+BLOG_CSS_URL = "/blog/css/blog.css"
+
+SATELLITE_TEMPLATE_VARS = {"css_url": BLOG_CSS_URL}
+
+DEFAULTS = {
+    "content": "content",
+    "output": "output",
+    "static": [],
+    "build": True,
+    "port": 8000,
+}
+
+
+def load_config():
+    """Load config from pyproject.toml [tool.postdev] or postdev.toml."""
+    config = dict(DEFAULTS)
+
+    pyproject = Path("pyproject.toml")
+    postdev_toml = Path("postdev.toml")
+
+    if pyproject.exists():
+        try:
+            import tomllib
+        except ImportError:
+            import tomli as tomllib
+        with open(pyproject, "rb") as f:
+            data = tomllib.load(f)
+        config.update(data.get("tool", {}).get("postdev", {}))
+    elif postdev_toml.exists():
+        try:
+            import tomllib
+        except ImportError:
+            import tomli as tomllib
+        with open(postdev_toml, "rb") as f:
+            config.update(tomllib.load(f))
+
+    return config
+
+
+def do_build(config):
+    """Run the blog build system for this satellite post."""
+    sys.path.insert(0, str(BLOG_DIR))
+    import build
+
+    build.CONTENT_DIR = Path(config["content"])
+    build.OUTPUT_DIR = Path(config["output"])
+    build.TEMPLATE_DIR = BLOG_DIR
+    build.STATIC_DIRS = list(config["static"])
+    build.EXTRA_TEMPLATE_VARS = SATELLITE_TEMPLATE_VARS
+    build.build()
 
 
 def serve(directory, port=8000):
@@ -62,12 +110,6 @@ def serve(directory, port=8000):
 
 def watch(watch_paths, build_fn, extensions=None):
     """Watch paths for changes and call build_fn with debouncing.
-
-    Args:
-        watch_paths: list of directories/files to watch.
-        build_fn: callable to invoke on changes.
-        extensions: set of file extensions to trigger on
-                    (default: .md, .ipynb, .html, .css, .js).
 
     Returns the watchdog Observer (already started).
     """
@@ -116,14 +158,56 @@ def watch(watch_paths, build_fn, extensions=None):
     return observer
 
 
-def rewrite_blog_css(directory):
-    """Rewrite relative CSS references in HTML files to the absolute blog URL."""
-    for html_file in Path(directory).rglob("*.html"):
-        text = html_file.read_text()
-        fixed = re.sub(
-            r'href="[^"]*?/css/blog\.css"',
-            f'href="{BLOG_CSS_URL}"',
-            text,
-        )
-        if fixed != text:
-            html_file.write_text(fixed)
+# --- CLI commands ---
+
+def cmd_build(config):
+    """Build the site."""
+    if config["build"]:
+        do_build(config)
+    else:
+        print("No build step configured.")
+
+
+def cmd_dev(config):
+    """Build, watch for changes, and serve."""
+    if config["build"]:
+        do_build(config)
+        watch_paths = [config["content"], BLOG_DIR / "template.html"]
+        watch(watch_paths, lambda: do_build(config))
+    serve(config["output"], port=config["port"])
+
+
+def cmd_deploy(config):
+    """Build and deploy to GitHub Pages."""
+    if config["build"]:
+        do_build(config)
+
+    output = config["output"]
+    subprocess.run(["git", "add", f"{output}/"], check=True)
+
+    result = subprocess.run(["git", "diff", "--cached", "--quiet"])
+    if result.returncode == 0:
+        print("No changes to deploy.")
+        return
+
+    subprocess.run(
+        ["git", "commit", "-m", "Rebuild output for GitHub Pages"],
+        check=True,
+    )
+    subprocess.run(["git", "push"], check=True)
+    print("Deployed.")
+
+
+def main():
+    commands = {"build": cmd_build, "dev": cmd_dev, "deploy": cmd_deploy}
+
+    if len(sys.argv) < 2 or sys.argv[1] not in commands:
+        print(f"Usage: postdev <{'|'.join(commands)}>")
+        sys.exit(1)
+
+    config = load_config()
+    commands[sys.argv[1]](config)
+
+
+if __name__ == "__main__":
+    main()
