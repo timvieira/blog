@@ -5,3 +5,4 @@ output/
 .ipynb_checkpoints
 cache/
 theme/TuftePelican
+.claude/
