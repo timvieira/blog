@@ -31,7 +31,7 @@ SATELLITE_TEMPLATE_VARS = {"css_url": BLOG_CSS_URL}
 
 DEFAULTS = {
     "content": "content",
-    "output": "output",
+    "output": "docs",
     "static": [],
     "build": True,
     "port": 8000,
