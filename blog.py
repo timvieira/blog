@@ -24,7 +24,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
 BLOG_DIR = Path(__file__).resolve().parent
-BLOG_CSS_DIR = BLOG_DIR / "content" / "css"
+BLOG_CONTENT_DIR = BLOG_DIR / "content"
 BLOG_CSS_URL = "/blog/css/blog.css"
 
 SATELLITE_TEMPLATE_VARS = {"css_url": BLOG_CSS_URL}
@@ -74,11 +74,12 @@ def do_build(config):
     build.TEMPLATE_DIR = BLOG_DIR
     build.STATIC_DIRS = list(config["static"])
     build.EXTRA_TEMPLATE_VARS = SATELLITE_TEMPLATE_VARS
+    build.SATELLITE = config.get("satellite", True)
     build.build()
 
 
 def serve(directory, port=8000):
-    """Serve a directory over HTTP, proxying /css/* to the blog's CSS.
+    """Serve a directory over HTTP, proxying /blog/* to the blog's content.
 
     Auto-increments port if the requested one is busy.
     Blocks forever (Ctrl-C to stop).
@@ -90,8 +91,8 @@ def serve(directory, port=8000):
             super().__init__(*a, directory=directory, **kw)
 
         def translate_path(self, path):
-            if path.startswith("/css/"):
-                return str(BLOG_CSS_DIR / path[5:])
+            if path.startswith("/blog/"):
+                return str(BLOG_CONTENT_DIR / path[len("/blog/"):])
             return super().translate_path(path)
 
         def log_message(self, fmt, *args):

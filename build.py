@@ -25,6 +25,7 @@ TEMPLATE_DIR = Path(".")
 STATIC_DIRS = ["images", "figures", "downloads", "css"]
 SITE_NAME = "Graduate Descent"
 EXTRA_TEMPLATE_VARS = {}  # satellite posts can set e.g. {"css_url": "/blog/css/blog.css"}
+SATELLITE = False  # when True, single published post becomes root index (no archive page)
 
 def slugify(title):
     """Convert a title to a URL slug, matching Pelican's default behavior."""
@@ -436,17 +437,32 @@ def build():
         )
         (old_dir / "index.html").write_text(redirect_html, encoding="utf-8")
 
-    # Render archive index (lives at output root)
-    html = template.render(
-        page_type="archive",
-        posts=published,
-        site_name=SITE_NAME,
-        root=".",
-        author=AUTHOR,
-        all_tags=all_tags,
-        **EXTRA_TEMPLATE_VARS,
-    )
-    (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
+    # Root index: for satellite repos with one post, use the article itself
+    if SATELLITE and len(published) == 1:
+        post = published[0]
+        html = template.render(
+            page_type="article",
+            post=post,
+            posts=published,
+            site_name=SITE_NAME,
+            root=".",
+            author=AUTHOR,
+            all_tags=all_tags,
+            **EXTRA_TEMPLATE_VARS,
+        )
+        (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
+    else:
+        # Render archive index (lives at output root)
+        html = template.render(
+            page_type="archive",
+            posts=published,
+            site_name=SITE_NAME,
+            root=".",
+            author=AUTHOR,
+            all_tags=all_tags,
+            **EXTRA_TEMPLATE_VARS,
+        )
+        (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
 
     # Render drafts index
     if drafts:

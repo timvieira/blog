@@ -5,7 +5,7 @@ clean:
 	rm -rf output
 
 serve: clean html
-	( cd output/ && python3 -m http.server 8000 )
+	blog dev
 
 
 copy-files: html
