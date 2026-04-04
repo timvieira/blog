@@ -2,14 +2,14 @@
 """Build and dev server for satellite blog posts.
 
 Usage:
-    postdev dev       # build + watch + serve
-    postdev build     # build only
-    postdev deploy    # build + commit output/ + push
+    blog dev       # build + watch + serve
+    blog build     # build only
+    blog deploy    # build + commit output/ + push
 
-Reads config from [tool.postdev] in pyproject.toml, or from postdev.toml.
+Reads config from [tool.blog] in pyproject.toml, or from blog.toml.
 All fields are optional with sensible defaults:
 
-    [tool.postdev]
+    [tool.blog]
     content = "content"     # source directory
     output = "output"       # build output directory
     static = []             # extra dirs to copy from content/ (e.g. ["images"])
@@ -39,11 +39,11 @@ DEFAULTS = {
 
 
 def load_config():
-    """Load config from pyproject.toml [tool.postdev] or postdev.toml."""
+    """Load config from pyproject.toml [tool.blog] or blog.toml."""
     config = dict(DEFAULTS)
 
     pyproject = Path("pyproject.toml")
-    postdev_toml = Path("postdev.toml")
+    blog_toml = Path("blog.toml")
 
     if pyproject.exists():
         try:
@@ -52,13 +52,13 @@ def load_config():
             import tomli as tomllib
         with open(pyproject, "rb") as f:
             data = tomllib.load(f)
-        config.update(data.get("tool", {}).get("postdev", {}))
-    elif postdev_toml.exists():
+        config.update(data.get("tool", {}).get("blog", {}))
+    elif blog_toml.exists():
         try:
             import tomllib
         except ImportError:
             import tomli as tomllib
-        with open(postdev_toml, "rb") as f:
+        with open(blog_toml, "rb") as f:
             config.update(tomllib.load(f))
 
     return config
@@ -202,7 +202,7 @@ def main():
     commands = {"build": cmd_build, "dev": cmd_dev, "deploy": cmd_deploy}
 
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
-        print(f"Usage: postdev <{'|'.join(commands)}>")
+        print(f"Usage: blog <{'|'.join(commands)}>")
         sys.exit(1)
 
     config = load_config()
