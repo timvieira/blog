@@ -179,8 +179,12 @@ def cmd_dev(config):
 
 def cmd_deploy(config):
     """Build and deploy to GitHub Pages."""
-    if config["build"]:
-        do_build(config)
+    if not config["build"]:
+        subprocess.run(["git", "push"], check=True)
+        print("Pushed.")
+        return
+
+    do_build(config)
 
     output = config["output"]
     subprocess.run(["git", "add", f"{output}/"], check=True)
