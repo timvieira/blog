@@ -491,7 +491,7 @@ def build():
         src = CONTENT_DIR / static_dir
         if src.exists():
             dst = OUTPUT_DIR / static_dir
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, dirs_exist_ok=True)
             print(f"Copied {static_dir}/")
 
     favicon = CONTENT_DIR / "favicon.png"
