@@ -162,7 +162,7 @@ def watch(watch_paths, build_fn, extensions=None):
 # --- CLI commands ---
 
 def cmd_build(config):
-    """Build the site."""
+    """Build the site (deletes output dir first)."""
     if config["build"]:
         do_build(config)
     else:
@@ -170,7 +170,7 @@ def cmd_build(config):
 
 
 def cmd_dev(config):
-    """Build, watch for changes, and serve."""
+    """Build + watch + serve (auto-rebuilds on file changes)."""
     if config["build"]:
         do_build(config)
         watch_paths = [config["content"], BLOG_DIR / "template.html"]
@@ -179,7 +179,7 @@ def cmd_dev(config):
 
 
 def cmd_deploy(config):
-    """Build and deploy to GitHub Pages."""
+    """Build, commit output dir, and git push."""
     if not config["build"]:
         subprocess.run(["git", "push"], check=True)
         print("Pushed.")
@@ -206,9 +206,23 @@ def cmd_deploy(config):
 def main():
     commands = {"build": cmd_build, "dev": cmd_dev, "deploy": cmd_deploy}
 
-    if len(sys.argv) < 2 or sys.argv[1] not in commands:
-        print(f"Usage: blog <{'|'.join(commands)}>")
-        sys.exit(1)
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help") or sys.argv[1] not in commands:
+        prog = Path(sys.argv[0]).name
+        print(f"usage: {prog} <command>\n")
+        print("commands:")
+        w = max(len(c) for c in commands)
+        for name, fn in commands.items():
+            desc = fn.__doc__ or ""
+            print(f"  {name:<{w}}  {desc}")
+        print(f"\nnotes:")
+        print(f"  build/dev delete and recreate the output dir on every run")
+        print(f"  dev watches .md, .ipynb, .html, .css, .js for changes")
+        print(f"  dev auto-increments port if the default is busy")
+        print(f"  deploy will 'git push' even when build=false")
+        print(f"\nconfiguration (via [tool.blog] in pyproject.toml or blog.toml):")
+        for key, val in DEFAULTS.items():
+            print(f"  {key:<10} {val!r}")
+        sys.exit(0 if len(sys.argv) >= 2 and sys.argv[1] in ("-h", "--help") else 1)
 
     config = load_config()
     commands[sys.argv[1]](config)
