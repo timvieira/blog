@@ -66,6 +66,9 @@ def load_config():
 
 def do_build(config):
     """Run the blog build system for this satellite post."""
+    for cmd in config.get("preprocess", []):
+        subprocess.run(cmd, shell=True, check=True)
+
     sys.path.insert(0, str(BLOG_DIR))
     import build
 
