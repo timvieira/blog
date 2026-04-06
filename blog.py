@@ -27,7 +27,7 @@ BLOG_DIR = Path(__file__).resolve().parent
 BLOG_CONTENT_DIR = BLOG_DIR / "content"
 BLOG_CSS_URL = "/blog/css/blog.css"
 
-SATELLITE_TEMPLATE_VARS = {"css_url": BLOG_CSS_URL}
+SATELLITE_TEMPLATE_VARS = {"css_url": BLOG_CSS_URL, "blog_url": "https://timvieira.github.io/blog/"}
 
 DEFAULTS = {
     "content": "content",
@@ -70,6 +70,7 @@ def do_build(config):
         subprocess.run(cmd, shell=True, check=True)
 
     sys.path.insert(0, str(BLOG_DIR))
+    sys.dont_write_bytecode = True
     import build
 
     build.CONTENT_DIR = Path(config["content"])
