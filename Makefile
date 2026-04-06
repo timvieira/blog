@@ -1,6 +1,9 @@
 html: clean
 	python3 build.py
 
+test:
+	python3 -m pytest test_feed.py -v
+
 clean:
 	rm -rf output
 

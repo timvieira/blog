@@ -14,6 +14,7 @@ import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
+from xml.sax.saxutils import escape as xml_escape
 
 import jinja2
 import markdown
@@ -515,21 +516,22 @@ def build_feed(posts, max_entries=20):
     feed_lines = [
         '<?xml version="1.0" encoding="utf-8"?>',
         '<feed xmlns="http://www.w3.org/2005/Atom">',
-        f"  <title>{SITE_NAME}</title>",
+        f"  <title>{xml_escape(SITE_NAME)}</title>",
         f'  <link href="{FEED_URL}/" rel="alternate"/>',
         f'  <link href="{FEED_URL}/atom.xml" rel="self"/>',
         f"  <id>{FEED_URL}/</id>",
         f"  <updated>{entries[0]['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</updated>",
     ]
     for post in entries:
-        url = f"{FEED_URL}/{post['url']}"
+        entry_id = f"{FEED_URL}/{post['url']}"
+        link = post["external_url"] if post["external_url"] else entry_id
         feed_lines.extend([
             "  <entry>",
-            f"    <title>{post['title']}</title>",
-            f'    <link href="{url}" rel="alternate"/>',
-            f"    <id>{url}</id>",
+            f"    <title>{xml_escape(post['title'])}</title>",
+            f'    <link href="{link}" rel="alternate"/>',
+            f"    <id>{entry_id}</id>",
             f"    <updated>{post['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</updated>",
-            f"    <author><name>{AUTHOR}</name></author>",
+            f"    <author><name>{xml_escape(AUTHOR)}</name></author>",
             "  </entry>",
         ])
     feed_lines.append("</feed>")
