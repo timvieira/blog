@@ -3,7 +3,7 @@ date: 2016-06-28
 comments: true
 tags: sampling, decision-making, importance-sampling, statistics, Monte-Carlo, variance-reduction
 
-The following post is about instance of "sampling in proportion to $p$ is not
+The following post is about an instance of "sampling in proportion to $p$ is not
 optimal, but you probably think it is." It's surprising how few people seem to
 know this trick. Myself included! It was brought to my attention recently by
 [Nikos Karampatziakis](http://lowrank.net/nikos/). (Thanks, Nikos!)
@@ -21,7 +21,7 @@ heavily from that paper as well as an email exchange from Nikos.
 
 A good strategy would be to sort recipes by $p_i$ and cook the most promising
 ones first. Unfortunately, you're not a great chef so there is some probability
-that you'll mess-up the recipe. So, it's a good idea to try recipes multiple
+that you'll mess up the recipe. So, it's a good idea to try recipes multiple
 times. Also, you have no short term memory...
 
 This suggests a *sampling with replacement* strategy, where we sample a recipe
@@ -62,7 +62,7 @@ $$
 = q_{j} \nabla_a\left[ -1 + \sum_{t=0}^\infty a^{t}\right]
 $$
 
-Plugin in the solution to the geometric series,
+Plug in the solution to the geometric series,
 $$
 = q_{j} \nabla_a\left[ -1 + \frac{1}{1-a} \right].
 $$
@@ -76,7 +76,7 @@ $$
 </details>
 
 
-The equation says that expected time it takes to sample $j$ for *the first time*
+The equation says that the expected time it takes to sample $j$ for *the first time*
 is the probability we didn't sample $j$ for $(t-1)$ steps times the probability we
 sample $j$ at time $t.$  We multiply this probability by the time $t$ to get the
 *expected* time.
@@ -85,7 +85,7 @@ Note that this equation assumes that we know $j$ is the special recipe *with
 certainty* when we sample it. We'll revisit this assumption later when we
 consider potential errors in executing the recipe.
 
-Since we don't known which $j$ is the right one, we take an expectation over it
+Since we don't know which $j$ is the right one, we take an expectation over it
 according to the prior distribution, which yields the following equation,
 $$
 f(\boldsymbol{q}) = \sum_{i=1}^n \frac{p_i}{q_i}.
@@ -193,7 +193,7 @@ recover the original solution, $q^*_i \propto \sqrt{p_i}.$
   belief that we'll like the recipe at all. How do we minimize the time until we
   find a tasty one? It turns out the same trick works without modification
   because all derivations apply to each recipe independently. The same trick
-  works if $p_i$ does not sums to one over $n.$ For example, if $p_i$ is the
+  works if $p_i$ does not sum to one over $n.$ For example, if $p_i$ is the
   independent probability that you'll like recipe $i$ at all, not the
   probability that it's the special one.
 
