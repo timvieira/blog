@@ -33,7 +33,7 @@ There are a few reasons we might want to use importance sampling:
 
   3. **Variance reduction**: It might be the case that sampling directly from $p$ would require more samples to estimate $\mu.$ Check out these [great notes](http://www.columbia.edu/~mh2078/MCS04/MCS_var_red2.pdf) for more.
 
-  4. **Off-policy evaluation and learning**: We might want to collect some exploratory data from $q$ and evaluate different *policies* $p$ (e.g., to pick the best one). Here's a link to a future post on [off-policy evaluation and counterfactual reasoning (https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/) and some cool papers:
+  4. **Off-policy evaluation and learning**: We might want to collect some exploratory data from $q$ and evaluate different *policies* $p$ (e.g., to pick the best one). Here's a link to a future post on [off-policy evaluation and counterfactual reasoning](https://timvieira.github.io/blog/counterfactual-reasoning-and-learning-from-logged-data/) and some cool papers:
      [counterfactual reasoning](http://arxiv.org/abs/1209.2355),
      [reinforcement learning](http://arxiv.org/abs/cs/0204043),
      [contextual bandits](http://arxiv.org/abs/1103.4601),
