@@ -243,6 +243,35 @@ def _render_md_in_html_blocks(body):
     )
 
 
+def _render_details_bodies(body):
+    """Render markdown in the body of each <details> block, after its <summary>.
+
+    _render_md_in_html_blocks pairs each opening tag with the first closing
+    block tag, so in <details><summary>...</summary> ... </details> it renders
+    only the summary, and links and emphasis after it would reach the page as
+    raw text.
+    """
+    def render_body(m):
+        return f"{m.group(1)}\n\n{_markdown().convert(m.group(2).strip())}\n\n{m.group(3)}"
+
+    return re.sub(
+        r'(<details(?:\s[^>]*)?>\s*<summary(?:\s[^>]*)?>.*?</summary>)(.*?)(</details>)',
+        render_body,
+        body,
+        flags=re.DOTALL,
+    )
+
+
+def _markdown():
+    """The markdown converter used for post bodies."""
+    return markdown.Markdown(
+        extensions=["extra", "codehilite", "toc"],
+        extension_configs={
+            "codehilite": {"css_class": "highlight"},
+        },
+    )
+
+
 def _protect_mermaid(body):
     """Replace ```mermaid...``` blocks with placeholders before markdown rendering."""
     mermaid_blocks = []
@@ -276,13 +305,8 @@ def render_markdown(body):
     body, placeholders = _protect_math(body)
     body, mermaid_blocks = _protect_mermaid(body)
     body = _render_md_in_html_blocks(body)
-    md = markdown.Markdown(
-        extensions=["extra", "codehilite", "toc"],
-        extension_configs={
-            "codehilite": {"css_class": "highlight"},
-        },
-    )
-    html = md.convert(body)
+    body = _render_details_bodies(body)
+    html = _markdown().convert(body)
     html = _restore_mermaid(html, mermaid_blocks)
     html = _restore_math(html, placeholders)
     return html

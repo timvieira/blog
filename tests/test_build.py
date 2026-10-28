@@ -239,6 +239,16 @@ def test_process_post_rewrites_absolute_urls(tmp_path, monkeypatch):
     assert 'href="../other-post/"' in post["content"]
 
 
+def test_render_markdown_inside_details_after_summary():
+    html = build.render_markdown(
+        '<details class="derivation">\n<summary>Proof</summary>\n\n'
+        'A **bold** word and [a link](https://example.com/).\n\n</details>\n'
+    )
+    assert "<strong>bold</strong>" in html
+    assert '<a href="https://example.com/">a link</a>' in html
+    assert "**" not in html and "](" not in html
+
+
 def test_process_post_keeps_blog_urls_absolute_in_satellite_builds(tmp_path, monkeypatch):
     monkeypatch.setattr(build, "CONTENT_DIR", tmp_path)
     monkeypatch.setattr(build, "SELF_URLS", [])     # as set by blog.py
