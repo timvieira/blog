@@ -79,6 +79,7 @@ def do_build(config):
     build.STATIC_DIRS = list(config["static"])
     build.EXTRA_TEMPLATE_VARS = SATELLITE_TEMPLATE_VARS
     build.SATELLITE = config.get("satellite", True)
+    build.SELF_URLS = []    # this site is not the blog, so links to the blog stay absolute
     build.build()
 
 

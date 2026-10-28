@@ -239,6 +239,18 @@ def test_process_post_rewrites_absolute_urls(tmp_path, monkeypatch):
     assert 'href="../other-post/"' in post["content"]
 
 
+def test_process_post_keeps_blog_urls_absolute_in_satellite_builds(tmp_path, monkeypatch):
+    monkeypatch.setattr(build, "CONTENT_DIR", tmp_path)
+    monkeypatch.setattr(build, "SELF_URLS", [])     # as set by blog.py
+    p = tmp_path / "test.md"
+    p.write_text(
+        'title: Test\ndate: 2025-01-01\n\n'
+        'See [this post](https://timvieira.github.io/blog/other-post/).\n'
+    )
+    post = build.process_post(p)
+    assert 'href="https://timvieira.github.io/blog/other-post/"' in post["content"]
+
+
 # ── redirect generation ─────────────────────────────────────────────
 
 

@@ -27,6 +27,10 @@ STATIC_DIRS = ["images", "figures", "downloads", "css"]
 SITE_NAME = "Graduate Descent"
 EXTRA_TEMPLATE_VARS = {}  # satellite posts can set e.g. {"css_url": "/blog/css/blog.css"}
 SATELLITE = False  # when True, single published post becomes root index (no archive page)
+# Absolute links to these URLs point into the site being built, so they are
+# rewritten as relative links.  blog.py clears this for satellite sites, whose
+# pages are not under /blog/: their links to the blog must stay absolute.
+SELF_URLS = ["https://timvieira.github.io/blog/", "http://timvieira.github.io/blog/"]
 
 def slugify(title):
     """Convert a title to a URL slug, matching Pelican's default behavior."""
@@ -342,7 +346,7 @@ def process_post(filepath):
 
     # Rewrite absolute self-links to relative (only in href/src attributes,
     # not in plain text like bibtex entries where URLs should stay absolute)
-    for prefix in ["https://timvieira.github.io/blog/", "http://timvieira.github.io/blog/"]:
+    for prefix in SELF_URLS:
         content = re.sub(
             r'(href|src)="' + re.escape(prefix),
             r'\1="' + root + "/",
