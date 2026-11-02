@@ -1,0 +1,19 @@
+{#- Notebook template for blog posts.
+
+    Extends nbconvert's JupyterLab template ("index.html.j2" resolves to lab/index.html.j2
+    because build.py selects template_name="lab"). The only change: a code cell tagged
+    "collapse-input" shows its code inside a click-to-expand <details> element. Untagged
+    cells render exactly as the lab template renders them.
+-#}
+{%- extends 'index.html.j2' -%}
+
+{% block input_group -%}
+{%- if 'collapse-input' in cell.metadata.get('tags', []) -%}
+<details class="code-toggle">
+<summary>code</summary>
+{{ super() }}
+</details>
+{%- else -%}
+{{ super() }}
+{%- endif -%}
+{%- endblock input_group %}

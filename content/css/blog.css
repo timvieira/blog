@@ -1714,3 +1714,20 @@ details.derivation.draft > summary::before {
     from { opacity: 1; }
     to { opacity: 0; }
 }
+/* Collapsible notebook code: code cells tagged "collapse-input" (see nbtemplates/) */
+details.code-toggle > summary {
+    cursor: pointer;
+    color: #999;
+    font-family: monospace;
+    font-size: 0.85em;
+    margin: 0.3em 0;
+}
+details.code-toggle > summary:hover {
+    color: #555;
+}
+details.code-toggle > summary::before {
+    content: '\25B8\00A0';   /* ▸ (display: block on summary hides the browser's own marker) */
+}
+details.code-toggle[open] > summary::before {
+    content: '\25BE\00A0';   /* ▾ */
+}

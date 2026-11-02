@@ -23,6 +23,7 @@ from pygments.formatters import HtmlFormatter
 CONTENT_DIR = Path("content")
 OUTPUT_DIR = Path("output/blog")
 TEMPLATE_DIR = Path(".")
+NB_TEMPLATE_DIR = Path(__file__).resolve().parent / "nbtemplates"  # next to build.py, so satellites find it too
 STATIC_DIRS = ["images", "figures", "downloads", "css"]
 SITE_NAME = "Graduate Descent"
 EXTRA_TEMPLATE_VARS = {}  # satellite posts can set e.g. {"css_url": "/blog/css/blog.css"}
@@ -104,15 +105,23 @@ def render_notebook(nb_path, start=0, end=None):
     # Slice cells
     nb.cells = nb.cells[start:end]
 
-    exporter = HTMLExporter()
-    exporter.template_name = "classic"
+    # template_name only takes effect when passed to the constructor.  This code used to set
+    # template_name = "classic" afterwards, which nbconvert ignored, so every notebook post
+    # has been rendered with its default "lab" template; keep that.  The blog template
+    # extends it with one opt-in feature: code cells tagged "collapse-input" are folded
+    # into a click-to-expand <details> element.
+    exporter = HTMLExporter(
+        template_name="lab",
+        extra_template_paths=[str(NB_TEMPLATE_DIR)],
+        template_file="blog_notebook.html.j2",
+    )
     exporter.exclude_input_prompt = True
     exporter.exclude_output_prompt = True
 
     html, resources = exporter.from_notebook_node(nb)
 
     # Strip the full HTML wrapper — extract just the body content
-    # The classic template wraps in <body> tags
+    # The template wraps in <body> tags
     body_match = re.search(r"<body[^>]*>(.*)</body>", html, re.DOTALL)
     if body_match:
         html = body_match.group(1)
