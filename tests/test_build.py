@@ -45,6 +45,14 @@ def test_parse_post_basic(tmp_path):
     assert body == "Body here."
 
 
+def test_parse_post_header_only(tmp_path):
+    p = tmp_path / "post.md"
+    p.write_text("title: Link Post\nexternal_url: https://example.com/\n")
+    meta, body = build.parse_post(p)
+    assert meta["external_url"] == "https://example.com/"
+    assert body == ""
+
+
 def test_parse_post_skips_blank_lines_after_header(tmp_path):
     p = tmp_path / "post.md"
     p.write_text("title: Test\ndate: 2025-01-01\n\n\n\nActual body.\n")

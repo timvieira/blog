@@ -115,3 +115,15 @@ def test_content_strips_scripts(tmp_path, monkeypatch):
     text = root.find("atom:entry/atom:content", NS).text
     assert "<script" not in text
     assert "<p>x</p><p>y</p>" == text
+
+
+def test_external_post_teaser_links_out(tmp_path, monkeypatch):
+    post = make_post(
+        external_url="https://example.com/article/",
+        content='<p>Teaser</p><img src="fig.png">',
+    )
+    root = parse_feed(tmp_path, monkeypatch, [post])
+    text = root.find("atom:entry/atom:content", NS).text
+    assert text.startswith("<p>Teaser</p>")
+    assert 'src="https://example.com/article/fig.png"' in text
+    assert 'href="https://example.com/article/">Continue reading' in text

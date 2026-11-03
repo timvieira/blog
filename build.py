@@ -75,6 +75,8 @@ def parse_post(filepath):
             break
         else:
             break
+    else:
+        body_start = len(lines)  # file is all header, no body
 
     body = "\n".join(lines[body_start:])
     return meta, body
@@ -573,6 +575,14 @@ def build_feed(posts, max_entries=20):
     for post in entries:
         entry_id = f"{FEED_URL}/{post['url']}"
         link = post["external_url"] if post["external_url"] else entry_id
+        body = post["content"]
+        if post["external_url"]:
+            # External posts are interactive pages on their own site. The feed
+            # shows the teaser written in the .md body, then links out.
+            body += (
+                f'\n<p><a href="{link}">Continue reading on the site →</a>'
+                " (interactive figures don't run in feed readers)</p>"
+            )
         feed_lines.extend([
             "  <entry>",
             f"    <title>{xml_escape(post['title'])}</title>",
@@ -581,7 +591,7 @@ def build_feed(posts, max_entries=20):
             f"    <published>{post['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</published>",
             f"    <updated>{post['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</updated>",
             f"    <author><name>{xml_escape(AUTHOR)}</name></author>",
-            f'    <content type="html">{xml_escape(_feed_html(post["content"], entry_id))}</content>',
+            f'    <content type="html">{xml_escape(_feed_html(body, link))}</content>',
             "  </entry>",
         ])
     feed_lines.append("</feed>")
