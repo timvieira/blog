@@ -8,7 +8,7 @@ import build
 NS = {"atom": "http://www.w3.org/2005/Atom"}
 
 
-def make_post(title="Test Post", slug="test-post", date=None, external_url=""):
+def make_post(title="Test Post", slug="test-post", date=None, external_url="", content="<p>Body</p>"):
     if date is None:
         date = datetime(2025, 1, 15)
     return {
@@ -16,6 +16,7 @@ def make_post(title="Test Post", slug="test-post", date=None, external_url=""):
         "date": date,
         "url": f"{slug}/",
         "external_url": external_url,
+        "content": content,
     }
 
 
@@ -77,3 +78,40 @@ def test_xml_special_chars_in_title(tmp_path, monkeypatch):
     entry = root.find("atom:entry", NS)
     title = entry.find("atom:title", NS).text
     assert title == "Foo & Bar <Baz>"
+
+
+def test_entry_has_full_content(tmp_path, monkeypatch):
+    post = make_post(content="<p>Hello &amp; <em>world</em></p>")
+    root = parse_feed(tmp_path, monkeypatch, [post])
+    content = root.find("atom:entry/atom:content", NS)
+    assert content.get("type") == "html"
+    assert content.text == "<p>Hello &amp; <em>world</em></p>"
+
+
+def test_content_urls_are_absolute(tmp_path, monkeypatch):
+    post = make_post(
+        slug="my-post",
+        content=(
+            '<a href="../other-post/">a</a>'
+            '<img src="/blog/images/x.png">'
+            '<a href="#fn1">b</a>'
+            '<a href="https://example.com/">c</a>'
+            '<img src="data:image/png;base64,AAAA">'
+        ),
+    )
+    root = parse_feed(tmp_path, monkeypatch, [post])
+    text = root.find("atom:entry/atom:content", NS).text
+    base = build.FEED_URL
+    assert f'href="{base}/other-post/"' in text
+    assert 'src="https://timvieira.github.io/blog/images/x.png"' in text
+    assert f'href="{base}/my-post/#fn1"' in text
+    assert 'href="https://example.com/"' in text
+    assert 'src="data:image/png;base64,AAAA"' in text
+
+
+def test_content_strips_scripts(tmp_path, monkeypatch):
+    post = make_post(content='<p>x</p><script type="module">alert(1)</script><p>y</p>')
+    root = parse_feed(tmp_path, monkeypatch, [post])
+    text = root.find("atom:entry/atom:content", NS).text
+    assert "<script" not in text
+    assert "<p>x</p><p>y</p>" == text

@@ -14,6 +14,7 @@ import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urljoin
 from xml.sax.saxutils import escape as xml_escape
 
 import jinja2
@@ -547,8 +548,18 @@ def build():
     print(f"\nDone. Output in {OUTPUT_DIR}/")
 
 
+def _feed_html(html, base_url):
+    """Prepare post HTML for feed readers: absolute URLs, no scripts."""
+    html = re.sub(r"<script\b.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+    return re.sub(
+        r'\b(href|src)="([^"]*)"',
+        lambda m: f'{m.group(1)}="{urljoin(base_url, m.group(2))}"',
+        html,
+    )
+
+
 def build_feed(posts, max_entries=20):
-    """Generate a minimal Atom feed."""
+    """Generate an Atom feed with full post content."""
     entries = posts[:max_entries]
     feed_lines = [
         '<?xml version="1.0" encoding="utf-8"?>',
@@ -567,8 +578,10 @@ def build_feed(posts, max_entries=20):
             f"    <title>{xml_escape(post['title'])}</title>",
             f'    <link href="{link}" rel="alternate"/>',
             f"    <id>{entry_id}</id>",
+            f"    <published>{post['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</published>",
             f"    <updated>{post['date'].strftime('%Y-%m-%dT%H:%M:%SZ')}</updated>",
             f"    <author><name>{xml_escape(AUTHOR)}</name></author>",
+            f'    <content type="html">{xml_escape(_feed_html(post["content"], entry_id))}</content>',
             "  </entry>",
         ])
     feed_lines.append("</feed>")
