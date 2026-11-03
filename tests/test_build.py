@@ -409,3 +409,18 @@ def test_multiline_inline_math_protected():
     html = build.render_markdown(md)
     assert "$a_i\n+ b_j$" in html
     assert "<em>" not in html
+
+
+# ── citation block ──────────────────────────────────────────────────
+
+
+def test_bibtex_default_key_skips_stopwords():
+    entry = build._bibtex_entry("On the Distribution of Things", 2021, "https://x/")
+    assert entry.startswith("@misc{vieira2021distribution,")
+    assert "url    = {https://x/}" in entry
+
+
+def test_bibtex_key_override_and_escaping():
+    entry = build._bibtex_entry("Tips & Tricks: 50% Off", 2014, "https://x/", key="vieira2014gumbel")
+    assert entry.startswith("@misc{vieira2014gumbel,")
+    assert r"title  = {Tips \& Tricks: 50\% Off}" in entry

@@ -324,6 +324,25 @@ def render_markdown(body):
     return html
 
 
+_BIBTEX_SKIP_WORDS = {"a", "an", "the", "on", "of", "for", "to", "in", "and", "how", "why", "what", "is", "my"}
+
+
+def _bibtex_entry(title, year, url, key=None):
+    """BibTeX @misc entry for citing a post."""
+    if not key:
+        words = [w for w in slugify(title).split("-") if w and w not in _BIBTEX_SKIP_WORDS]
+        key = f"vieira{year}{words[0] if words else ''}"
+    title = re.sub(r"([&%#_$])", r"\\\1", title)
+    return (
+        f"@misc{{{key},\n"
+        f"  author = {{Tim Vieira}},\n"
+        f"  title  = {{{title}}},\n"
+        f"  year   = {{{year}}},\n"
+        f"  url    = {{{url}}}\n"
+        f"}}"
+    )
+
+
 def process_post(filepath):
     """Process a single post: parse, handle notebooks, render to HTML."""
     meta, body = parse_post(filepath)
@@ -401,6 +420,12 @@ def process_post(filepath):
         "draft": is_draft,
         "tex_macros": tex_macros,
         "external_url": meta.get("external_url", ""),
+        # Closing "cite this post" block; off for satellites and with `cite: false`
+        "bibtex": (
+            _bibtex_entry(meta.get("title", slug), date.year, f"{FEED_URL}/{url}", meta.get("bibtex_key"))
+            if not SATELLITE and meta.get("cite", "").lower() != "false"
+            else ""
+        ),
     }
 
 
@@ -426,6 +451,15 @@ def build():
         post = process_post(filepath)
         if post:
             posts.append(post)
+
+    # Citation keys must be unique (set `bibtex_key:` on a post to fix a clash)
+    keys = {}
+    for post in posts:
+        if post["bibtex"]:
+            key = post["bibtex"].split("{", 1)[1].split(",", 1)[0]
+            if key in keys:
+                sys.exit(f"ERROR: duplicate bibtex key '{key}' in '{keys[key]}' and '{post['title']}'")
+            keys[key] = post["title"]
 
     # Sort by date, newest first
     posts.sort(key=lambda p: p["date"], reverse=True)

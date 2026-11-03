@@ -1731,3 +1731,35 @@ details.code-toggle > summary::before {
 details.code-toggle[open] > summary::before {
     content: '\25BE\00A0';   /* ▾ */
 }
+
+/* Closing "cite this post" block (template.html) */
+.post-closing {
+    margin-top: 2.5em;
+    padding-top: 1em;
+    border-top: 1px solid #ddd;
+}
+.cite-block {
+    position: relative;
+}
+.cite-block pre {
+    background: #f8f8f8;
+    padding: 0.8em 1em;
+    overflow-x: auto;
+    white-space: pre;
+}
+.cite-copy {
+    position: absolute;
+    top: 0.4em;
+    right: 0.4em;
+    font-size: 0.8em;
+    padding: 0.2em 0.6em;
+    color: #666;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.cite-copy:hover {
+    color: #222;
+    border-color: #888;
+}
