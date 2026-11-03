@@ -2,6 +2,7 @@ title: Gumbel-Max Trick and Weighted Reservoir Sampling
 date: 2014-08-01
 comments: true
 tags: sampling, Gumbel, reservoir-sampling, sampling-without-replacement, probability, tricks, statistics
+bibtex_key: vieira2014gumbel
 
 A while back, [Hanna](http://people.cs.umass.edu/~wallach/) and I stumbled upon
 the following blog post:
@@ -94,17 +95,6 @@ sorting and taking the elements with the highest keys. This same modification ap
 **Closing**: To the best of my knowledge, the connection between the
 Gumbel-max trick and ES is undocumented. Furthermore, the Gumbel-max-trick is not known as a streaming algorithm, much less known to perform sampling without replacement! If you know of a reference, let me know.
 
-
-**How to cite this article**: If you found this article useful, please cite it as
-
-<pre style="background-color: white; color: black; border: #333;">
-@misc{vieira2014gumbel,
-    title = {Gumbel-max trick and weighted reservoir sampling},
-    author = {Tim Vieira},
-    url = {http://timvieira.github.io/blog/gumbel-max-trick-and-weighted-reservoir-sampling/},
-    year = {2014}
-}
-</pre>
 
 ## Further Reading
 

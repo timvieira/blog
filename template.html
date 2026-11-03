@@ -82,6 +82,25 @@
     <div class="entry-content" style="view-transition-name: article-body">
       {{ post.content }}
     </div>
+    {% if post.bibtex %}
+    <footer class="post-closing">
+      <p>I am very happy to answer questions! Tweet at <a href="https://twitter.com/xtimv">@xtimv</a> or email <a href="mailto:tim.f.vieira@gmail.com">tim.f.vieira@gmail.com</a>.</p>
+      <p>If you found this article interesting, please consider sharing it on social media. If you found it useful, please cite it:</p>
+      <div class="cite-block">
+        <button type="button" class="cite-copy" onclick="copyCitation(this)">Copy</button>
+        <pre>{{ post.bibtex|e }}</pre>
+      </div>
+    </footer>
+    <script>
+      function copyCitation(btn) {
+        var text = btn.parentNode.querySelector('pre').textContent;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+        });
+      }
+    </script>
+    {% endif %}
   </article>
 
   <!--
