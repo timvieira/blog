@@ -105,8 +105,11 @@ def render_notebook(nb_path, start=0, end=None):
 
     nb = nbformat.read(str(nb_path), as_version=4)
 
-    # Slice cells
-    nb.cells = nb.cells[start:end]
+    # Slice cells, then drop empty code cells (they render as blank boxes)
+    nb.cells = [
+        c for c in nb.cells[start:end]
+        if not (c.cell_type == "code" and not c.source.strip() and not c.get("outputs"))
+    ]
 
     # template_name only takes effect when passed to the constructor.  This code used to set
     # template_name = "classic" afterwards, which nbconvert ignored, so every notebook post

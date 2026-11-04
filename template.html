@@ -84,20 +84,47 @@
     </div>
     {% if post.bibtex %}
     <footer class="post-closing">
+      <div class="post-closing-label">Questions &amp; citation</div>
       <p>I am very happy to answer questions! Tweet at <a href="https://twitter.com/xtimv">@xtimv</a> or email <a href="mailto:tim.f.vieira@gmail.com">tim.f.vieira@gmail.com</a>.</p>
       <p>If you found this article interesting, please consider sharing it on social media. If you found it useful, please cite it:</p>
       <div class="cite-block">
-        <button type="button" class="cite-copy" onclick="copyCitation(this)">Copy</button>
+        <div class="cite-bar">
+          <span>BibTeX</span>
+          <button type="button" class="cite-copy" onclick="copyCitation(this)" aria-label="Copy BibTeX to clipboard">
+            <svg class="icon-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="9" rx="1.5"/><path d="M10.5 3.5v-.5a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 3v6.5A1.5 1.5 0 0 0 4 11h1.5"/></svg>
+            <svg class="icon-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+            <span class="cite-copy-text">Copy</span>
+          </button>
+        </div>
         <pre>{{ post.bibtex|e }}</pre>
       </div>
     </footer>
     <script>
       function copyCitation(btn) {
-        var text = btn.parentNode.querySelector('pre').textContent;
-        navigator.clipboard.writeText(text).then(function () {
-          btn.textContent = 'Copied';
-          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
-        });
+        var text = btn.closest('.cite-block').querySelector('pre').textContent;
+        var done = function () {
+          btn.classList.add('copied');
+          btn.querySelector('.cite-copy-text').textContent = 'Copied!';
+          setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.querySelector('.cite-copy-text').textContent = 'Copy';
+          }, 2000);
+        };
+        var fallback = function () {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(ta);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(done, fallback);
+        } else {
+          fallback();
+        }
       }
     </script>
     {% endif %}
