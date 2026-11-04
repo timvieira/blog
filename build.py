@@ -600,6 +600,8 @@ def _feed_html(html, base_url):
 def build_feed(posts, max_entries=20):
     """Generate an Atom feed with full post content."""
     entries = posts[:max_entries]
+    if not entries:     # e.g., a satellite whose only post is a draft
+        return
     feed_lines = [
         '<?xml version="1.0" encoding="utf-8"?>',
         '<feed xmlns="http://www.w3.org/2005/Atom">',
