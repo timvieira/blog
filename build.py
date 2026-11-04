@@ -516,8 +516,10 @@ def build():
         (old_dir / "index.html").write_text(redirect_html, encoding="utf-8")
 
     # Root index: for satellite repos with one post, use the article itself
-    if SATELLITE and len(published) == 1:
-        post = dict(published[0])
+    # (a lone draft counts, so a draft satellite can be previewed at its root)
+    root_posts = published or drafts
+    if SATELLITE and len(root_posts) == 1:
+        post = dict(root_posts[0])
         # Rewrite relative paths: article content uses ../ (relative to slug/),
         # but the root index is one level up, so strip one ../ prefix
         post["content"] = re.sub(
