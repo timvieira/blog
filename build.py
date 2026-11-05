@@ -539,10 +539,11 @@ def build():
         )
         (OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
     else:
-        # Render archive index (lives at output root)
+        # Render archive index (lives at output root).  A satellite with no
+        # published posts lists its drafts, so a draft series can be previewed.
         html = template.render(
             page_type="archive",
-            posts=published,
+            posts=root_posts if SATELLITE else published,
             site_name=SITE_NAME,
             root=".",
             author=AUTHOR,
