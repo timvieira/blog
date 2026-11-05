@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647 300" font-family="Georgia, 'Times New Roman', serif" role="img">
+<title>A derivation with left recursion, and after the left-corner transformation</title>
+<line x1="186.2" y1="36.0" x2="128.1" y2="64.0" stroke="#333" stroke-width="0.9"/>
+<line x1="128.1" y1="82.0" x2="85.3" y2="110.0" stroke="#333" stroke-width="0.9"/>
+<line x1="85.3" y1="128.0" x2="54.2" y2="156.0" stroke="#333" stroke-width="0.9"/>
+<line x1="54.2" y1="174.0" x2="54.2" y2="190.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="54.2,196.0 20.0,216.0 88.4,216.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="54.2" y="232.0" font-size="14" fill="#333" text-anchor="middle">My sister</text>
+<text x="54.2" y="173.0" font-size="15" fill="#333" text-anchor="middle">NP</text>
+<line x1="85.3" y1="128.0" x2="116.4" y2="156.0" stroke="#333" stroke-width="0.9"/>
+<text x="116.4" y="173.0" font-size="14" fill="#333" text-anchor="middle">'s</text>
+<text x="85.3" y="127.0" font-size="15" fill="#333" text-anchor="middle">PossP</text>
+<line x1="128.1" y1="82.0" x2="171.0" y2="110.0" stroke="#333" stroke-width="0.9"/>
+<line x1="171.0" y1="128.0" x2="171.0" y2="144.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="171.0,150.0 144.4,170.0 197.6,170.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="171.0" y="186.0" font-size="14" fill="#333" text-anchor="middle">diploma</text>
+<text x="171.0" y="127.0" font-size="15" fill="#333" text-anchor="middle">NN</text>
+<text x="128.1" y="81.0" font-size="15" fill="#333" text-anchor="middle">NP</text>
+<line x1="186.2" y1="36.0" x2="244.2" y2="64.0" stroke="#333" stroke-width="0.9"/>
+<line x1="244.2" y1="82.0" x2="244.2" y2="98.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="244.2,104.0 217.6,124.0 270.8,124.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="244.2" y="140.0" font-size="14" fill="#333" text-anchor="middle">arrived</text>
+<text x="244.2" y="81.0" font-size="15" fill="#333" text-anchor="middle">VP</text>
+<text x="186.2" y="35.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-family="cursive">𝒮</tspan></text>
+<line x1="422.3" y1="36.0" x2="365.0" y2="52.0" stroke="#333" stroke-width="0.9"/>
+<text x="365.0" y="64.0" font-size="15" fill="#333" text-anchor="middle">~</text>
+<line x1="365.0" y1="82.0" x2="365.0" y2="98.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="365.0,104.0 330.8,124.0 399.2,124.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="365.0" y="140.0" font-size="14" fill="#333" text-anchor="middle">My sister</text>
+<text x="365.0" y="81.0" font-size="15" fill="#333" text-anchor="middle">NP</text>
+<line x1="422.3" y1="36.0" x2="479.6" y2="64.0" stroke="#333" stroke-width="0.9"/>
+<line x1="479.6" y1="82.0" x2="427.2" y2="110.0" stroke="#333" stroke-width="0.9"/>
+<text x="427.2" y="127.0" font-size="14" fill="#333" text-anchor="middle">'s</text>
+<line x1="479.6" y1="82.0" x2="532.0" y2="110.0" stroke="#333" stroke-width="0.9"/>
+<line x1="532.0" y1="128.0" x2="481.8" y2="156.0" stroke="#333" stroke-width="0.9"/>
+<line x1="481.8" y1="174.0" x2="481.8" y2="190.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="481.8,196.0 455.2,216.0 508.4,216.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="481.8" y="232.0" font-size="14" fill="#333" text-anchor="middle">diploma</text>
+<text x="481.8" y="173.0" font-size="15" fill="#333" text-anchor="middle">NN</text>
+<line x1="532.0" y1="128.0" x2="582.3" y2="156.0" stroke="#333" stroke-width="0.9"/>
+<line x1="582.3" y1="174.0" x2="555.0" y2="202.0" stroke="#333" stroke-width="0.9"/>
+<line x1="555.0" y1="220.0" x2="555.0" y2="236.0" stroke="#333" stroke-width="0.9"/>
+<polygon points="555.0,242.0 528.4,262.0 581.6,262.0" fill="none" stroke="#333" stroke-width="0.9"/>
+<text x="555.0" y="278.0" font-size="14" fill="#333" text-anchor="middle">arrived</text>
+<text x="555.0" y="219.0" font-size="15" fill="#333" text-anchor="middle">VP</text>
+<line x1="582.3" y1="174.0" x2="609.6" y2="202.0" stroke="#333" stroke-width="0.9"/>
+<line x1="609.6" y1="220.0" x2="609.6" y2="248.0" stroke="#333" stroke-width="0.9"/>
+<text x="609.6" y="265.0" font-size="14" fill="#333" text-anchor="middle" font-style="italic">ε</text>
+<text x="609.6" y="219.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-size="80%" baseline-shift="35%"><tspan font-family="cursive">𝒮</tspan></tspan><tspan font-size="90%">/</tspan><tspan font-size="80%" baseline-shift="-25%"><tspan font-family="cursive">𝒮</tspan></tspan></text>
+<text x="582.3" y="173.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-size="80%" baseline-shift="35%"><tspan font-family="cursive">𝒮</tspan></tspan><tspan font-size="90%">/</tspan><tspan font-size="80%" baseline-shift="-25%">NP</tspan></text>
+<text x="532.0" y="127.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-size="80%" baseline-shift="35%"><tspan font-family="cursive">𝒮</tspan></tspan><tspan font-size="90%">/</tspan><tspan font-size="80%" baseline-shift="-25%">PossP</tspan></text>
+<text x="479.6" y="81.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-size="80%" baseline-shift="35%"><tspan font-family="cursive">𝒮</tspan></tspan><tspan font-size="90%">/</tspan><tspan font-size="80%" baseline-shift="-25%">NP</tspan></text>
+<text x="422.3" y="35.0" font-size="15" fill="#333" text-anchor="middle"><tspan font-family="cursive">𝒮</tspan></text>
+</svg>
