@@ -18,6 +18,10 @@ status: draft
 .theorem { border-left: 3px solid #c9c2b8; padding: 0.6em 1em; margin: 1.2em 0; background: #fbf8f3; }
 .theorem > :first-child { margin-top: 0; }
 .theorem > :last-child { margin-bottom: 0; }
+/* notebook outputs: wide graphs and long lines scroll sideways at full size */
+.jp-OutputArea-output { overflow-x: auto; max-width: 100%; }
+.jp-OutputArea-output svg { max-width: none; }
+.jp-OutputArea-output pre { white-space: pre; overflow-x: auto; }
 </style>
 
 <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin-bottom: 1.5em; border-radius: 4px; font-size: 0.95em;"><p style="margin: 0;"><strong>Draft</strong> — This article is a work in progress. Content may change.</p></div>
@@ -104,7 +108,64 @@ The primary difference is that Dyna does not restrict the set of terminals and n
 
 **What carries over.**  Every algorithm in the grammar series was originally stated for Dyna programs in chapter 5 of my dissertation: fixpoint iteration (naive, semi-naive, and prioritized), Newton's method, the right-linear solver, and the hybrid solver that breaks a program into strongly connected components.  The grammar versions are what you get by reading "program" as "grammar" and "item" as "nonterminal."  The main extra wrinkle for programs is that rules have variables, so the solvers must work with the program's groundings (or with nonground reasoning).
 
-**Try it.**  The [`dyna-pi`](https://github.com/timvieira/dyna-pi) library implements these ideas; its [demo notebook](https://github.com/timvieira/dyna-pi/blob/main/docs/Demo.ipynb) is a good place to start.
+**Try it.**  The [`dyna-pi`](https://github.com/timvieira/dyna-pi) library implements these ideas.  The rest of this post is a tour adapted from its [tutorial notebook](https://github.com/timvieira/dyna-pi/blob/main/docs/Demo.ipynb).
+
+
+## A tour of `dyna-pi`
+
+The **dynamic program improvement system** (`dyna-pi`) is an interactive tool for analyzing and improving dynamic programming algorithms.  It provides the Dyna language, general-purpose solvers (agenda-based fixpoint iteration and semiring Newton's method), static analyses (types, and worst-case time and space complexity), meaning-preserving program transformations, a search algorithm over those transformations, and visualization tools that integrate with Jupyter.
+
+{% notebook dyna-tutorial.ipynb cells[8:9] %}
+
+### CKY
+
+Here is the CKY program from above, written for `dyna-pi`.  The last two lines declare which items are inputs and which are outputs.
+
+{% notebook dyna-tutorial.ipynb cells[14:24] %}
+
+### Computation graphs and derivations
+
+{% notebook dyna-tutorial.ipynb cells[25:30] %}
+
+### Solvers
+
+{% notebook dyna-tutorial.ipynb cells[33:35] %}
+
+{% notebook dyna-tutorial.ipynb cells[38:39] %}
+
+**What about cyclical programs?**  This is where the [grammar series](https://timvieira.github.io/semiring-newton/weighted-grammars-as-algebraic-systems/) picks up: cyclical programs define infinitely many derivations, so fixpoint iteration only converges in the limit.
+
+{% notebook dyna-tutorial.ipynb cells[41:43] %}
+
+{% notebook dyna-tutorial.ipynb cells[44:61] %}
+
+### Semirings
+
+The same program can be evaluated in different [semirings](/blog/semirings-a-powerful-abstraction-for-dynamic-programming/) without changing its rules.
+
+{% notebook dyna-tutorial.ipynb cells[129:141] %}
+
+### Program transformations
+
+**Unfold and fold.**  Transformations rewrite a program into a semantically equivalent one that may be more efficient to run.
+
+{% notebook dyna-tutorial.ipynb cells[63:65] %}
+
+{% notebook dyna-tutorial.ipynb cells[66:74] %}
+
+**Speeding up CKY.**  Folding in a new item (the "hook trick") changes the program's worst-case runtime, which `dyna-pi` can compute from a description of the input types:
+
+{% notebook dyna-tutorial.ipynb cells[79:85] %}
+
+Unfolding can also specialize the program to a specific grammar:
+
+{% notebook dyna-tutorial.ipynb cells[88:91] %}
+
+**The left-corner transformation.**  This example shows how the left-corner transformation can be used to speed up the following sum over weighted Peano numbers.
+
+{% notebook dyna-tutorial.ipynb cells[163:171] %}
+
+The [tutorial notebook](https://github.com/timvieira/dyna-pi/blob/main/docs/Demo.ipynb) goes further, with program analysis, type-based program specialization, and semi-automated search over transformations.
 
 
 ## References
